@@ -5,6 +5,7 @@
 import pygame
 from pygame import *
 from player import Player
+from blocks import Platform
 
 #Объявляем переменные
 WIN_WIDTH = 800 #Ширина создаваемого окна
@@ -26,6 +27,10 @@ def main():
 
     hero = Player(55,55) # создаем героя по (x,y) координатам
     up = down = left = right = False    # по умолчанию — стоим
+
+    entities = pygame.sprite.Group() # Все объекты
+    platforms = [] # то, во что мы будем врезаться или опираться
+    entities.add(hero)
 
     level = [
        "-------------------------",
@@ -49,6 +54,18 @@ def main():
        "-                       -",
        "-------------------------"]
 
+    #рисуем платформы
+    x=y=0 # координаты
+    for row in level: # вся строка
+        for col in row: # каждый символ
+            if col == "-":
+                pf = Platform(x,y)
+                entities.add(pf)
+                platforms.append(pf)
+            x += PLATFORM_WIDTH #блоки платформы ставятся на ширине блоков
+        y += PLATFORM_HEIGHT    #то же самое и с высотой
+        x = 0                   #на каждой новой строчке начинаем с нуля
+
     timer = pygame.time.Clock()
 
     while 1: # Основной цикл программы
@@ -60,43 +77,30 @@ def main():
             if e.type == QUIT:
                 raise SystemExit
 
-            if e.type == KEYDOWN and e.key == K_LEFT:
-                left = True
-            if e.type == KEYDOWN and e.key == K_RIGHT:
-                right = True
+            if e.type == KEYDOWN and not (left or right or up or down):
+                if e.key == K_LEFT:
+                    left = True
+                elif e.key == K_RIGHT:
+                    right = True
+                elif e.key == K_UP:
+                    up = True
+                elif e.key == K_DOWN:
+                    down = True
 
-            if e.type == KEYUP and e.key == K_RIGHT:
-                right = False
-            if e.type == KEYUP and e.key == K_LEFT:
-                left = False
-
-            if e.type == KEYDOWN and e.key == K_UP:
-                up = True
-            if e.type == KEYDOWN and e.key == K_DOWN:
-                down = True
-
-            if e.type == KEYUP and e.key == K_UP:
-                up = False
-            if e.type == KEYUP and e.key == K_DOWN:
-                down = False
+            if e.type == KEYUP:
+                if e.key == K_RIGHT:
+                    right = False
+                elif e.key == K_LEFT:
+                    left = False
+                elif e.key == K_UP:
+                    up = False
+                elif e.key == K_DOWN:
+                    down = False
 
         screen.blit(bg, (0,0))      # Каждую итерацию необходимо всё перерисовывать
 
-        #рисуем платформы
-        x=y=0 # координаты
-        for row in level: # вся строка
-            for col in row: # каждый символ
-                if col == "-":
-                    #создаем блок, заливаем его цветом и рисеум его
-                    pf = Surface((PLATFORM_WIDTH,PLATFORM_HEIGHT))
-                    pf.fill(Color(PLATFORM_COLOR))
-                    screen.blit(pf,(x,y))
-                x += PLATFORM_WIDTH #блоки платформы ставятся на ширине блоков
-            y += PLATFORM_HEIGHT    #то же самое и с высотой
-            x = 0                   #на каждой новой строчке начинаем с нуля
-
-        hero.update(left, right, up, down) # передвижение
-        hero.draw(screen) # отображение
+        hero.update(left, right, up, down, platforms) # передвижение
+        entities.draw(screen) # отображение всего
 
         pygame.display.update()     # обновление и вывод всех изменений на экран
         
