@@ -9,14 +9,12 @@ __author__ = 'cam'
 
 import random
 
-def gen_level():
-    height = 30
-    weidth = 30
+def gen_level(height,weidth):
     level = []
-    for y in range(weidth):
+    for y in range(height):
         st_line = ""
 
-        for x in range(height):
+        for x in range(weidth):
             line = " "
             if 7 < random.randint (0, 10) :
                 line = "*"
@@ -24,7 +22,5 @@ def gen_level():
                 line = "-"
             st_line = st_line + line
         level.append(st_line)
-    print (level)
-    return level
 
-gen_level()
+    return level
