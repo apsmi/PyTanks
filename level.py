@@ -25,6 +25,6 @@ def gen_level():
             st_line = st_line + line
         level.append(st_line)
     print (level)
-    return
+    return level
 
 gen_level()
