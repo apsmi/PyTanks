@@ -6,6 +6,7 @@ import pygame
 from pygame import *
 from player import Player
 from blocks import Platform
+from level import gen_level
 
 #Объявляем переменные
 WIN_WIDTH = 800 #Ширина создаваемого окна
@@ -32,27 +33,7 @@ def main():
     platforms = [] # то, во что мы будем врезаться или опираться
     entities.add(hero)
 
-    level = [
-       "-------------------------",
-       "-                       -",
-       "-                       -",
-       "-                       -",
-       "-            --         -",
-       "-                       -",
-       "--                      -",
-       "-                       -",
-       "-                   --- -",
-       "-                       -",
-       "-                       -",
-       "-      ---              -",
-       "-                       -",
-       "-   -----------         -",
-       "-                       -",
-       "-                -      -",
-       "-                   --  -",
-       "-                       -",
-       "-                       -",
-       "-------------------------"]
+    level = gen_level (20,25)
 
     #рисуем платформы
     x=y=0 # координаты
