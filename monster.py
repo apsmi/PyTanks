@@ -117,7 +117,6 @@ class Monster(sprite.Sprite):
                 elif self.course == 4:
                     self.rect.x += self.xvel
                 self.course = random.randint(1,4)
-                #self.update(platforms)
 
     def die(self):
         self.rect.x = self.startX
