@@ -41,7 +41,7 @@ def main():
     #2 координаты появления, скорость перемещения по горизонтали, скорость перемещения по вертикали, максимальное расстояние в одну сторону, которое может пройти монстр, по вертикали
     mn = Monster(736,580,1,1,20000,20000)
     entities.add(mn)
-    platforms.append(mn)
+    #platforms.append(mn)
     monsters.add(mn)
 
     level = gen_level (20,25)
@@ -113,16 +113,28 @@ def main():
                 elif e.key == K_DOWN:
                     down = False
 
+        if mn.fire == 1 and not mn.isBullet:
+            bullet_mn = Bullet(mn.rect.x,mn.rect.y,mn.shutdirection)
+            entities.add(bullet_mn)
+            mn.isBullet = True
+
         screen.blit(bg, (0,0))      # Каждую итерацию необходимо всё перерисовывать
 
         if isBullet:
-            bullet.update(platforms)
+            bullet.update(platforms+ [mn])
             if bullet.bum >= 20:
                 entities.remove(bullet)
                 bullet = None
                 isBullet = False
 
-        hero.update(left, right, up, down, platforms) # передвижение
+        if mn.isBullet:
+            bullet_mn.update(platforms + [hero])
+            if bullet_mn.bum >= 20:
+                entities.remove(bullet_mn)
+                bullet_mn = None
+                mn.isBullet = False
+
+        hero.update(left, right, up, down, platforms + [mn]) # передвижение
 
         monsters.update(platforms + [hero] ) # передвигаем всех монстров
 
