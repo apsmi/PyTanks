@@ -22,5 +22,8 @@ def gen_level(height,weidth):
                 line = "*"
             st_line = st_line + line
         level.append(st_line)
-
+    level[1] = level[1][:1] + " " + level[1][2:]
+    level[height-2] = level[height-2][:weidth-2] + " " + level[height-2][weidth-1:]
     return level
+
+gen_level(20,25)
