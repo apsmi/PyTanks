@@ -7,6 +7,7 @@ from pygame import *
 from player import Player
 from blocks import Platform
 from level import gen_level
+from bullet import Bullet
 
 #Объявляем переменные
 WIN_WIDTH = 800 #Ширина создаваемого окна
@@ -49,6 +50,9 @@ def main():
 
     timer = pygame.time.Clock()
 
+    isBullet = False
+    shutdirection = "up"
+
     while 1: # Основной цикл программы
 
         timer.tick(60)
@@ -59,18 +63,35 @@ def main():
                 raise SystemExit
 
             if e.type == KEYDOWN:
+
                 if e.key == K_LEFT:
+                    shutdirection = "left"
+
                     left = True
                     right = up = down = False
+
                 elif e.key == K_RIGHT:
+                    shutdirection = "right"
+
                     right = True
                     left = up = down = False
+
                 elif e.key == K_UP:
+                    shutdirection = "up"
+
                     up = True
                     left = right = down = False
+
                 elif e.key == K_DOWN:
+                    shutdirection = "down"
+
                     down = True
                     left = right = up = False
+
+                if e.key == K_SPACE and not isBullet:
+                    bullet = Bullet(hero.rect.left,hero.rect.top,shutdirection)
+                    entities.add(bullet)
+                    isBullet = True
 
             if e.type == KEYUP:
                 if e.key == K_RIGHT:
@@ -83,6 +104,13 @@ def main():
                     down = False
 
         screen.blit(bg, (0,0))      # Каждую итерацию необходимо всё перерисовывать
+
+        if isBullet:
+            bullet.update(platforms)
+            if bullet.bum >= 20:
+                entities.remove(bullet)
+                bullet = None
+                isBullet = False
 
         hero.update(left, right, up, down, platforms) # передвижение
         entities.draw(screen) # отображение всего

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'apsmi'
 
 from pygame import *

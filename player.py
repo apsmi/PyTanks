@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from pygame import *
@@ -69,7 +68,7 @@ class Player(sprite.Sprite):
             self.image.fill(Color(COLOR))
             self.boltAnimRight.blit(self.image, (0, 0))#animation
 
-        if not(left or right): # стоим, когда нет указаний идти
+        if not(left or right): # стоим, когда нет указаний идти вправо - влево
             self.xvel = 0
 
         self.rect.x += self.xvel # переносим свои положение на xvel
@@ -84,9 +83,6 @@ class Player(sprite.Sprite):
             self.yvel = MOVE_SPEED # низ = x + n
             self.image.fill(Color(COLOR))
             self.boltAnimDown.blit(self.image, (0, 0))#animation
-
-        if not(left or right): # стоим, когда нет указаний идти вправо - влево
-            self.xvel = 0
 
         if not(up or down): # стоим, когда нет указаний идти вправо - влево
             self.yvel = 0
