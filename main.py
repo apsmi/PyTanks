@@ -39,8 +39,8 @@ def main():
     x=y=0 # координаты
     for row in level: # вся строка
         for col in row: # каждый символ
-            if col == "-":
-                pf = Platform(x,y)
+            if col == "-" or col == "*":
+                pf = Platform(x,y,col)
                 entities.add(pf)
                 platforms.append(pf)
             x += PLATFORM_WIDTH #блоки платформы ставятся на ширине блоков

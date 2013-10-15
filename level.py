@@ -19,7 +19,7 @@ def gen_level(height,weidth):
             if 7 < random.randint (0, 10) :
                 line = "-"
             if y == 0 or y == (height-1) or x == 0 or x == (weidth - 1):
-                line = "-"
+                line = "*"
             st_line = st_line + line
         level.append(st_line)
 
