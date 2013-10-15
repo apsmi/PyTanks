@@ -5,6 +5,7 @@ from pygame import *
 import pyganim
 from blocks import Platform
 from monster import Monster
+from player import Player
 
 MOVE_SPEED = 5
 WIDTH = 6
@@ -109,10 +110,13 @@ class Bullet(sprite.Sprite):
                     self.boltAnimBum.blit(self.image, (0, 0))  #animation
                     self.bum = 1
 
-                    if isinstance(p, Platform):
+                    if isinstance(p, Platform):     #попадание пули в платформу
                         p.shut(self.shutdirection)
-                    if isinstance(p, Monster):
+                    if isinstance(p, Monster):   #попадание пули в монстра
                         p.die()
+                    if isinstance(p, Player):   #попадание пули в героя
+                        p.die()
+
 
                 if xvel > 0:                      # если движется вправо
                     self.rect.right -= xvel # то не движется вправо

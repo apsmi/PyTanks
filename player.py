@@ -105,3 +105,7 @@ class Player(sprite.Sprite):
 
                 if yvel < 0:                      # если движется вверх
                     self.rect.top -= yvel # то не движется вверх
+
+    def die(self):
+        self.rect.x = self.startX
+        self.rect.y = self.startY
