@@ -2,11 +2,23 @@
 # -*- coding: utf-8 -*-
 
 from pygame import *
+import pyganim
 
-MOVE_SPEED = 2
-WIDTH = 32
-HEIGHT = 32
+MOVE_SPEED = 1
+WIDTH = 28
+HEIGHT = 28
 COLOR =  "#888888"
+
+ANIMATION_DELAY = 0.1 # скорость смены кадров
+ANIMATION_RIGHT = ['tanks\h_right_1.png',
+                   'tanks\h_right_2.png']
+ANIMATION_LEFT = ['tanks\h_left_1.png',
+                  'tanks\h_left_2.png']
+
+ANIMATION_UP = ['tanks\h_up_1.png',
+                'tanks\h_up_2.png']
+ANIMATION_DOWN = ['tanks\h_down_1.png',
+                  'tanks\h_down_2.png']
 
 
 class Player(sprite.Sprite):
@@ -17,15 +29,45 @@ class Player(sprite.Sprite):
         self.startX = x # Начальная позиция Х, пригодится когда будем переигрывать уровень
         self.startY = y
         self.image = Surface((WIDTH,HEIGHT))
-        self.image.fill(Color(COLOR))
+        self.image = image.load("tanks\h_up_1.png")
         self.rect = Rect(x, y, WIDTH, HEIGHT) # прямоугольный объект
+
+        self.image.set_colorkey(Color(COLOR)) # делаем фон прозрачным
+        #  Анимация движения вправо
+        boltAnim = []
+        for anim in ANIMATION_RIGHT:
+            boltAnim.append((anim, ANIMATION_DELAY))
+        self.boltAnimRight = pyganim.PygAnimation(boltAnim)
+        self.boltAnimRight.play()
+        # Анимация движения влево
+        boltAnim = []
+        for anim in ANIMATION_LEFT:
+            boltAnim.append((anim, ANIMATION_DELAY))
+        self.boltAnimLeft = pyganim.PygAnimation(boltAnim)
+        self.boltAnimLeft.play()
+        #  Анимация движения вверх
+        boltAnim = []
+        for anim in ANIMATION_UP:
+            boltAnim.append((anim, ANIMATION_DELAY))
+        self.boltAnimUp = pyganim.PygAnimation(boltAnim)
+        self.boltAnimUp.play()
+        # Анимация движения вниз
+        boltAnim = []
+        for anim in ANIMATION_DOWN:
+            boltAnim.append((anim, ANIMATION_DELAY))
+        self.boltAnimDown = pyganim.PygAnimation(boltAnim)
+        self.boltAnimDown.play()
 
     def update(self,  left, right, up, down, platforms):
         if left:
             self.xvel = -MOVE_SPEED # Лево = x- n
+            self.image.fill(Color(COLOR))
+            self.boltAnimLeft.blit(self.image, (0, 0))  #animation
 
         if right:
             self.xvel = MOVE_SPEED # Право = x + n
+            self.image.fill(Color(COLOR))
+            self.boltAnimRight.blit(self.image, (0, 0))#animation
 
         if not(left or right): # стоим, когда нет указаний идти
             self.xvel = 0
@@ -35,9 +77,13 @@ class Player(sprite.Sprite):
 
         if up:
             self.yvel = -MOVE_SPEED # верх = x- n
+            self.image.fill(Color(COLOR))
+            self.boltAnimUp.blit(self.image, (0, 0))#animation
 
         if down:
             self.yvel = MOVE_SPEED # низ = x + n
+            self.image.fill(Color(COLOR))
+            self.boltAnimDown.blit(self.image, (0, 0))#animation
 
         if not(left or right): # стоим, когда нет указаний идти вправо - влево
             self.xvel = 0

@@ -26,7 +26,7 @@ def main():
                                          # будем использовать как фон
     bg.fill(Color(BACKGROUND_COLOR))     # Заливаем поверхность сплошным цветом
 
-    hero = Player(55,55) # создаем героя по (x,y) координатам
+    hero = Player(34,34) # создаем героя по (x,y) координатам
     up = down = left = right = False    # по умолчанию — стоим
 
     entities = pygame.sprite.Group() # Все объекты
@@ -58,15 +58,19 @@ def main():
             if e.type == QUIT:
                 raise SystemExit
 
-            if e.type == KEYDOWN and not (left or right or up or down):
+            if e.type == KEYDOWN:
                 if e.key == K_LEFT:
                     left = True
+                    right = up = down = False
                 elif e.key == K_RIGHT:
                     right = True
+                    left = up = down = False
                 elif e.key == K_UP:
                     up = True
+                    left = right = down = False
                 elif e.key == K_DOWN:
                     down = True
+                    left = right = up = False
 
             if e.type == KEYUP:
                 if e.key == K_RIGHT:
