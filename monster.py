@@ -39,6 +39,9 @@ class Monster(sprite.Sprite):
         self.xvel = left # cкорость передвижения по горизонтали, 0 - стоит на месте
         self.yvel = up # скорость движения по вертикали, 0 - не двигается
         self.course = 1
+        self.isBullet = False
+        self.shutdirection = "down"
+        self.fire = 0
 
         #  Анимация движения вправо
         boltAnim = []
@@ -68,30 +71,39 @@ class Monster(sprite.Sprite):
     def update(self, platforms): # по принципу героя
 
         #course - направление
-
+        #движение
         if self.course == 1:
             self.rect.y += self.yvel
             self.image.fill(Color(COLOR))
             self.boltAnimDown.blit(self.image, (0, 0))#animation
+            self.shutdirection = "down"
         elif self.course == 2:
             self.rect.x += self.xvel
             self.image.fill(Color(COLOR))
             self.boltAnimRight.blit(self.image, (0, 0))#animation
+            self.shutdirection = "right"
         elif self.course == 3:
             self.rect.y -= self.yvel
             self.image.fill(Color(COLOR))
             self.boltAnimUp.blit(self.image, (0, 0))#animation
+            self.shutdirection = "up"
         elif self.course == 4:
             self.rect.x -= self.xvel
             self.image.fill(Color(COLOR))
             self.boltAnimLeft.blit(self.image, (0, 0))#animation
+            self.shutdirection = "left"
 
         self.collide(platforms)
 
+        #проверка на макс. пройденое расстояние
         if (abs(self.startX - self.rect.x) > self.maxLengthLeft):
             self.xvel =-self.xvel  # если прошли максимальное растояние, то идеи в обратную сторону
         if (abs(self.startY - self.rect.y) > self.maxLengthUp):
             self.yvel = -self.yvel # если прошли максимальное растояние, то идеи в обратную сторону, вертикаль
+
+        #стрельба
+        if 50 < random.randint (1, 100):
+            self.fire = 1
 
     def collide(self, platforms):
         for p in platforms:
