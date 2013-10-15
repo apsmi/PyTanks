@@ -8,6 +8,7 @@ from player import Player
 from blocks import Platform
 from level import gen_level
 from bullet import Bullet
+from monster import Monster
 
 #Объявляем переменные
 WIN_WIDTH = 800 #Ширина создаваемого окна
@@ -31,8 +32,15 @@ def main():
     up = down = left = right = False    # по умолчанию — стоим
 
     entities = pygame.sprite.Group() # Все объекты
+    monsters = pygame.sprite.Group() # Все передвигающиеся объекты
     platforms = [] # то, во что мы будем врезаться или опираться
     entities.add(hero)
+
+    #2 координаты появления, скорость перемещения по горизонтали, скорость перемещения по вертикали, максимальное расстояние в одну сторону, которое может пройти монстр, по вертикали
+    mn = Monster(736,580,1,1,20000,20000)
+    entities.add(mn)
+    platforms.append(mn)
+    monsters.add(mn)
 
     level = gen_level (20,25)
 
@@ -116,7 +124,7 @@ def main():
         entities.draw(screen) # отображение всего
 
         pygame.display.update()     # обновление и вывод всех изменений на экран
-        
+        monsters.update(platforms) # передвигаем всех монстров
 
 if __name__ == "__main__":
     main()
