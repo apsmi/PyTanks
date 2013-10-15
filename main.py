@@ -34,7 +34,9 @@ def main():
     entities = pygame.sprite.Group() # Все объекты
     monsters = pygame.sprite.Group() # Все передвигающиеся объекты
     platforms = [] # то, во что мы будем врезаться или опираться
+
     entities.add(hero)
+    #platforms.append(hero)
 
     #2 координаты появления, скорость перемещения по горизонтали, скорость перемещения по вертикали, максимальное расстояние в одну сторону, которое может пройти монстр, по вертикали
     mn = Monster(736,580,1,1,20000,20000)
@@ -121,10 +123,12 @@ def main():
                 isBullet = False
 
         hero.update(left, right, up, down, platforms) # передвижение
+
+        monsters.update(platforms + [hero] ) # передвигаем всех монстров
+
         entities.draw(screen) # отображение всего
 
         pygame.display.update()     # обновление и вывод всех изменений на экран
-        monsters.update(platforms) # передвигаем всех монстров
 
 if __name__ == "__main__":
     main()

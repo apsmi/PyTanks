@@ -57,6 +57,8 @@ class Bullet(sprite.Sprite):
             up = True
         if self.shutdirection == "down":
             down = True
+        if self.shutdirection == "stop":
+            left = right = up = down = False
 
         if left:
             self.xvel = -MOVE_SPEED # Лево = x - n
@@ -116,3 +118,5 @@ class Bullet(sprite.Sprite):
 
                 if yvel < 0:                      # если движется вверх
                     self.rect.top -= yvel # то не движется вверх
+
+                self.shutdirection = "stop"

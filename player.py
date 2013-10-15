@@ -95,13 +95,13 @@ class Player(sprite.Sprite):
             if sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
 
                 if xvel > 0:                      # если движется вправо
-                    self.rect.right = p.rect.left # то не движется вправо
+                    self.rect.right -= xvel # то не движется вправо
 
                 if xvel < 0:                      # если движется влево
-                    self.rect.left = p.rect.right # то не движется влево
+                    self.rect.left -= xvel # то не движется влево
 
                 if yvel > 0:                      # если падает вниз
-                    self.rect.bottom = p.rect.top # то не падает вниз
+                    self.rect.bottom -= yvel # то не падает вниз
 
                 if yvel < 0:                      # если движется вверх
-                    self.rect.top = p.rect.bottom # то не движется вверх
+                    self.rect.top -= yvel # то не движется вверх
