@@ -8,51 +8,84 @@ import pyganim
 import os
 import random
 
-MONSTER_WIDTH = 32
-MONSTER_HEIGHT = 32
-MONSTER_COLOR = "#2110FF"
-ICON_DIR = os.path.dirname(__file__) #  Полный путь к каталогу с файлами
+MOVE_SPEED = 1
+WIDTH = 28
+HEIGHT = 28
+COLOR =  "#888888"
 
+ANIMATION_DELAY = 0.1 # скорость смены кадров
+ANIMATION_RIGHT = ['tanks\h_right_1.png',
+                   'tanks\h_right_2.png']
+ANIMATION_LEFT = ['tanks\h_left_1.png',
+                  'tanks\h_left_2.png']
 
-ANIMATION_MONSTERHORYSONTAL = [('%s/blocks/tank1.png' % ICON_DIR),
-                      ('%s/blocks/tank1.png' % ICON_DIR )]
+ANIMATION_UP = ['tanks\h_up_1.png',
+                'tanks\h_up_2.png']
+ANIMATION_DOWN = ['tanks\h_down_1.png',
+                  'tanks\h_down_2.png']
 
 class Monster(sprite.Sprite):
     def __init__(self, x, y, left, up, maxLengthLeft,maxLengthUp):
         sprite.Sprite.__init__(self)
-        self.image = Surface((MONSTER_WIDTH, MONSTER_HEIGHT))
-        self.image.fill(Color(MONSTER_COLOR))
-        self.rect = Rect(x, y, MONSTER_WIDTH, MONSTER_HEIGHT)
-        self.image.set_colorkey(Color(MONSTER_COLOR))
+
+        self.image = Surface((WIDTH,HEIGHT))
+        self.image = image.load("tanks\h_up_1.png")
+        self.rect = Rect(x, y, WIDTH, HEIGHT) # прямоугольный объект
+        self.image.set_colorkey(Color(COLOR)) # делаем фон прозрачным
+
         self.startX = x # начальные координаты
         self.startY = y
         self.maxLengthLeft = maxLengthLeft # максимальное расстояние, которое может пройти в одну сторону
         self.maxLengthUp= maxLengthUp # максимальное расстояние, которое может пройти в одну сторону, вертикаль
         self.xvel = left # cкорость передвижения по горизонтали, 0 - стоит на месте
         self.yvel = up # скорость движения по вертикали, 0 - не двигается
-        self.lengthCompleted = 32 # пройденое растояние
         self.course = 1
+
+        #  Анимация движения вправо
         boltAnim = []
-        for anim in ANIMATION_MONSTERHORYSONTAL:
-            boltAnim.append((anim, 0.3))
-        self.boltAnim = pyganim.PygAnimation(boltAnim)
-        self.boltAnim.play()
+        for anim in ANIMATION_RIGHT:
+            boltAnim.append((anim, ANIMATION_DELAY))
+        self.boltAnimRight = pyganim.PygAnimation(boltAnim)
+        self.boltAnimRight.play()
+        # Анимация движения влево
+        boltAnim = []
+        for anim in ANIMATION_LEFT:
+            boltAnim.append((anim, ANIMATION_DELAY))
+        self.boltAnimLeft = pyganim.PygAnimation(boltAnim)
+        self.boltAnimLeft.play()
+        #  Анимация движения вверх
+        boltAnim = []
+        for anim in ANIMATION_UP:
+            boltAnim.append((anim, ANIMATION_DELAY))
+        self.boltAnimUp = pyganim.PygAnimation(boltAnim)
+        self.boltAnimUp.play()
+        # Анимация движения вниз
+        boltAnim = []
+        for anim in ANIMATION_DOWN:
+            boltAnim.append((anim, ANIMATION_DELAY))
+        self.boltAnimDown = pyganim.PygAnimation(boltAnim)
+        self.boltAnimDown.play()
 
     def update(self, platforms): # по принципу героя
 
-        self.image.fill(Color(MONSTER_COLOR))
-        self.boltAnim.blit(self.image, (0, 0))
-        #course - направление. 1- диагональ, 2 - горизонталь
-
+        #course - направление
 
         if self.course == 1:
             self.rect.y += self.yvel
+            self.image.fill(Color(COLOR))
+            self.boltAnimDown.blit(self.image, (0, 0))#animation
         elif self.course == 2:
             self.rect.x += self.xvel
+            self.image.fill(Color(COLOR))
+            self.boltAnimRight.blit(self.image, (0, 0))#animation
         elif self.course == 3:
             self.rect.y -= self.yvel
+            self.image.fill(Color(COLOR))
+            self.boltAnimUp.blit(self.image, (0, 0))#animation
         elif self.course == 4:
             self.rect.x -= self.xvel
+            self.image.fill(Color(COLOR))
+            self.boltAnimLeft.blit(self.image, (0, 0))#animation
 
         self.collide(platforms)
 
