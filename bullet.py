@@ -3,6 +3,8 @@ __author__ = 'apsmi'
 
 from pygame import *
 import pyganim
+from blocks import Platform
+from monster import Monster
 
 MOVE_SPEED = 5
 WIDTH = 6
@@ -106,6 +108,11 @@ class Bullet(sprite.Sprite):
                     self.image.fill(Color(COLOR))
                     self.boltAnimBum.blit(self.image, (0, 0))  #animation
                     self.bum = 1
+
+                    if isinstance(p, Platform):
+                        p.shut(self.shutdirection)
+                    if isinstance(p, Monster):
+                        p.die()
 
                 if xvel > 0:                      # если движется вправо
                     self.rect.right -= xvel # то не движется вправо

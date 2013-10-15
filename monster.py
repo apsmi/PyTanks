@@ -5,7 +5,6 @@ __author__ = 'cam'
 
 from pygame import *
 import pyganim
-import os
 import random
 
 MOVE_SPEED = 1
@@ -14,15 +13,15 @@ HEIGHT = 28
 COLOR =  "#888888"
 
 ANIMATION_DELAY = 0.1 # скорость смены кадров
-ANIMATION_RIGHT = ['tanks\h_right_1.png',
-                   'tanks\h_right_2.png']
-ANIMATION_LEFT = ['tanks\h_left_1.png',
-                  'tanks\h_left_2.png']
+ANIMATION_RIGHT = ['tanks\m_a_right_1.png',
+                   'tanks\m_a_right_2.png']
+ANIMATION_LEFT = ['tanks\m_a_left_1.png',
+                  'tanks\m_a_left_2.png']
 
-ANIMATION_UP = ['tanks\h_up_1.png',
-                'tanks\h_up_2.png']
-ANIMATION_DOWN = ['tanks\h_down_1.png',
-                  'tanks\h_down_2.png']
+ANIMATION_UP = ['tanks\m_a_up_1.png',
+                'tanks\m_a_up_2.png']
+ANIMATION_DOWN = ['tanks\m_a_down_1.png',
+                  'tanks\m_a_down_2.png']
 
 class Monster(sprite.Sprite):
     def __init__(self, x, y, left, up, maxLengthLeft,maxLengthUp):
@@ -107,3 +106,7 @@ class Monster(sprite.Sprite):
                     self.rect.x += self.xvel
                 self.course = random.randint(1,4)
                 #self.update(platforms)
+
+    def die(self):
+        self.rect.x = self.startX
+        self.rect.y = self.startY

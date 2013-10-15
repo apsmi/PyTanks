@@ -130,5 +130,9 @@ def main():
 
         pygame.display.update()     # обновление и вывод всех изменений на экран
 
+        for p in platforms:
+            if (p.rect.width == 0) or (p.rect.height == 0):
+                platforms.remove(p)
+
 if __name__ == "__main__":
     main()
