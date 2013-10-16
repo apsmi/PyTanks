@@ -87,7 +87,7 @@ class Monster(sprite.Sprite):
                         self.course = 2
                     elif hero_x < self.rect.x:
                         self.course = 4
-            self.counter = 60
+            self.counter = 15
 
         #course - направление
         #движение
