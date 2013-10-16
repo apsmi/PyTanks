@@ -109,6 +109,7 @@ def main():
             bullet_mn = Bullet(mn.rect.x,mn.rect.y,mn.shutdirection)
             entities.add(bullet_mn)
             mn.isBullet = True
+            mn.fire = 0
 
         #движение пули героя
         if hero.isBullet:
@@ -119,7 +120,7 @@ def main():
                 hero.isBullet = False
 
         #движение пули монстра
-        if mn.isBullet:
+        if mn.isBullet :
             bullet_mn.update(platforms + [hero])
             if bullet_mn.bum >= 20:
                 entities.remove(bullet_mn)
@@ -133,7 +134,7 @@ def main():
 
         hero.update(left, right, up, down, platforms + [mn]) # передвижение
 
-        mn.update(platforms + [hero] ) # передвигаем всех монстров
+        mn.update(platforms + [hero], hero.rect.top, hero.rect.left ) # передвигаем всех монстров
 
         screen.blit(bg, (0,0))      # Каждую итерацию необходимо всё перерисовывать
 

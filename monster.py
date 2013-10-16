@@ -38,10 +38,12 @@ class Monster(sprite.Sprite):
         self.maxLengthUp= maxLengthUp # максимальное расстояние, которое может пройти в одну сторону, вертикаль
         self.xvel = left # cкорость передвижения по горизонтали, 0 - стоит на месте
         self.yvel = up # скорость движения по вертикали, 0 - не двигается
-        self.course = 1
-        self.isBullet = False
-        self.shutdirection = "down"
-        self.fire = 0
+        self.course = 1 # направление движения
+        self.isBullet = False # проверка существовая пули
+        self.shutdirection = "down" # направления выстела
+        self.fire = 0 # выстрел
+        self.impact = False # переменная столкновения
+        self.counter = 0 # счётчик поиска игрока
 
         #  Анимация движения вправо
         boltAnim = []
@@ -68,7 +70,24 @@ class Monster(sprite.Sprite):
         self.boltAnimDown = pyganim.PygAnimation(boltAnim)
         self.boltAnimDown.play()
 
-    def update(self, platforms): # по принципу героя
+    def update(self, platforms, hero_y, hero_x): # по принципу героя
+
+        #наведение на героя
+
+        if self.counter == 0:
+            if 50 < random.randint (1,100) and hero_y != self.rect.y:
+                if self.impact == False:
+                    if hero_y > self.rect.y:
+                        self.course = 1
+                    elif hero_y < self.rect.y:
+                        self.course = 3
+            else:
+                if self.impact == False:
+                    if hero_x > self.rect.x:
+                        self.course = 2
+                    elif hero_x < self.rect.x:
+                        self.course = 4
+            self.counter = 60
 
         #course - направление
         #движение
@@ -93,7 +112,7 @@ class Monster(sprite.Sprite):
             self.boltAnimLeft.blit(self.image, (0, 0))#animation
             self.shutdirection = "left"
 
-        self.collide(platforms)
+        self.collide(platforms,hero_y, hero_x)
 
         #проверка на макс. пройденое расстояние
         if (abs(self.startX - self.rect.x) > self.maxLengthLeft):
@@ -102,12 +121,16 @@ class Monster(sprite.Sprite):
             self.yvel = -self.yvel # если прошли максимальное растояние, то идеи в обратную сторону, вертикаль
 
         #стрельба
-        if 50 < random.randint (1, 100):
-            self.fire = 1
+        if self.isBullet == False :
+            if 40 > random.randint (1, 1000):
+                self.fire = 1
 
-    def collide(self, platforms):
+        self.counter -= 1 #уменьшаем счётчик цикла update
+
+    def collide(self, platforms, hero_y, hero_x):
         for p in platforms:
             if sprite.collide_rect(self, p) and self != p: # если с чем-то или кем-то столкнулись
+                self.impact = True
                 if self.course == 1:
                     self.rect.y -= self.yvel
                 elif self.course == 2:
@@ -116,7 +139,21 @@ class Monster(sprite.Sprite):
                     self.rect.y += self.yvel
                 elif self.course == 4:
                     self.rect.x += self.xvel
-                self.course = random.randint(1,4)
+
+                if hero_y == self.rect.y:
+                    if hero_x > self.rect.x:
+                        self.course = 2
+                    elif hero_x < self.rect.x:
+                        self.course = 4
+
+                if hero_x == self.rect.x:
+                    if hero_y > self.rect.y:
+                        self.course = 1
+                    elif hero_y < self.rect.y:
+                        self.course = 3
+
+            else:
+                self.impact = False
 
     def die(self):
         self.rect.x = self.startX
