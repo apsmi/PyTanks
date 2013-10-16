@@ -114,6 +114,19 @@ class Monster(sprite.Sprite):
 
         self.collide(platforms,hero_y, hero_x)
 
+        if self.impact == True:
+            if hero_y == self.rect.y:
+                if hero_x > self.rect.x:
+                    self.course = 2
+                elif hero_x < self.rect.x:
+                    self.course = 4
+
+            if hero_x == self.rect.x:
+                if hero_y > self.rect.y:
+                    self.course = 1
+                elif hero_y < self.rect.y:
+                    self.course = 3
+
         #проверка на макс. пройденое расстояние
         if (abs(self.startX - self.rect.x) > self.maxLengthLeft):
             self.xvel =-self.xvel  # если прошли максимальное растояние, то идеи в обратную сторону
@@ -126,6 +139,7 @@ class Monster(sprite.Sprite):
                 self.fire = 1
 
         self.counter -= 1 #уменьшаем счётчик цикла update
+        self.impact = False
 
     def collide(self, platforms, hero_y, hero_x):
         for p in platforms:
@@ -139,21 +153,6 @@ class Monster(sprite.Sprite):
                     self.rect.y += self.yvel
                 elif self.course == 4:
                     self.rect.x += self.xvel
-
-                if hero_y == self.rect.y:
-                    if hero_x > self.rect.x:
-                        self.course = 2
-                    elif hero_x < self.rect.x:
-                        self.course = 4
-
-                if hero_x == self.rect.x:
-                    if hero_y > self.rect.y:
-                        self.course = 1
-                    elif hero_y < self.rect.y:
-                        self.course = 3
-
-            else:
-                self.impact = False
 
     def die(self):
         self.rect.x = self.startX
