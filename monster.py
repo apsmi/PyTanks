@@ -22,28 +22,28 @@ ANIMATION_UP = ['tanks\m_a_up_1.png',
                 'tanks\m_a_up_2.png']
 ANIMATION_DOWN = ['tanks\m_a_down_1.png',
                   'tanks\m_a_down_2.png']
+INIT_IMAGE = "tanks\m_a_up_1.png"
 
 class Monster(sprite.Sprite):
     def __init__(self, x, y, left, up, maxLengthLeft,maxLengthUp):
         sprite.Sprite.__init__(self)
-
         self.image = Surface((WIDTH,HEIGHT))
-        self.image = image.load("tanks\h_up_1.png")
+        self.image = image.load(INIT_IMAGE)
         self.rect = Rect(x, y, WIDTH, HEIGHT) # прямоугольный объект
         self.image.set_colorkey(Color(COLOR)) # делаем фон прозрачным
-
+        self.xvel = left # cкорость передвижения по горизонтали, 0 - стоит на месте 00000
+        self.yvel = up # скорость движения по вертикали, 0 - не двигается           0000
         self.startX = x # начальные координаты
         self.startY = y
-        self.maxLengthLeft = maxLengthLeft # максимальное расстояние, которое может пройти в одну сторону
-        self.maxLengthUp= maxLengthUp # максимальное расстояние, которое может пройти в одну сторону, вертикаль
-        self.xvel = left # cкорость передвижения по горизонтали, 0 - стоит на месте
-        self.yvel = up # скорость движения по вертикали, 0 - не двигается
-        self.course = 1 # направление движения
-        self.isBullet = False # проверка существовая пули
-        self.shutdirection = "down" # направления выстела
-        self.fire = 0 # выстрел
-        self.impact = False # переменная столкновения
-        self.counter = 0 # счётчик поиска игрока
+
+        self.maxLengthLeft = maxLengthLeft # максимальное расстояние, которое может пройти в одну сторону 0000
+        self.maxLengthUp= maxLengthUp # максимальное расстояние, которое может пройти в одну сторону, вертикаль 0000
+        self.course = 1 # направление движения                                                                  0000
+        self.isBullet = False # проверка существовая пули                                                    0000
+        self.shutdirection = "down" # направления выстела                                                   0000
+        self.fire = 0 # выстрел                                                                             00000
+        self.impact = False # переменная столкновения                                                       00000
+        self.counter = 0 # счётчик поиска игрока                                                        000000
 
         #  Анимация движения вправо
         boltAnim = []
@@ -96,23 +96,27 @@ class Monster(sprite.Sprite):
             self.image.fill(Color(COLOR))
             self.boltAnimDown.blit(self.image, (0, 0))#animation
             self.shutdirection = "down"
+            self.collide(0, self.yvel, platforms) #проверяем столкновения
         elif self.course == 2:
             self.rect.x += self.xvel
             self.image.fill(Color(COLOR))
             self.boltAnimRight.blit(self.image, (0, 0))#animation
             self.shutdirection = "right"
+            self.collide(self.xvel, 0, platforms) #проверяем столкновения
         elif self.course == 3:
+
             self.rect.y -= self.yvel
             self.image.fill(Color(COLOR))
             self.boltAnimUp.blit(self.image, (0, 0))#animation
             self.shutdirection = "up"
+            self.collide(0, -self.yvel, platforms) #проверяем столкновения
         elif self.course == 4:
             self.rect.x -= self.xvel
             self.image.fill(Color(COLOR))
             self.boltAnimLeft.blit(self.image, (0, 0))#animation
             self.shutdirection = "left"
+            self.collide(-self.xvel, 0, platforms) #проверяем столкновения
 
-        self.collide(platforms,hero_y, hero_x)
 
         if self.impact == True:
             if hero_y == self.rect.y:
@@ -141,18 +145,21 @@ class Monster(sprite.Sprite):
         self.counter -= 1 #уменьшаем счётчик цикла update
         self.impact = False
 
-    def collide(self, platforms, hero_y, hero_x):
+    def collide(self, xvel, yvel, platforms):
         for p in platforms:
-            if sprite.collide_rect(self, p) and self != p: # если с чем-то или кем-то столкнулись
-                self.impact = True
-                if self.course == 1:
-                    self.rect.y -= self.yvel
-                elif self.course == 2:
-                    self.rect.x -= self.xvel
-                elif self.course == 3:
-                    self.rect.y += self.yvel
-                elif self.course == 4:
-                    self.rect.x += self.xvel
+            if sprite.collide_rect(self, p): # если есть пересечение платформы с танком
+
+                if xvel > 0:                      # если движется вправо
+                    self.rect.right -= xvel # то не движется вправо
+
+                if xvel < 0:                      # если движется влево
+                    self.rect.left -= xvel # то не движется влево
+
+                if yvel > 0:                      # если падает вниз
+                    self.rect.bottom -= yvel # то не падает вниз
+
+                if yvel < 0:                      # если движется вверх
+                    self.rect.top -= yvel # то не движется вверх
 
     def die(self):
         self.rect.x = self.startX

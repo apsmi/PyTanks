@@ -9,6 +9,7 @@ from blocks import Platform, PLATFORM_HEIGHT, PLATFORM_WIDTH
 from level import gen_level
 from bullet import Bullet
 from monster import Monster
+from tank import Tank, Tank_config
 
 def window_init(width, height, color, caption):
     #инициализация окна
@@ -29,7 +30,9 @@ def main():
     platforms = [] # то, во что мы будем врезаться или опираться
 
     #создаем героя
-    hero = Player(34,34) # создаем героя по (x,y) координатам
+    #hero = Player(34,34) # создаем героя по (x,y) координатам
+    hero_config = Tank_config()
+    hero = Player(hero_config)
     entities.add(hero) # добавляем героя во все объекты
     up = down = left = right = False    # по умолчанию — стоим
 
