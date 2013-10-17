@@ -36,6 +36,18 @@ class Monster(Tank):
                         self.course = 4
             self.config.counter = 15
 
+
+        #проверка на макс. пройденое расстояние
+        if (abs(self.startX - self.rect.x) > self.config.maxLengthLeft):
+            self.course = 2
+            self.config.counter = 200
+            #self.config.xvel =-self.config.xvel  # если прошли максимальное растояние, то идеи в обратную сторону
+        if (abs(self.startY - self.rect.y) > self.config.maxLengthUp):
+            self.course = 1
+            self.config.counter = 200
+            #self.config.yvel = -self.config.yvel # если прошли максимальное растояние, то идеи в обратную сторону, вертикаль
+
+
         #course - направление
         #движение
         if self.course == 1:
@@ -77,12 +89,6 @@ class Monster(Tank):
                     self.course = 1
                 elif hero_y < self.rect.y:
                     self.course = 3
-
-        #проверка на макс. пройденое расстояние
-        if (abs(self.startX - self.rect.x) > self.config.maxLengthLeft):
-            self.config.xvel =-self.config.xvel  # если прошли максимальное растояние, то идеи в обратную сторону
-        if (abs(self.startY - self.rect.y) > self.config.maxLengthUp):
-            self.config.yvel = -self.config.yvel # если прошли максимальное растояние, то идеи в обратную сторону, вертикаль
 
         #стрельба
         if self.isBullet == False :

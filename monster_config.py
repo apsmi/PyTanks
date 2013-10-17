@@ -18,10 +18,10 @@ class Monster_config_1 (Tank_config):
                           'tanks\m_a_down_2.png']
         self.INIT_IMAGE = "tanks\m_a_up_1.png"
 
-        self.maxLengthLeft = 2000 # макс. пройденое расстояние от точки спавна
-        self.maxLengthUp = 2000 # макс. пройденое расстояние от точки спавна
+        self.maxLengthLeft = 100 # макс. пройденое расстояние от точки спавна
+        self.maxLengthUp = 100 # макс. пройденое расстояние от точки спавна
 
         self.xvel = 1 # cкорость передвижения по горизонтали, 0 - стоит на месте
         self.yvel = 1 # скорость движения по вертикали, 0 - не двигается
 
-        self.counter = 15 # счётчик поиска игрока (сложность)
+        self.counter = 20 # счётчик поиска игрока (сложность)
