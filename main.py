@@ -9,7 +9,8 @@ from blocks import Platform, PLATFORM_HEIGHT, PLATFORM_WIDTH
 from level import gen_level
 from bullet import Bullet
 from monster import Monster
-from tank import Tank, Tank_config
+from tank import Tank_config
+from monster_config import Monster_config_1
 
 def window_init(width, height, color, caption):
     #инициализация окна
@@ -37,7 +38,8 @@ def main():
     up = down = left = right = False    # по умолчанию — стоим
 
     #2 координаты появления, скорость перемещения по горизонтали, скорость перемещения по вертикали, максимальное расстояние в одну сторону, которое может пройти монстр, по вертикали
-    mn = Monster(736,580,1,1,20000,20000)
+    mn_config = Monster_config_1(736,580)
+    mn = Monster(mn_config)
     entities.add(mn)
 
     #генерируем уровень
