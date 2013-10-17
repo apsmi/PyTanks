@@ -118,7 +118,10 @@ def main():
 
         #движение пули героя
         if hero.isBullet:
-            bullet.update(platforms + [mn])
+            if mn.isBullet:
+                bullet.update(platforms + [mn] + [bullet_mn])
+            else:
+                bullet.update(platforms + [mn])
             if bullet.bum >= 20:
                 entities.remove(bullet)
                 bullet = None
@@ -126,7 +129,10 @@ def main():
 
         #движение пули монстра
         if mn.isBullet :
-            bullet_mn.update(platforms + [hero])
+            if hero.isBullet:
+                bullet_mn.update(platforms + [hero] + [bullet])
+            else:
+                bullet_mn.update(platforms + [hero])
             if bullet_mn.bum >= 20:
                 entities.remove(bullet_mn)
                 bullet_mn = None
