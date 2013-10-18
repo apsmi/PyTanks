@@ -24,7 +24,7 @@ def window_init(width, height, color, caption):
 
 def main():
     #инициализация
-    bg, screen = window_init(800, 640, "#550000", "PyTanks")
+    bg, screen = window_init(800, 640, "#000000", "PyTanks")
 
     #группы объектов
     entities = pygame.sprite.Group() # Все объекты
@@ -38,7 +38,8 @@ def main():
     up = down = left = right = False    # по умолчанию — стоим
 
     #2 координаты появления, скорость перемещения по горизонтали, скорость перемещения по вертикали, максимальное расстояние в одну сторону, которое может пройти монстр, по вертикали
-    mn = Monster(736,580,1,1,20000,20000)
+    mn_config = Monster_config_3(736,580)
+    mn = Monster(mn_config)
     entities.add(mn)
 
     #генерируем уровень
@@ -118,7 +119,10 @@ def main():
 
         #движение пули героя
         if hero.isBullet:
-            bullet.update(platforms + [mn])
+            if mn.isBullet:
+                bullet.update(platforms + [mn] + [bullet_mn])
+            else:
+                bullet.update(platforms + [mn])
             if bullet.bum >= 20:
                 entities.remove(bullet)
                 bullet = None
@@ -126,7 +130,10 @@ def main():
 
         #движение пули монстра
         if mn.isBullet :
-            bullet_mn.update(platforms + [hero])
+            if hero.isBullet:
+                bullet_mn.update(platforms + [hero] + [bullet])
+            else:
+                bullet_mn.update(platforms + [hero])
             if bullet_mn.bum >= 20:
                 entities.remove(bullet_mn)
                 bullet_mn = None

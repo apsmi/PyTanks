@@ -11,6 +11,8 @@ class Tank_config():
         self.MOVE_SPEED_Y = 1
         self.WIDTH = 28
         self.HEIGHT = 28
+        self.life = 1 # начальные жизни игрока (сколько попаданий выдержит броня танка)
+        self.lifeStart = self.life
         self.COLOR =  "#FFFFFF"
         self.ANIMATION_DELAY = 0.1 # скорость смены кадров
         self.ANIMATION_RIGHT = ['tanks\h_up_1.png',
@@ -80,5 +82,9 @@ class Tank(sprite.Sprite):
                     self.rect.top -= yvel # то не движется вверх
 
     def die(self):  #умираем, если попадает пуля
-        self.rect.x = self.startX
-        self.rect.y = self.startY
+        if self.config.life == 1:
+            self.rect.x = self.startX
+            self.rect.y = self.startY
+            self.config.life = self.config.lifeStart
+        else:
+            self.config.life -= 1
