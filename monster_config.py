@@ -55,16 +55,16 @@ class Monster_config_3 (Tank_config):
         Tank_config.__init__(self)
         self.START_X = START_X
         self.START_Y = START_Y
-        self.ANIMATION_RIGHT = ['tanks\m_a_right_1.png',
-                           'tanks\m_a_right_2.png']
-        self.ANIMATION_LEFT = ['tanks\m_a_left_1.png',
-                          'tanks\m_a_left_2.png']
+        self.ANIMATION_RIGHT = ['tanks\m_3_1.png',
+                           'tanks\m_3_2.png']
+        self.ANIMATION_LEFT = ['tanks\m_3_1.png',
+                           'tanks\m_3_2.png']
 
-        self.ANIMATION_UP = ['tanks\m_a_up_1.png',
-                        'tanks\m_a_up_2.png']
-        self.ANIMATION_DOWN = ['tanks\m_a_down_1.png',
-                          'tanks\m_a_down_2.png']
-        self.INIT_IMAGE = "tanks\m_a_up_1.png"
+        self.ANIMATION_UP = ['tanks\m_3_1.png',
+                           'tanks\m_3_2.png']
+        self.ANIMATION_DOWN = ['tanks\m_3_1.png',
+                           'tanks\m_3_2.png']
+        self.INIT_IMAGE = "tanks\m_3_1.png"
 
         self.maxLengthLeft = 500 # макс. пройденое расстояние от точки спавна
         self.maxLengthUp = 500 # макс. пройденое расстояние от точки спавна

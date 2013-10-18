@@ -54,6 +54,7 @@ class Monster(Tank):
             self.rect.y += self.config.yvel
             self.image.fill(Color(self.config.COLOR))
             self.boltAnimDown.blit(self.image, (0, 0))#animation
+            self.image = transform.rotate(self.image, 180)
             self.shutdirection = "down"
             self.collide(0, self.config.yvel, platforms) #проверяем столкновения
         elif self.course == 2:
@@ -61,9 +62,9 @@ class Monster(Tank):
             self.image.fill(Color(self.config.COLOR))
             self.boltAnimRight.blit(self.image, (0, 0))#animation
             self.shutdirection = "right"
+            self.image = transform.rotate(self.image, 270)
             self.collide(self.config.xvel, 0, platforms) #проверяем столкновения
         elif self.course == 3:
-
             self.rect.y -= self.config.yvel
             self.image.fill(Color(self.config.COLOR))
             self.boltAnimUp.blit(self.image, (0, 0))#animation
@@ -73,6 +74,7 @@ class Monster(Tank):
             self.rect.x -= self.config.xvel
             self.image.fill(Color(self.config.COLOR))
             self.boltAnimLeft.blit(self.image, (0, 0))#animation
+            self.image = transform.rotate(self.image, 90)
             self.shutdirection = "left"
             self.collide(-self.config.xvel, 0, platforms) #проверяем столкновения
 

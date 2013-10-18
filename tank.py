@@ -13,7 +13,7 @@ class Tank_config():
         self.HEIGHT = 28
         self.life = 1 # начальные жизни игрока (сколько попаданий выдержит броня танка)
         self.lifeStart = self.life
-        self.COLOR =  "#FFFFFF"
+        self.COLOR =  "#000000"
         self.ANIMATION_DELAY = 0.1 # скорость смены кадров
         self.ANIMATION_RIGHT = ['tanks\h_up_1.png',
                         'tanks\h_up_2.png']
