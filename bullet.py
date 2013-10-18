@@ -12,7 +12,7 @@ WIDTH = 6
 HEIGHT = 6
 BUM_WIDTH = 22
 BUM_HEIGHT = 22
-COLOR =  "#333333"
+COLOR =  "#FFFFFF"
 
 ANIMATION_DELAY = 0.1 # скорость смены кадров
 ANIMATION_BUM = ['shut/bum_1.png',
@@ -27,6 +27,13 @@ class Bullet(sprite.Sprite):
         self.startX = x # Начальная позиция Х, пригодится когда будем переигрывать уровень
         self.startY = y
         self.image = Surface((WIDTH,HEIGHT))
+
+        #  Анимация взрыва пули
+        boltAnim = []
+        for anim in ANIMATION_BUM:
+            boltAnim.append((anim, ANIMATION_DELAY))
+        self.boltAnimBum = pyganim.PygAnimation(boltAnim)
+        self.boltAnimBum.play()
 
         self.shutdirection = shutdirection
         if shutdirection == "left":
@@ -69,7 +76,7 @@ class Bullet(sprite.Sprite):
         if right:
             self.xvel = MOVE_SPEED # Право = x + n
 
-        if not(left or right): # стоим, когда нет указаний идти вправо - влево
+        if not(left or right): # стоим, когда нет указаний идти вправо - влево или попали куда-то
             self.xvel = 0
 
         self.rect.x += self.xvel # переносим свои положение на xvel
@@ -81,7 +88,7 @@ class Bullet(sprite.Sprite):
         if down:
             self.yvel = MOVE_SPEED # низ = x + n
 
-        if not(up or down): # стоим, когда нет указаний идти вправо - влево
+        if not(up or down): # стоим, когда нет указаний идти вправо - влево или попали куда-то
             self.yvel = 0
 
         self.rect.y += self.yvel # переносим свои положение на yvel
@@ -89,7 +96,10 @@ class Bullet(sprite.Sprite):
 
         if (0 < self.bum):
             if (self.bum < 20):
+                self.image = Surface((BUM_WIDTH,BUM_HEIGHT))
+                self.rect = Rect(self.rect.left, self.rect.top, BUM_WIDTH, BUM_HEIGHT) # прямоугольный объект
                 self.image.fill(Color(COLOR))
+                self.image.set_colorkey(Color(COLOR)) # делаем фон прозрачным
                 self.boltAnimBum.blit(self.image, (0, 0))  #animation
                 self.bum += 1
 
@@ -97,17 +107,7 @@ class Bullet(sprite.Sprite):
         for p in platforms:
             if sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
                 if self.bum == 0:
-                    self.image = Surface((BUM_WIDTH,BUM_HEIGHT))
                     self.rect = Rect(self.rect.left - 8, self.rect.top-8, BUM_WIDTH, BUM_HEIGHT) # прямоугольный объект
-                    self.image.set_colorkey(Color(COLOR)) # делаем фон прозрачным
-                    #  Анимация движения вправо
-                    boltAnim = []
-                    for anim in ANIMATION_BUM:
-                        boltAnim.append((anim, ANIMATION_DELAY))
-                    self.boltAnimBum = pyganim.PygAnimation(boltAnim)
-                    self.boltAnimBum.play()
-                    self.image.fill(Color(COLOR))
-                    self.boltAnimBum.blit(self.image, (0, 0))  #animation
                     self.bum = 1
 
                     if isinstance(p, Platform):     #попадание пули в платформу

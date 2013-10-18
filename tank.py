@@ -23,6 +23,9 @@ class Tank_config():
                         'tanks\h_up_2.png']
         self.ANIMATION_DOWN = ['tanks\h_up_1.png',
                         'tanks\h_up_2.png']
+        self.ANIMATION_DIE = ['tanks\die_1.png',
+                        'tanks\die_2.png',
+                        'tanks\die_3.png']
         self.INIT_IMAGE = "tanks\h_up_1.png"
 
 
@@ -39,6 +42,8 @@ class Tank(sprite.Sprite):
         self.yvel = 0 # скорость движения по вертикали, 0 - не двигается
         self.startX = self.config.START_X # начальные координаты
         self.startY = self.config.START_Y
+
+        self.dead = 0 #счетчик кадров при смерте
 
         #  Анимация движения вправо
         boltAnim = []
@@ -64,6 +69,12 @@ class Tank(sprite.Sprite):
             boltAnim.append((anim, self.config.ANIMATION_DELAY))
         self.boltAnimDown = pyganim.PygAnimation(boltAnim)
         self.boltAnimDown.play()
+        # Анимация уничтожения
+        boltAnim = []
+        for anim in self.config.ANIMATION_DIE:
+            boltAnim.append((anim, 0.2))
+        self.boltAnimDie = pyganim.PygAnimation(boltAnim)
+        self.boltAnimDie.play()
 
     def collide(self, xvel, yvel, platforms):
         for p in platforms:
@@ -83,8 +94,9 @@ class Tank(sprite.Sprite):
 
     def die(self):  #умираем, если попадает пуля
         if self.config.life == 1:
-            self.rect.x = self.startX
-            self.rect.y = self.startY
+            self.dead = 1
+            #self.rect.x = self.startX
+            #self.rect.y = self.startY
             self.config.life = self.config.lifeStart
         else:
             self.config.life -= 1
