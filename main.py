@@ -3,13 +3,14 @@
 
 # Импортируем библиотеку pygame
 import pygame
+import sys
 from pygame import *
 from player import Player
 from blocks import Platform, PLATFORM_HEIGHT, PLATFORM_WIDTH
 from level import gen_level
 from bullet import Bullet
 from monster import Monster
-from tank import Tank, Tank_config
+from tank import Tank_config
 
 def window_init(width, height, color, caption):
     #инициализация окна
@@ -23,7 +24,7 @@ def window_init(width, height, color, caption):
 
 def main():
     #инициализация
-    bg, screen = window_init(800, 640, "#000000", "PyTanks")
+    bg, screen = window_init(800, 640, "#550000", "PyTanks")
 
     #группы объектов
     entities = pygame.sprite.Group() # Все объекты
@@ -67,8 +68,9 @@ def main():
 
         for e in pygame.event.get(): # Обрабатываем события
             #выход
-            if e.type == QUIT:
-                raise SystemExit
+            if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):
+                pygame.quit()
+                sys.exit()
 
             #действия героя
             if e.type == KEYDOWN:

@@ -11,16 +11,16 @@ class Tank_config():
         self.MOVE_SPEED_Y = 1
         self.WIDTH = 28
         self.HEIGHT = 28
-        self.COLOR =  "#888888"
+        self.COLOR =  "#FFFFFF"
         self.ANIMATION_DELAY = 0.1 # скорость смены кадров
-        self.ANIMATION_RIGHT = ['tanks\h_right_1.png',
-                           'tanks\h_right_2.png']
-        self.ANIMATION_LEFT = ['tanks\h_left_1.png',
-                          'tanks\h_left_2.png']
+        self.ANIMATION_RIGHT = ['tanks\h_up_1.png',
+                        'tanks\h_up_2.png']
+        self.ANIMATION_LEFT = ['tanks\h_up_1.png',
+                        'tanks\h_up_2.png']
         self.ANIMATION_UP = ['tanks\h_up_1.png',
                         'tanks\h_up_2.png']
-        self.ANIMATION_DOWN = ['tanks\h_down_1.png',
-                          'tanks\h_down_2.png']
+        self.ANIMATION_DOWN = ['tanks\h_up_1.png',
+                        'tanks\h_up_2.png']
         self.INIT_IMAGE = "tanks\h_up_1.png"
 
 
@@ -29,9 +29,10 @@ class Tank(sprite.Sprite):
         sprite.Sprite.__init__(self)
         self.config = config
         self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-        self.image = image.load(self.config.INIT_IMAGE)
         self.rect = Rect(self.config.START_X, self.config.START_Y, self.config.WIDTH, self.config.HEIGHT) # прямоугольный объект
-        self.image.set_colorkey(Color(self.config.COLOR)) # делаем фон прозрачным
+
+        self.image = image.load(self.config.INIT_IMAGE)
+
         self.xvel = 0 # cкорость передвижения по горизонтали, 0 - стоит на месте
         self.yvel = 0 # скорость движения по вертикали, 0 - не двигается
         self.startX = self.config.START_X # начальные координаты
