@@ -11,6 +11,7 @@ from level import gen_level
 from bullet import Bullet
 from monster import Monster
 from tank import Tank_config
+from monster_config import *
 
 def window_init(width, height, color, caption):
     #инициализация окна
