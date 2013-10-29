@@ -48,7 +48,7 @@ class Monster_config_2 (Tank_config):
         self.xvel = 2 # cкорость передвижения по горизонтали, 0 - стоит на месте
         self.yvel = 2 # скорость движения по вертикали, 0 - не двигается
 
-        self.counter = 30 # счётчик поиска игрока (сложность)
+        self.counter = 78 # счётчик поиска игрока (сложность)
 
 class Monster_config_3 (Tank_config):
     def __init__(self, START_X, START_Y):
@@ -72,7 +72,7 @@ class Monster_config_3 (Tank_config):
         self.xvel = 1 # cкорость передвижения по горизонтали, 0 - стоит на месте
         self.yvel = 1 # скорость движения по вертикали, 0 - не двигается
 
-        self.counter = 25 # счётчик поиска игрока (сложность)
+        self.counter = 56 # счётчик поиска игрока (сложность)
 
         self.life = 3 # счётчик жизней
         self.lifeStart = self.life

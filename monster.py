@@ -16,6 +16,7 @@ class Monster(Tank):
         self.shutdirection = "down" # направления выстела
         self.fire = 0 # выстрел
         self.impact = False # переменная столкновения
+        self.config.counterStart = self.config.counter
 
     def update(self, platforms, hero_y, hero_x): # по принципу героя
 
@@ -48,7 +49,7 @@ class Monster(Tank):
                             self.course = 2
                         elif hero_x < self.rect.x:
                             self.course = 4
-                self.config.counter = 15
+                self.config.counter = self.config.counterStart
 
 
             #проверка на макс. пройденое расстояние
