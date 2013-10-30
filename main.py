@@ -12,6 +12,7 @@ from bullet import Bullet
 from monster import Monster
 from tank import Tank_config
 from monster_config import *
+from camera import  camera_configure, Camera
 
 def window_init(width, height, color, caption):
     #инициализация окна
@@ -25,7 +26,7 @@ def window_init(width, height, color, caption):
 
 def main():
     #инициализация
-    bg, screen = window_init(800, 640, "#000000", "PyTanks")
+    bg, screen = window_init(800, 600, "#000000", "PyTanks")
 
     #группы объектов
     entities = pygame.sprite.Group() # Все объекты
@@ -44,7 +45,12 @@ def main():
     entities.add(mn)
 
     #генерируем уровень
-    level = gen_level (20,25)
+    level = gen_level (80,80)
+
+    #расчитываем размер камеры и создаём её
+    total_level_width  = len(level[0])*PLATFORM_WIDTH # Высчитываем фактическую ширину уровня
+    total_level_height = len(level)*PLATFORM_HEIGHT   # высоту
+    camera = Camera(camera_configure, total_level_width, total_level_height)
 
     #рисуем платформы
     x=y=0 # координаты
@@ -151,7 +157,10 @@ def main():
 
         screen.blit(bg, (0,0))      # Каждую итерацию необходимо всё перерисовывать
 
-        entities.draw(screen) # отображение всего
+        #entities.draw(screen) # отображение всего
+        camera.update(hero) # центризируем камеру относительно персонажа
+        for e in entities:
+            screen.blit(e.image, camera.apply(e))
 
         pygame.display.update()     # обновление и вывод всех изменений на экран
 
