@@ -33,6 +33,9 @@ def gen_level(height, width):
     level[1] = level[1][:1] + " " + level[1][2:]
     level[height-2] = level[height-2][:width-2] + " " + level[height-2][width-1:]
 
+    total_level_width  = len(level[0])*PLATFORM_WIDTH # Высчитываем фактическую ширину уровня
+    total_level_height = len(level)*PLATFORM_HEIGHT   # высоту
+
     blocks = pygame.sprite.Group()
 
     #рисуем платформы
@@ -46,4 +49,4 @@ def gen_level(height, width):
         y += PLATFORM_HEIGHT    #то же самое и с высотой
         x = 0                   #на каждой новой строчке начинаем с нуля
 
-    return blocks
+    return blocks, total_level_width, total_level_height

@@ -44,11 +44,9 @@ def main():
     monsters.add(monster)
 
     # генерируем уровень
-    blocks = gen_level(80,80)
+    blocks, total_level_width, total_level_height = gen_level(80,80)
     
-    #расчитываем размер камеры и создаём её
-    total_level_width  = len(level[0])*PLATFORM_WIDTH # Высчитываем фактическую ширину уровня
-    total_level_height = len(level)*PLATFORM_HEIGHT   # высоту
+    #создаем камеру
     camera = Camera(camera_configure, total_level_width, total_level_height)
 
     # таймер
