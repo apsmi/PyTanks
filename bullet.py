@@ -139,3 +139,6 @@ class Bullet(sprite.Sprite):
                     self.rect.top -= yvel # то не движется вверх
 
                 self.shutdirection = "stop"
+
+    def die(self, shutdirection):
+        return 0
