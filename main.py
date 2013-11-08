@@ -9,6 +9,7 @@ from level import gen_level
 from bullet import Bullet
 from tank import Tank_config, Tank
 from monster_config import *
+from camera import  camera_configure, Camera
 
 from monster import Monster
 
@@ -43,7 +44,12 @@ def main():
     monsters.add(monster)
 
     # генерируем уровень
-    blocks = gen_level (20,25)
+    blocks = gen_level(80,80)
+    
+    #расчитываем размер камеры и создаём её
+    total_level_width  = len(level[0])*PLATFORM_WIDTH # Высчитываем фактическую ширину уровня
+    total_level_height = len(level)*PLATFORM_HEIGHT   # высоту
+    camera = Camera(camera_configure, total_level_width, total_level_height)
 
     # таймер
     timer = pygame.time.Clock()
@@ -93,16 +99,20 @@ def main():
         players_bullets.update( blocks.sprites() + monsters.sprites() + monsters_bullets.sprites())
         monsters_bullets.update( blocks.sprites() + players.sprites() + players_bullets.sprites())
         monsters.update( blocks.sprites() + players.sprites(), player.rect.top, player.rect.left, monsters_bullets)
+        camera.update(player) # центризируем камеру относительно персонажа
 
         # Каждую итерацию необходимо всё перерисовывать
         screen.blit(bg, (0,0))
 
         # рисование всех объектов
-        blocks.draw(screen)
-        players.draw(screen)
-        players_bullets.draw(screen)
-        monsters_bullets.draw(screen)
-        monsters.draw(screen)
+        #blocks.draw(screen)
+        #players.draw(screen)
+        #players_bullets.draw(screen)
+        #monsters_bullets.draw(screen)
+        #monsters.draw(screen)
+        entities = blocks.sprites() + players.sprites() + players_bullets.sprites() + monsters_bullets.sprites() + monsters.sprites()
+        for e in entities:
+            screen.blit(e.image, camera.apply(e))
 
         # обновление и вывод всех изменений на экран
         pygame.display.update()
