@@ -38,13 +38,23 @@ def main():
     player = Tank(player_config)
     players.add(player)
 
-    # монстр
-    monster_config = Monster_config_3(736,580)
+    # монстр 1
+    monster_config = Monster_config_1(704,580)
+    monster = Monster(monster_config)
+    monsters.add(monster)
+
+    # монстр 1
+    monster_config = Monster_config_2(736,580)
+    monster = Monster(monster_config)
+    monsters.add(monster)
+
+    # монстр 1
+    monster_config = Monster_config_3(768,580)
     monster = Monster(monster_config)
     monsters.add(monster)
 
     # генерируем уровень
-    blocks, total_level_width, total_level_height = gen_level(80,80)
+    blocks, total_level_width, total_level_height = gen_level(30,30)
     
     #создаем камеру
     camera = Camera(camera_configure, total_level_width, total_level_height)
@@ -96,18 +106,13 @@ def main():
         players.update( blocks.sprites() + monsters.sprites())
         players_bullets.update( blocks.sprites() + monsters.sprites() + monsters_bullets.sprites())
         monsters_bullets.update( blocks.sprites() + players.sprites() + players_bullets.sprites())
-        monsters.update( blocks.sprites() + players.sprites(), player.rect.top, player.rect.left, monsters_bullets)
+        monsters.update( blocks.sprites() + players.sprites() + monsters.sprites(), player.rect.top, player.rect.left, monsters_bullets)
         camera.update(player) # центризируем камеру относительно персонажа
 
         # Каждую итерацию необходимо всё перерисовывать
         screen.blit(bg, (0,0))
 
         # рисование всех объектов
-        #blocks.draw(screen)
-        #players.draw(screen)
-        #players_bullets.draw(screen)
-        #monsters_bullets.draw(screen)
-        #monsters.draw(screen)
         entities = blocks.sprites() + players.sprites() + players_bullets.sprites() + monsters_bullets.sprites() + monsters.sprites()
         for e in entities:
             screen.blit(e.image, camera.apply(e))

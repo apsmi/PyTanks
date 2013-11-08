@@ -18,12 +18,12 @@ class Tank_config():
         self.HEIGHT = 28                          # высота автарки
         self.lifeStart = 1                        # количество жизней танка
         self.ANIMATION_DELAY = 0.1                # скорость анимации аватарки
-        self.ANIMATION =     ['tanks\h_up_1.png', # анимация при движении
-                              'tanks\h_up_2.png']
+        self.ANIMATION =     ['tanks\player1_1.png', # анимация при движении
+                              'tanks\player1_2.png']
         self.ANIMATION_DIE = ['tanks\die_1.png',  # анимация при взрыве
                               'tanks\die_2.png',
                               'tanks\die_3.png']
-        self.INIT_IMAGE =     "tanks\h_up_1.png"  # изображение при появлении танка
+        self.INIT_IMAGE =     "tanks\player1_1.png"  # изображение при появлении танка
 
 
 class Tank(sprite.Sprite):
@@ -147,20 +147,21 @@ class Tank(sprite.Sprite):
 
         # проверяем столкновения с препятствиями
         for p in obstructions:
+            if p != self:
 
-            if sprite.collide_rect(self, p): # если есть пересечение чего-то с танком
+                if sprite.collide_rect(self, p): # если есть пересечение чего-то с танком
 
-                if xvel > 0:                 # если движется вправо
-                    self.rect.right -= xvel  # то не движется вправо
+                    if xvel > 0:                 # если движется вправо
+                        self.rect.right -= xvel  # то не движется вправо
 
-                if xvel < 0:                 # если движется влево
-                    self.rect.left -= xvel   # то не движется влево
+                    if xvel < 0:                 # если движется влево
+                        self.rect.left -= xvel   # то не движется влево
 
-                if yvel > 0:                 # если падает вниз
-                    self.rect.bottom -= yvel # то не падает вниз
+                    if yvel > 0:                 # если падает вниз
+                        self.rect.bottom -= yvel # то не падает вниз
 
-                if yvel < 0:                 # если движется вверх
-                    self.rect.top -= yvel    # то не движется вверх
+                    if yvel < 0:                 # если движется вверх
+                        self.rect.top -= yvel    # то не движется вверх
 
     def die(self, shutdirection):
 

@@ -113,18 +113,19 @@ class Bullet(sprite.Sprite):
                 self.bum += 1
             else:
                 self.kill()
-                self.shooter.isBullet = False #???????????????????????????????????????????????????????
+                self.shooter.isBullet = False # сообщаем тому, кто выстрелил, что его пуля кердык
 
     def collide(self, xvel, yvel, obstructions):
 
         for p in obstructions:
             if sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
 
+                #если пуля не начала взрываться, то начинаем взрывать ее
                 if self.bum == 0:
                     self.rect.left -= 8
                     self.rect.top -= 8
                     self.bum = 1
-                    p.die(self.shutdirection)
+                    p.die(self.shutdirection)   # сообщаем объекту, в который попали, что в него попали
 
                 if xvel > 0:                      # если движется вправо
                     self.rect.right -= xvel # то не движется вправо
