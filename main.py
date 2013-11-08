@@ -74,7 +74,7 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-            # действия героя
+            # действия  героя
             # нажатие клавиши на клавиатуре
             if e.type == KEYDOWN:
                 if e.key == K_LEFT:
