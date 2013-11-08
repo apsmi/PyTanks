@@ -54,16 +54,18 @@ class Monster(Tank):
 
 
             #проверка на макс. пройденое расстояние
-            if (abs(self.config.START_X - self.rect.x) > self.config.maxLengthLeft):
+            if (self.config.START_X - self.rect.x) > self.config.maxLengthLeft:
                 self.course = "right"
                 self.counter = 200 # включаем дурака
-                #self.config.xvel =-self.config.xvel  # если прошли максимальное растояние, то идеи в обратную сторону
-            if (abs(self.config.START_Y - self.rect.y) > self.config.maxLengthUp):
+            if (self.config.START_Y - self.rect.y) > self.config.maxLengthUp:
                 self.course = "down"
-                self.counter = 200 # включаем дурака
-                #self.config.yvel = -self.config.yvel # если прошли максимальное растояние, то идеи в обратную сторону, вертикаль
-# TODO: дописать еще два направления
-
+                self.counter = 20 # включаем дурака
+            if (self.config.START_X - self.rect.x) < 0 and (self.rect.x - self.config.START_X)  > self.config.maxLengthLeft :
+                self.course = "left"
+                self.counter = 20 # включаем дурака
+            if (self.config.START_Y - self.rect.y) < 0 and (self.rect.y - self.config.START_Y) > self.config.maxLengthUp :
+                self.course = "up"
+                self.counter = 20 # включаем дурака
 
             #course - направление
             # движение влево
