@@ -23,7 +23,7 @@ def window_init(width, height, color, caption):
 
 def main():
 
-    # инициализация окна
+    #  инициализация окна
     bg, screen = window_init(800, 640, "#000000", "PyTanks")
 
     # группы объектов
