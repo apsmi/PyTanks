@@ -30,7 +30,7 @@ def main():
     players = pygame.sprite.Group()
     players_bullets = pygame.sprite.Group()
     monsters = pygame.sprite.Group()
-    monsters_bullets = pygame.sprite.Group() # перемещено в глобальную переменную
+    monsters_bullets = pygame.sprite.Group()
 
     # создаем героя
     player_config = Tank_config()
