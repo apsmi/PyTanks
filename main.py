@@ -61,6 +61,9 @@ def main():
     # таймер
     timer = pygame.time.Clock()
 
+    # надпись
+    font = pygame.font.Font(None, 18)
+
     # Основной цикл программы
     while 1:
 
@@ -112,9 +115,13 @@ def main():
         screen.blit(bg, (0,0))
 
         # рисование всех объектов
-        entities = blocks.sprites() + players.sprites() + players_bullets.sprites() + monsters_bullets.sprites() + monsters.sprites()
+        entities = blocks.sprites() + players.sprites() + monsters.sprites() + players_bullets.sprites() + monsters_bullets.sprites()
         for e in entities:
             screen.blit(e.image, camera.apply(e))
+
+        # выводим FPS
+        label = font.render(' %.2f ' % timer.get_fps(), True, (255,255,255), (0,0,0))
+        screen.blit(label, (1, 1))
 
         # обновление и вывод всех изменений на экран
         pygame.display.update()
