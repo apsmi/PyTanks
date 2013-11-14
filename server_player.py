@@ -5,7 +5,11 @@ IDLE = 0
 WAIT_PLAYERS_COUNT = 1
 WAIT_ALL_PLAYERS = 2
 
+LEN_TERM = 4
+
 import asynchat
+import struct
+import pickle
 
 # серверный экземпляр клиента
 class Game_Client(asynchat.async_chat):
@@ -15,9 +19,11 @@ class Game_Client(asynchat.async_chat):
         self.addr = addr
         self.ibuffer = []
         self.obuffer = b""
-        self.dataframe = []
-        self.set_terminator(b"\x00")
-        self.state = WAIT_ALL_PLAYERS
+        self.imes = b""
+        self.set_terminator(LEN_TERM)
+        self.state = "len"
+        self.team = ""
+        self.sprite = 0
 
     def writable(self):
         return len(self.obuffer) > 0
@@ -30,6 +36,14 @@ class Game_Client(asynchat.async_chat):
         self.ibuffer.append(data)
 
     def found_terminator(self):
-
-        self.dataframe = self.ibuffer
+        dataframe = b"".join(self.ibuffer)
         self.ibuffer = []
+        if self.state == "len":
+            self.state = "data"
+            length = struct.unpack('L',dataframe)[0]
+            self.set_terminator(length)
+        elif self.state == "data":
+            self.state = "len"
+            self.set_terminator(LEN_TERM)
+            self.imes = pickle.loads(dataframe)
+            #print(message)
