@@ -22,7 +22,7 @@ class Game_Server(asyncore.dispatcher):
             player = Game_Client(sock, addr)
             self.players.append(player)
             if (self.player_count) % 2 == 0 :
-                player.team = "red"
+                player.team = "green"
             else:
                 player.team = "yellow"
         else:

@@ -14,7 +14,6 @@ from monster import Monster
 
 def window_init(width, height, color, caption):
     display = (width, height)                   # Группируем ширину и высоту в одну переменную
-    pygame.init()                               # Инициация PyGame, обязательная строчка
     screen = pygame.display.set_mode(display)   # Создаем окошко
     pygame.display.set_caption(caption)         # Пишем в шапку
     bg = Surface((width,height))                # Создание видимой поверхности, будем использовать как фон
@@ -22,6 +21,9 @@ def window_init(width, height, color, caption):
     return bg, screen
 
 def main():
+
+    pygame.init()                               # Инициация PyGame, обязательная строчка
+    pygame.event.set_allowed(QUIT, KEYDOWN, KEYUP)
 
     #  инициализация окна
     bg, screen = window_init(800, 640, "#000000", "PyTanks")
