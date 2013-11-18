@@ -17,6 +17,7 @@ class Tank_config():
         self.WIDTH = 28                           # ширина аватарки
         self.HEIGHT = 28                          # высота автарки
         self.lifeStart = 1                        # количество жизней танка
+        self.last = {}                            #x,y,course,shutdirection
 
 class Tank(sprite.Sprite):
     """

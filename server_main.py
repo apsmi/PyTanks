@@ -2,15 +2,26 @@
 # -*- coding: utf-8 -*-
 __author__ = 'apsmi'
 
+#MESSAGE = {
+#    "blocks"  : [ {"id" : 0, "x" : 0, "y" : 0, "type" : 0} ],
+#    "players" : [ {"id" : 0, "x" : 0, "y" : 0, "team" : 0} ]
+#}
+
 import asyncore
 import time
 import pygame
 import random
+import pickle, struct
 from server_dispatcher import Game_Server
 from server_level import gen_level
 from server_tank import Tank, Tank_config
 from server_socket_loop import Socket_Loop
 from server_bullet import Bullet
+
+def pack_data(data):
+    tmp = pickle.dumps(data)
+    l = len(tmp)
+    return struct.pack('L', l) + tmp
 
 # основная функция сервера
 def server_main():
@@ -50,6 +61,28 @@ def server_main():
             players_green.add(player_sprite)
         elif player.team == "yellow":
             players_yellow.add(player_sprite)
+
+    # отправить начальную конфигурацию уровня
+    dataframe = {}
+
+    #блоки
+    dataframe["blocks"] = []
+    for b in blocks.sprites():
+        data = {"id" : b.id, "x" : b.rect.x, "y" : b.rect.y, "type" : b.type}
+        dataframe["blocks"].append(data)
+
+    #игроки
+    dataframe["players"] = []
+    for player in game_server.players:
+        data = {"id" : player.addr[0], "x" : player.sprite.rect.x, "y" : player.sprite.rect.y, "team" : player.team}
+        dataframe["players"].append(data)
+
+    # упаковываем данные
+    message = pack_data(dataframe)
+
+    # отправляем
+    for player in game_server.players:
+        player.obuffer = message
 
     # таймер
     timer = pygame.time.Clock()
@@ -99,6 +132,40 @@ def server_main():
         players_yellow_bullets.update( blocks.sprites() + players_green.sprites() + players_green_bullets.sprites() )
         players_green_bullets.update( blocks.sprites() + players_yellow.sprites() + players_yellow_bullets.sprites() )
 
-        # TODO: send data to clients
+        # отправить начальную конфигурацию уровня
+        dataframe = {}
+
+        #блоки
+        dataframe["blocks"] = []
+        for b in blocks.sprites():
+            if b.shooted:
+                data = {"id" : b.id, "shootdirection" : b.shootdirection}
+                dataframe["blocks"].append(data)
+                b.shooted = False
+                b.shootdirection = ""
+
+        #игроки
+        dataframe["players"] = []
+        for player in game_server.players:
+            current = {"id": player.addr[0], "x": player.sprite.rect.x, "y": player.sprite.rect.y,
+                        "course": player.sprite.course, "shutdirection": player.sprite.shutdirection,
+                        "dead": player.sprite.dead}
+            if player.last != current :
+                dataframe["players"].append(current)
+            player.last = current
+
+        #пули
+        dataframe["bullets"] = []
+        for b in players_yellow_bullets.sprites() + players_green_bullets.sprites():
+            data = {"x": b.rect.x, "y": b.rect.y, "shutdirection" : b.shutdirection, "bum": b.bum}
+            dataframe["bullets"].append(data)
+
+        # упаковываем данные
+        message = pack_data(dataframe)
+
+        # отправляем
+        for player in game_server.players:
+            player.obuffer = message
+
 
 server_main()

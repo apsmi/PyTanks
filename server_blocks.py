@@ -9,14 +9,20 @@ class Block(sprite.Sprite):
     """
         Данный класс описывает блоки
     """
-    def __init__(self, x, y, type):
+    def __init__(self, x, y, type, id):
         sprite.Sprite.__init__(self)
         self.rect = Rect(x, y, PLATFORM_WIDTH, PLATFORM_HEIGHT) # размеры блока
+        self.type = type
+        self.id = id
+        self.shooted = False
+        self.shootdirection = ""
 
     def die(self, shutdirection):
 
         # попадание в блок
         if self.type == "-":
+            self.shooted = True
+            self.shootdirection = shutdirection
 
             # если он разрушаемый
             x = self.rect.left

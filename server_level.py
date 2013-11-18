@@ -36,11 +36,13 @@ def gen_level(height, width):
     blocks = pygame.sprite.Group()
 
     #рисуем платформы
+    id = 0
     x=y=0 # координаты
     for row in level:          # вся строка
         for col in row:        # каждый символ
             if col == "-" or col == "*":
-                pf = Block(x,y,col)
+                pf = Block(x,y,col, id)
+                id += 1
                 blocks.add(pf)
             x += PLATFORM_WIDTH #блоки платформы ставятся на ширине блоков
         y += PLATFORM_HEIGHT    #то же самое и с высотой
