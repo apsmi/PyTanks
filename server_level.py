@@ -9,7 +9,7 @@
 
 import random
 import pygame
-from blocks import Block, PLATFORM_HEIGHT, PLATFORM_WIDTH
+from server_blocks import Block, PLATFORM_HEIGHT, PLATFORM_WIDTH
 
 def gen_level(height, width):
 
@@ -33,6 +33,9 @@ def gen_level(height, width):
     level[1] = level[1][:1] + " " + level[1][2:]
     level[height-2] = level[height-2][:width-2] + " " + level[height-2][width-1:]
 
+    total_level_width  = len(level[0])*PLATFORM_WIDTH # Высчитываем фактическую ширину уровня
+    total_level_height = len(level)*PLATFORM_HEIGHT   # высоту
+
     blocks = pygame.sprite.Group()
 
     #рисуем платформы
@@ -41,11 +44,11 @@ def gen_level(height, width):
     for row in level:          # вся строка
         for col in row:        # каждый символ
             if col == "-" or col == "*":
-                pf = Block(x,y,col, id)
+                pf = Block(x,y,col,id)
                 id += 1
                 blocks.add(pf)
             x += PLATFORM_WIDTH #блоки платформы ставятся на ширине блоков
         y += PLATFORM_HEIGHT    #то же самое и с высотой
         x = 0                   #на каждой новой строчке начинаем с нуля
 
-    return blocks
+    return blocks, total_level_width, total_level_height

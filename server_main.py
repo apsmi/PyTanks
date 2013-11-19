@@ -3,8 +3,8 @@
 __author__ = 'apsmi'
 
 #MESSAGE = {
-#    "blocks"  : [ {"id" : 0, "x" : 0, "y" : 0, "type" : 0} ],
-#    "players" : [ {"id" : 0, "x" : 0, "y" : 0, "team" : 0} ]
+#    'blocks'  : [ {'id' : 0, 'x' : 0, 'y' : 0, 'type' : 0} ],
+#    'players' : [ {'id' : 0, 'x' : 0, 'y' : 0, 'team' : 0} ]
 #}
 
 import asyncore
@@ -27,7 +27,7 @@ def pack_data(data):
 def server_main():
 
     # серверный сокет
-    game_server = Game_Server("", 80)
+    game_server = Game_Server('', 80)
 
     #запускаем цикл опроса сокетов
     socket_loop_thread = Socket_Loop(asyncore.loop, 0.01)
@@ -36,18 +36,20 @@ def server_main():
     # инициализация pygame
     pygame.init()
 
-    # ждем двух клиентов
-    while game_server.player_count < 2:
-        time.sleep(1)
-
     # создаем уровень
-    blocks = gen_level(30,30)
+    level_height = level_width = 30
+    blocks, total_level_width, total_level_height = gen_level(level_height,level_width)
 
     # группы объектов
     players_yellow = pygame.sprite.Group()
     players_yellow_bullets = pygame.sprite.Group()
     players_green = pygame.sprite.Group()
     players_green_bullets = pygame.sprite.Group()
+
+    # ждем двух клиентов
+    while game_server.player_count < 1:
+        time.sleep(1)
+    time.sleep(5)
 
     # создаем героев
 
@@ -57,25 +59,29 @@ def server_main():
         player_config = Tank_config(x, y)
         player_sprite = Tank(player_config)
         player.sprite = player_sprite
-        if player.team == "green":
+        if player.team == 'green':
             players_green.add(player_sprite)
-        elif player.team == "yellow":
+        elif player.team == 'yellow':
             players_yellow.add(player_sprite)
 
     # отправить начальную конфигурацию уровня
     dataframe = {}
 
+    # передаем размеры уровня
+    dataframe['level'] = {'total_width': total_level_width, 'total_height': total_level_height, 'width': level_width,
+                          'height': level_height}
+
     #блоки
-    dataframe["blocks"] = []
+    dataframe['blocks'] = []
     for b in blocks.sprites():
-        data = {"id" : b.id, "x" : b.rect.x, "y" : b.rect.y, "type" : b.type}
-        dataframe["blocks"].append(data)
+        data = {'id' : b.id, 'x' : b.rect.x, 'y' : b.rect.y, 'type' : b.type}
+        dataframe['blocks'].append(data)
 
     #игроки
-    dataframe["players"] = []
+    dataframe['players'] = []
     for player in game_server.players:
-        data = {"id" : player.addr[0], "x" : player.sprite.rect.x, "y" : player.sprite.rect.y, "team" : player.team}
-        dataframe["players"].append(data)
+        data = {'id' : player.addr[0], 'x' : player.sprite.rect.x, 'y' : player.sprite.rect.y, 'team' : player.team}
+        dataframe['players'].append(data)
 
     # упаковываем данные
     message = pack_data(dataframe)
@@ -99,32 +105,32 @@ def server_main():
                 # нажатие клавиши на клавиатуре
                 if e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_LEFT:
-                        player.sprite.course = "left"
+                        player.sprite.course = 'left'
                     elif e.key == pygame.K_RIGHT:
-                        player.sprite.course = "right"
+                        player.sprite.course = 'right'
                     elif e.key == pygame.K_UP:
-                        player.sprite.course = "up"
+                        player.sprite.course = 'up'
                     elif e.key == pygame.K_DOWN:
-                        player.sprite.course = "down"
+                        player.sprite.course = 'down'
                     if e.key == pygame.K_SPACE and not player.sprite.isBullet:
                         player_bullet = Bullet(player.sprite.rect.left,player.sprite.rect.top,player.sprite.shutdirection)
                         player_bullet.shooter = player.sprite
-                        if player.team == "green":
+                        if player.team == 'green':
                             players_green_bullets.add(player_bullet)
-                        elif player.team == "yellow":
+                        elif player.team == 'yellow':
                             players_yellow_bullets.add(player_bullet)
                         player.sprite.isBullet = True
 
                 # отпускание клавиши
                 if e.type == pygame.KEYUP:
-                    if (e.key == pygame.K_RIGHT) and (player.course == "right"):
-                        player.sprite.course = ""
-                    elif (e.key == pygame.K_LEFT) and (player.course == "left"):
-                        player.sprite.course = ""
-                    elif (e.key == pygame.K_UP) and (player.course == "up"):
-                        player.sprite.course = ""
-                    elif (e.key == pygame.K_DOWN) and (player.course == "down"):
-                        player.sprite.course = ""
+                    if (e.key == pygame.K_RIGHT) and (player.course == 'right'):
+                        player.sprite.course = ''
+                    elif (e.key == pygame.K_LEFT) and (player.course == 'left'):
+                        player.sprite.course = ''
+                    elif (e.key == pygame.K_UP) and (player.course == 'up'):
+                        player.sprite.course = ''
+                    elif (e.key == pygame.K_DOWN) and (player.course == 'down'):
+                        player.sprite.course = ''
 
         # обновление всех объектов
         players_yellow.update( blocks.sprites() + players_green.sprites() + players_yellow.sprites() )
@@ -136,29 +142,29 @@ def server_main():
         dataframe = {}
 
         #блоки
-        dataframe["blocks"] = []
+        dataframe['blocks'] = []
         for b in blocks.sprites():
             if b.shooted:
-                data = {"id" : b.id, "shootdirection" : b.shootdirection}
-                dataframe["blocks"].append(data)
+                data = {'id' : b.id, 'shootdirection' : b.shootdirection}
+                dataframe['blocks'].append(data)
                 b.shooted = False
-                b.shootdirection = ""
+                b.shootdirection = ''
 
         #игроки
-        dataframe["players"] = []
+        dataframe['players'] = []
         for player in game_server.players:
-            current = {"id": player.addr[0], "x": player.sprite.rect.x, "y": player.sprite.rect.y,
-                        "course": player.sprite.course, "shutdirection": player.sprite.shutdirection,
-                        "dead": player.sprite.dead}
+            current = {'id': player.addr[0], 'x': player.sprite.rect.x, 'y': player.sprite.rect.y,
+                        'course': player.sprite.course, 'shutdirection': player.sprite.shutdirection,
+                        'dead': player.sprite.dead}
             if player.last != current :
-                dataframe["players"].append(current)
+                dataframe['players'].append(current)
             player.last = current
 
         #пули
-        dataframe["bullets"] = []
+        dataframe['bullets'] = []
         for b in players_yellow_bullets.sprites() + players_green_bullets.sprites():
-            data = {"x": b.rect.x, "y": b.rect.y, "shutdirection" : b.shutdirection, "bum": b.bum}
-            dataframe["bullets"].append(data)
+            data = {'x': b.rect.x, 'y': b.rect.y, 'shutdirection' : b.shutdirection, 'bum': b.bum}
+            dataframe['bullets'].append(data)
 
         # упаковываем данные
         message = pack_data(dataframe)

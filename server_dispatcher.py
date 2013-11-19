@@ -12,12 +12,15 @@ class Game_Server(asyncore.dispatcher):
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
         self.set_reuse_addr()
         self.bind((host, port))
-        self.listen()
+        self.listen(5)
         self.player_count = 0
         self.players = []
 
     def handle_accepted(self, sock, addr):
         if self.player_count < 2:
+
+            print("connected %s:%d" % (addr[0], addr[1]))
+
             self.player_count += 1
             player = Game_Client(sock, addr)
             self.players.append(player)
