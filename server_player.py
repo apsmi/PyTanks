@@ -30,7 +30,7 @@ class Game_Client(asynchat.async_chat):
         return len(self.obuffer) > 0
 
     def handle_write(self):
-        sent = self.send(self.obuffer)
+        sent = self.sendto(self.obuffer, self.addr)
         self.obuffer = self.obuffer[sent:]
 
     def collect_incoming_data(self, data):

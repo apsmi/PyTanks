@@ -47,7 +47,7 @@ def server_main():
     players_green_bullets = pygame.sprite.Group()
 
     # ждем двух клиентов
-    while game_server.player_count < 2:
+    while game_server.player_count < 1:
         time.sleep(1)
 
     # создаем героев

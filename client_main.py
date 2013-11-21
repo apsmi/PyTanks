@@ -17,24 +17,35 @@ import asyncore, socket, asynchat, threading, pickle, struct
 
 LEN_TERM = 4
 
+# фиктивный диспетчер
+class Fiktive_Dispatcher(asyncore.dispatcher):
+    def __init__(self):
+        asyncore.dispatcher.__init__(self)
+        self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.bind(('', 0))
+        self.listen(1)
+
 # сокет, принимающий соединение от клиентов
 class Client(asynchat.async_chat):
 
-    def __init__(self, host, port):
-        asynchat.async_chat.__init__(self)
-        self.create_socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.connect( (host, port) )
-        self.obuffer = b""
+    def __init__(self, sock, addr):
+        asynchat.async_chat.__init__(self, sock=sock)
+        self.addr = addr
         self.ibuffer = []
+        self.obuffer = b""
+        self.imes = [] #b""
         self.set_terminator(LEN_TERM)
         self.state = "len"
-        self.imes = [] #b""
+
+    def handle_close(self):
+        print(self.socket.getsockname())
+        self.close()
 
     def writable(self):
         return len(self.obuffer) > 0
 
     def handle_write(self):
-        sent = self.send(self.obuffer)
+        sent = self.sendto(self.obuffer, self.addr)
         self.obuffer = self.obuffer[sent:]
 
     def collect_incoming_data(self, data):
@@ -78,7 +89,33 @@ def pack_data(data):
 
 def main():
 
-    game_client = Client("localhost", 80)
+    # фиктивный диспетчер
+    f_d = Fiktive_Dispatcher()
+
+    # открываем сокет TCP
+
+    SERVER_ADDR = 'localhost'
+    SERVER_PORT_TCP = 80
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((SERVER_ADDR, SERVER_PORT_TCP))
+
+    # получем серверный udp порт
+    buf = sock.recv(1024)
+    server_port = struct.unpack('L',buf)[0]
+
+    # создаем UPD сокет
+    socket_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    socket_udp.bind(('', 0))
+    client_port = socket_udp.getsockname()[1]
+
+    # отправляем порт созданного сокета серверу
+    buf = struct.pack('L', client_port)
+    sock.sendall(buf)
+    sock.close()
+
+    # создаем асинхронный клиент
+    game_client = Client(socket_udp, (SERVER_ADDR, server_port))
 
     # запускаем цикл опроса сокетов
     socket_loop_thread = Socket_Loop(asyncore.loop, 0.01)
