@@ -7,7 +7,7 @@ import time
 
 from client_level import gen_client_level
 from bullet import Bullet
-from client_tank import Tank_config, Tank
+import client_tank# import Tank_config, Tank
 from monster_config import *
 from camera import  camera_configure, Camera
 
@@ -22,13 +22,13 @@ class Client(asynchat.async_chat):
 
     def __init__(self, host, port):
         asynchat.async_chat.__init__(self)
-        self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.create_socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.connect( (host, port) )
         self.obuffer = b""
         self.ibuffer = []
         self.set_terminator(LEN_TERM)
         self.state = "len"
-        self.imes = b""
+        self.imes = [] #b""
 
     def writable(self):
         return len(self.obuffer) > 0
@@ -50,7 +50,7 @@ class Client(asynchat.async_chat):
         elif self.state == "data":
             self.state = "len"
             self.set_terminator(LEN_TERM)
-            self.imes = pickle.loads(dataframe)
+            self.imes.append(pickle.loads(dataframe))
 
 class Socket_Loop(threading.Thread):
 
@@ -70,6 +70,11 @@ def window_init(width, height, color, caption):
     bg = Surface((width,height))                # Создание видимой поверхности, будем использовать как фон
     bg.fill(Color(color))                       # Заливаем поверхность сплошным цветом
     return bg, screen
+
+def pack_data(data):
+    tmp = pickle.dumps(data)
+    l = len(tmp)
+    return struct.pack('L', l) + tmp
 
 def main():
 
@@ -93,8 +98,13 @@ def main():
     #monsters_bullets = pygame.sprite.Group()
 
     # получаем первоначальную инфу
-    time.sleep(10)
-    init_data = game_client.imes
+    #time.sleep(5)
+    while len(game_client.imes) <= 0:
+        time.sleep(1)
+
+    init_data = game_client.imes.pop(0)
+
+    print("Level recieved ", time.time())
 
     # генерируем уровень
     total_level_width = init_data['level']['total_width']
@@ -110,8 +120,8 @@ def main():
         y = player_item['y']
         id = player_item['id']
         team = player_item['team']
-        tank_config = Tank_config(x, y)
-        player = Tank(tank_config, id, team)
+        tank_config = client_tank.Tank_config(x, y)
+        player = client_tank.Tank(tank_config, id, team)
         players.add(player)
     
     #создаем камеру
@@ -123,13 +133,36 @@ def main():
     # надпись
     font = pygame.font.Font(None, 18)
 
+    print("starting loop")
+
     # Основной цикл программы
     while 1:
 
         timer.tick(30) # таймер на 30 кадров
 
+        # отправляем произошедшие события на сервер
+        event_queue = []
+        for e in pygame.event.get():
+            # выход
+            if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):
+                pygame.quit()
+                sys.exit()
+
+            # нажатие клавиши на клавиатуре
+            if (e.type == KEYDOWN) or (e.type == KEYUP):
+                event_item = {'type': e.type, 'key': e.key}
+                event_queue.append(event_item)
+
+        # упаковываем данные
+        message = pack_data(event_queue)
+        game_client.obuffer = message
+
         # получаем очередной пакет данных
-        dataframe = game_client.imes
+        if len(game_client.imes) > 0:
+            dataframe = game_client.imes.pop(0)
+        else:
+            dataframe = {'blocks': [], 'players': []}
+            print("No data in pop")
 
         #блоки dataframe["blocks"] = {"id" : b.id, "shootdirection" : b.shootdirection}
         blocks_list = dataframe['blocks']

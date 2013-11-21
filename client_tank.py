@@ -14,8 +14,8 @@ class Tank_config():
         self.START_Y = y                         # начальные координаты по вертикали
         #self.MOVE_SPEED_X = 1                     # скорость перемещения по горизонтали
         #self.MOVE_SPEED_Y = 1                     # скорость перемещения по вертикали
-        #self.WIDTH = 28                           # ширина аватарки
-        #self.HEIGHT = 28                          # высота автарки
+        self.WIDTH = 28                           # ширина аватарки
+        self.HEIGHT = 28                          # высота автарки
         #self.lifeStart = 1                        # количество жизней танка
         self.ANIMATION_DELAY = 0.1                # скорость анимации аватарки
         self.ANIMATION =     ['tanks\player1_1.png', # анимация при движении

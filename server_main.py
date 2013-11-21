@@ -47,11 +47,11 @@ def server_main():
     players_green_bullets = pygame.sprite.Group()
 
     # ждем двух клиентов
-    while game_server.player_count < 1:
+    while game_server.player_count < 2:
         time.sleep(1)
-    time.sleep(5)
 
     # создаем героев
+    print("Waiting players coplete")
 
     for player in game_server.players:
         x = random.randint(32, 738)
@@ -90,6 +90,8 @@ def server_main():
     for player in game_server.players:
         player.obuffer = message
 
+    print("Level sent, start loop ", time.time())
+
     # таймер
     timer = pygame.time.Clock()
 
@@ -97,22 +99,26 @@ def server_main():
     while 1:
 
         timer.tick(30) # таймер на 30 кадров
+        print(' %.2f ' % timer.get_fps())
 
         for player in game_server.players:
             event_queue = player.imes
             for e in event_queue:
                 # действия  героя
                 # нажатие клавиши на клавиатуре
-                if e.type == pygame.KEYDOWN:
-                    if e.key == pygame.K_LEFT:
+                type = e['type']
+                key = e['key']
+
+                if type == pygame.KEYDOWN:
+                    if key == pygame.K_LEFT:
                         player.sprite.course = 'left'
-                    elif e.key == pygame.K_RIGHT:
+                    elif key == pygame.K_RIGHT:
                         player.sprite.course = 'right'
-                    elif e.key == pygame.K_UP:
+                    elif key == pygame.K_UP:
                         player.sprite.course = 'up'
-                    elif e.key == pygame.K_DOWN:
+                    elif key == pygame.K_DOWN:
                         player.sprite.course = 'down'
-                    if e.key == pygame.K_SPACE and not player.sprite.isBullet:
+                    if key == pygame.K_SPACE and not player.sprite.isBullet:
                         player_bullet = Bullet(player.sprite.rect.left,player.sprite.rect.top,player.sprite.shutdirection)
                         player_bullet.shooter = player.sprite
                         if player.team == 'green':
@@ -122,14 +128,14 @@ def server_main():
                         player.sprite.isBullet = True
 
                 # отпускание клавиши
-                if e.type == pygame.KEYUP:
-                    if (e.key == pygame.K_RIGHT) and (player.course == 'right'):
+                if type == pygame.KEYUP:
+                    if (key == pygame.K_RIGHT) and (player.sprite.course == 'right'):
                         player.sprite.course = ''
-                    elif (e.key == pygame.K_LEFT) and (player.course == 'left'):
+                    elif (key == pygame.K_LEFT) and (player.sprite.course == 'left'):
                         player.sprite.course = ''
-                    elif (e.key == pygame.K_UP) and (player.course == 'up'):
+                    elif (key == pygame.K_UP) and (player.sprite.course == 'up'):
                         player.sprite.course = ''
-                    elif (e.key == pygame.K_DOWN) and (player.course == 'down'):
+                    elif (key == pygame.K_DOWN) and (player.sprite.course == 'down'):
                         player.sprite.course = ''
 
         # обновление всех объектов

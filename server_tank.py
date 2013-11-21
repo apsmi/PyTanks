@@ -37,6 +37,8 @@ class Tank(sprite.Sprite):
         self.yvel = 0                       # скорость движения по вертикали, 0 - не двигается
         self.dead = 0                       # счетчик кадров при смерти
 
+        self.rect = Rect(self.config.START_X, self.config.START_Y, self.config.WIDTH, self.config.HEIGHT) # прямоугольный объект
+
     def update(self,  obstructions):
 
         # если танк взорвали
