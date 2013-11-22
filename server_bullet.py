@@ -4,7 +4,7 @@ from pygame import sprite, Rect
 
 
 class Bullet(sprite.Sprite):
-    def __init__(self, x, y, shutdirection):
+    def __init__(self, id, x, y, shutdirection):
         sprite.Sprite.__init__(self)
 
         self.MOVE_SPEED = 5
@@ -18,6 +18,9 @@ class Bullet(sprite.Sprite):
         self.startY = y # начальная позиция
         self.WIDTH = 6  # ширина картинки
         self.HEIGHT = 6 # высота картинки
+
+        self.dead = False
+        self.id = id
 
         # определяем направление полета
         if shutdirection == "":
@@ -85,7 +88,8 @@ class Bullet(sprite.Sprite):
                 self.rect = Rect(self.rect.left, self.rect.top, self.BUM_WIDTH, self.BUM_HEIGHT) # прямоугольный объект
                 self.bum += 1
             else:
-                self.kill()
+                #self.kill()
+                self.dead = True
                 self.shooter.isBullet = False # сообщаем тому, кто выстрелил, что его пуля кердык
 
     def collide(self, xvel, yvel, obstructions):

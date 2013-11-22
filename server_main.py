@@ -2,17 +2,12 @@
 # -*- coding: utf-8 -*-
 __author__ = 'apsmi'
 
-#MESSAGE = {
-#    'blocks'  : [ {'id' : 0, 'x' : 0, 'y' : 0, 'type' : 0} ],
-#    'players' : [ {'id' : 0, 'x' : 0, 'y' : 0, 'team' : 0} ]
-#}
-
 import asyncore
 import time
 import pygame
 import random
 import pickle, struct
-from server_dispatcher import Game_Server, Game_Server_UDP
+from server_dispatcher import Game_Server_UDP
 from server_level import gen_level
 from server_tank import Tank, Tank_config
 from server_socket_loop import Socket_Loop
@@ -95,6 +90,9 @@ def server_main():
     # таймер
     timer = pygame.time.Clock()
 
+    # id пули
+    bullet_id = 0
+
     # Основной цикл программы
     while 1:
 
@@ -119,7 +117,8 @@ def server_main():
                     elif key == pygame.K_DOWN:
                         player.sprite.course = 'down'
                     if key == pygame.K_SPACE and not player.sprite.isBullet:
-                        player_bullet = Bullet(player.sprite.rect.left,player.sprite.rect.top,player.sprite.shutdirection)
+                        player_bullet = Bullet(bullet_id,player.sprite.rect.left,player.sprite.rect.top,player.sprite.shutdirection)
+                        bullet_id += 1
                         player_bullet.shooter = player.sprite
                         if player.team == 'green':
                             players_green_bullets.add(player_bullet)
@@ -171,8 +170,10 @@ def server_main():
         #пули
         dataframe['bullets'] = []
         for b in players_yellow_bullets.sprites() + players_green_bullets.sprites():
-            data = {'x': b.rect.x, 'y': b.rect.y, 'shutdirection' : b.shutdirection, 'bum': b.bum}
+            data = {'id': b.id, 'x': b.rect.x, 'y': b.rect.y, 'shutdirection' : b.shutdirection, 'bum': b.bum}
             dataframe['bullets'].append(data)
+            if b.dead:
+                b.kill()
 
         # упаковываем данные
         message = pack_data(dataframe)

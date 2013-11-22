@@ -6,7 +6,7 @@ from pygame import *
 import time
 
 from client_level import gen_client_level
-#from client_bullet import Bullet, bullet_draw
+from client_bullet import Bullet
 import client_tank# import Tank_config, Tank
 from monster_config import *
 from camera import  camera_configure, Camera
@@ -188,7 +188,7 @@ def main():
                 game_client.imes = game_client.imes[-3:]
             dataframe = game_client.imes.pop(0)
         else:
-            dataframe = {'blocks': [], 'players': []}
+            dataframe = {'blocks': [], 'players': [], 'bullets': []}
             print("No data in pop")
 
         #блоки dataframe["blocks"] = {"id" : b.id, "shootdirection" : b.shootdirection}
@@ -197,6 +197,7 @@ def main():
             for block in blocks.sprites():
                 if block.id == block_data['id']:
                     block.die(block_data['shootdirection'])
+                    break
 
         # игроки dataframe["players"] = { "id": player.addr[0], "x": player.sprite.rect.x, "y": player.sprite.rect.y,
         #                                 "course": player.sprite.course, "shutdirection": player.sprite.shutdirection,
@@ -209,16 +210,23 @@ def main():
                                   player_item['course'], player_item['shutdirection'], player_item['dead'])
 
         # пули
-        #bullets = []
-        #bullets_list = dataframe['bullets']
-        #data = {'x': b.rect.x, 'y': b.rect.y, 'shutdirection' : b.shutdirection, 'bum': b.bum}
-        #for bullet_item in bullets_list:
-            #x = bullet_item['x']
-            #y = bullet_item['y']
-            #shutdirection = bullet_item['shutdirection']
-            #bum = bullet_item['bum']
-            #bul_image = bullet_draw(x, y, shutdirection, bum)
-            #bullets.append(bul_image)
+        bullets = []
+        bullets_list = dataframe['bullets']
+        #{'id': b.id, 'x': b.rect.x, 'y': b.rect.y, 'shutdirection' : b.shutdirection, 'bum': b.bum}
+        for bullet_item in bullets_list:
+            id = bullet_item['id']
+            x = bullet_item['x']
+            y = bullet_item['y']
+            shutdirection = bullet_item['shutdirection']
+            bum = bullet_item['bum']
+            found = False
+            for b in players_bullets.sprites():
+                if b.id == id:
+                    found = True
+                    b.update(x, y, bum)
+            if not found:
+                b = Bullet(id, x, y, shutdirection)
+                players_bullets.add(b)
 
         # обновление всех объектов
         #players.update( blocks.sprites() + monsters.sprites())

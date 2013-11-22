@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 
+import pyganim
 from pygame import *
 
-import pyganim
-
-#def bullet_draw(x, y, shutdirection, bum):
-
-
 class Bullet(sprite.Sprite):
-    def __init__(self, x, y, shutdirection):
+    def __init__(self, id, x, y, shutdirection):
         sprite.Sprite.__init__(self)
 
         self.IMAGE_LEFT = "shut/bullet_left.png"
@@ -18,14 +14,15 @@ class Bullet(sprite.Sprite):
         self.ANIMATION_DELAY = 0.1 # скорость смены кадров
         self.ANIMATION_BUM = ['shut/bum_1.png',
                  'shut/bum_2.png']
-        self.MOVE_SPEED = 5
+        #self.MOVE_SPEED = 5
         self.BUM_WIDTH = 22
         self.BUM_HEIGHT = 22
         self.COLOR =  "#FFFFFF"
 
-        self.bum = 0    # индикатор взрыва пули
-        self.xvel = 0   # скорость полета пули
-        self.yvel = 0   # скорость полета пули
+        self.id = id
+        #self.bum = 0    # индикатор взрыва пули
+        #self.xvel = 0   # скорость полета пули
+        #self.yvel = 0   # скорость полета пули
         self.startX = x # начальная позиция
         self.startY = y # начальная позиция
         self.WIDTH = 6  # ширина картинки
@@ -39,83 +36,85 @@ class Bullet(sprite.Sprite):
         self.boltAnimBum.play()
 
         # определяем направление полета
-        if shutdirection == "":
-            self.shutdirection = "up"
-        else:
-            self.shutdirection = shutdirection
+        #if shutdirection == "":
+            #self.shutdirection = "up"
+        #else:
+            #self.shutdirection = shutdirection
 
         self.image = Surface((self.WIDTH,self.HEIGHT)) # поверхность изображения
 
         # загружаем картинку и определяем положение пули
         if shutdirection == "left":
             self.image = image.load(self.IMAGE_LEFT)
-            self.startX -= 6
-            self.startY += 11
+            #self.startX -= 6
+            #self.startY += 11
         elif shutdirection == "right":
             self.image = image.load(self.IMAGE_RIGHT)
-            self.startX += 28
-            self.startY += 11
+            #self.startX += 28
+            #self.startY += 11
         elif shutdirection == "up":
             self.image = image.load(self.IMAGE_UP)
-            self.startX += 11
-            self.startY += 6
+            #self.startX += 11
+            #self.startY += 6
         elif shutdirection == "down":
             self.image = image.load(self.IMAGE_DOWN)
-            self.startX += 11
-            self.startY += 28
+            #self.startX += 11
+            #self.startY += 28
 
         self.rect = Rect(self.startX, self.startY, self.WIDTH, self.HEIGHT) # прямоугольный объект
 
-    def update(self, obstructions):
+    def update(self, x, y, bum):
 
-        left = right = up = down = False
+        self.rect.x, self.rect.y, self.bum = x, y, bum
 
-        if self.shutdirection == "left":
-            left = True
-        if self.shutdirection == "right":
-            right = True
-        if self.shutdirection == "up":
-            up = True
-        if self.shutdirection == "down":
-            down = True
-        if self.shutdirection == "stop":
-            left = right = up = down = False
+        #left = right = up = down = False
 
-        if left:
-            self.xvel = -self.MOVE_SPEED # Лево = x - n
+        #if self.shutdirection == "left":
+            #left = True
+        #if self.shutdirection == "right":
+            #right = True
+        #if self.shutdirection == "up":
+            #up = True
+        #if self.shutdirection == "down":
+            #down = True
+        #if self.shutdirection == "stop":
+            #left = right = up = down = False
 
-        if right:
-            self.xvel = self.MOVE_SPEED # Право = x + n
+        #if left:
+            #self.xvel = -self.MOVE_SPEED # Лево = x - n
 
-        if not(left or right): # стоим, когда нет указаний идти вправо-влево или попали куда-то
-            self.xvel = 0
+        #if right:
+            #self.xvel = self.MOVE_SPEED # Право = x + n
 
-        self.rect.x += self.xvel # переносим свои положение на xvel
-        self.collide(self.xvel, 0, obstructions) #проверяем столкновения
+        #if not(left or right): # стоим, когда нет указаний идти вправо-влево или попали куда-то
+            #self.xvel = 0
 
-        if up:
-            self.yvel = -self.MOVE_SPEED # верх = x- n
+        #self.rect.x += self.xvel # переносим свои положение на xvel
+        #self.collide(self.xvel, 0, obstructions) #проверяем столкновения
 
-        if down:
-            self.yvel = self.MOVE_SPEED # низ = x + n
+        #if up:
+            #self.yvel = -self.MOVE_SPEED # верх = x- n
 
-        if not(up or down): # стоим, когда нет указаний идти вправо - влево или попали куда-то
-            self.yvel = 0
+        #if down:
+            #self.yvel = self.MOVE_SPEED # низ = x + n
 
-        self.rect.y += self.yvel # переносим свои положение на yvel
-        self.collide(0, self.yvel, obstructions)#проверяем столкновения
+        #if not(up or down): # стоим, когда нет указаний идти вправо - влево или попали куда-то
+            #self.yvel = 0
+
+        #self.rect.y += self.yvel # переносим свои положение на yvel
+        #self.collide(0, self.yvel, obstructions)#проверяем столкновения
 
         if (0 < self.bum):
             if (self.bum < 20):
                 self.image = Surface((self.BUM_WIDTH,self.BUM_HEIGHT))
-                self.rect = Rect(self.rect.left, self.rect.top, self.BUM_WIDTH, self.BUM_HEIGHT) # прямоугольный объект
+                #self.rect = Rect(self.rect.left, self.rect.top, self.BUM_WIDTH, self.BUM_HEIGHT) # прямоугольный объект
                 self.image.fill(Color(self.COLOR))
                 self.image.set_colorkey(Color(self.COLOR)) # делаем фон прозрачным
                 self.boltAnimBum.blit(self.image, (0, 0))  #animation
-                self.bum += 1
+                #self.bum += 1
             else:
                 self.kill()
-                self.shooter.isBullet = False # сообщаем тому, кто выстрелил, что его пуля кердык
+                #self.shooter.isBullet = False # сообщаем тому, кто выстрелил, что его пуля кердык
 
     def collide(self, xvel, yvel, obstructions):
 
