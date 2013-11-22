@@ -2,11 +2,25 @@
 # -*- coding: utf-8 -*-
 __author__ = 'apsmi'
 
+PLAYERS_COUNT = 1
+
+SERVER_ADDRESS = ''
+SERVER_PORT = 80
+
+LEVEL_H = 20
+LEVEL_W = 25
+
+BLOCK_SIZE = 32
+
+WINDOW_H = 640
+WINDOW_W = 800
+
 import asyncore
 import time
 import pygame
 import random
-import pickle, struct
+import pickle
+import struct
 from server_dispatcher import Game_Server_UDP
 from server_level import gen_level
 from server_tank import Tank, Tank_config
@@ -19,10 +33,10 @@ def pack_data(data):
     return struct.pack('L', l) + tmp
 
 # основная функция сервера
-def server_main():
+def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BLOCK_SIZE, WINDOW_H, WINDOW_W):
 
     # серверный сокет
-    game_server = Game_Server_UDP('', 80)
+    game_server = Game_Server_UDP(SERVER_ADDRESS, SERVER_PORT)
 
     #запускаем цикл опроса сокетов
     socket_loop_thread = Socket_Loop(asyncore.loop, 0.01)
@@ -32,7 +46,8 @@ def server_main():
     pygame.init()
 
     # создаем уровень
-    level_height = level_width = 30
+    level_height = LEVEL_H
+    level_width = LEVEL_W
     blocks, total_level_width, total_level_height = gen_level(level_height,level_width)
 
     # группы объектов
@@ -41,16 +56,14 @@ def server_main():
     players_green = pygame.sprite.Group()
     players_green_bullets = pygame.sprite.Group()
 
-    # ждем двух клиентов
-    while game_server.player_count < 1:
+    # ждем клиентов
+    while game_server.player_count < PLAYERS_COUNT:
         time.sleep(1)
 
     # создаем героев
-    print("Waiting players coplete")
-
     for player in game_server.players:
-        x = random.randint(32, 738)
-        y = random.randint(32, 576)
+        x = random.randint(BLOCK_SIZE, WINDOW_W - 2 * BLOCK_SIZE)
+        y = random.randint(BLOCK_SIZE, WINDOW_H - 2 * BLOCK_SIZE)
         player_config = Tank_config(x, y)
         player_sprite = Tank(player_config)
         player.sprite = player_sprite
@@ -85,8 +98,6 @@ def server_main():
     for player in game_server.players:
         player.obuffer = message
 
-    print("Level sent, start loop ", time.time())
-
     # таймер
     timer = pygame.time.Clock()
 
@@ -96,18 +107,25 @@ def server_main():
     # Основной цикл программы
     while 1:
 
-        timer.tick(30) # таймер на 30 кадров
-        print(' %.2f ' % timer.get_fps())
+        timer.tick(30)                    # таймер на 30 кадров
+        print(' %.2f ' % timer.get_fps()) # вывод fps
 
+        # цикл по всем игрокам
         for player in game_server.players:
-            event_queue = player.imes
-            for e in event_queue:
-                # действия  героя
-                # нажатие клавиши на клавиатуре
-                type = e['type']
-                key = e['key']
 
+            # очередь событий текущего игрока
+            event_queue = player.imes
+
+            # цикл по всем событиям в очереди
+            for e in event_queue:
+
+                type = e['type'] # тип события
+                key = e['key']   # нажатая клавиша
+
+                # нажатие клавиши на клавиатуре
                 if type == pygame.KEYDOWN:
+
+                    # движение
                     if key == pygame.K_LEFT:
                         player.sprite.course = 'left'
                     elif key == pygame.K_RIGHT:
@@ -116,6 +134,8 @@ def server_main():
                         player.sprite.course = 'up'
                     elif key == pygame.K_DOWN:
                         player.sprite.course = 'down'
+
+                    # выстрел
                     if key == pygame.K_SPACE and not player.sprite.isBullet:
                         player_bullet = Bullet(bullet_id,player.sprite.rect.left,player.sprite.rect.top,player.sprite.shutdirection)
                         bullet_id += 1
@@ -137,13 +157,13 @@ def server_main():
                     elif (key == pygame.K_DOWN) and (player.sprite.course == 'down'):
                         player.sprite.course = ''
 
-        # обновление всех объектов
+        # обновление всех объектов (симуляция мира)
         players_yellow.update( blocks.sprites() + players_green.sprites() + players_yellow.sprites() )
         players_green.update( blocks.sprites() + players_yellow.sprites() + players_green.sprites() )
         players_yellow_bullets.update( blocks.sprites() + players_green.sprites() + players_green_bullets.sprites() )
         players_green_bullets.update( blocks.sprites() + players_yellow.sprites() + players_yellow_bullets.sprites() )
 
-        # отправить начальную конфигурацию уровня
+        # отправить очередные изменения мира
         dataframe = {}
 
         #блоки
@@ -182,5 +202,4 @@ def server_main():
         for player in game_server.players:
             player.obuffer = message
 
-
-server_main()
+server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BLOCK_SIZE, WINDOW_H, WINDOW_W)

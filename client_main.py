@@ -111,7 +111,7 @@ def main():
     #monsters = pygame.sprite.Group()
     #monsters_bullets = pygame.sprite.Group()
 
-    SERVER_ADDR = 'localhost'
+    SERVER_ADDR = '10.12.129.70'
     SERVER_PORT_DISP = 80
 
     # создаем асинхронный клиент

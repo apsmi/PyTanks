@@ -7,7 +7,7 @@ class Bullet(sprite.Sprite):
     def __init__(self, id, x, y, shutdirection):
         sprite.Sprite.__init__(self)
 
-        self.MOVE_SPEED = 5
+        self.MOVE_SPEED = 7
         self.BUM_WIDTH = 22
         self.BUM_HEIGHT = 22
 

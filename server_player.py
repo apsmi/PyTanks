@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
 # player states
-IDLE = 0
-WAIT_PLAYERS_COUNT = 1
-WAIT_ALL_PLAYERS = 2
 
-LEN_TERM = 4
+IN_BUF_SIZE = 16384   # размер  входящего буфера сокета
+OUT_BUF_SIZE = 16384  # размер исходящего буфера сокета
+LEN_TERM = 4          # размера первой части сообщения, содержащего длину - одно целое число 4 байта
 
 import asynchat
 import struct
@@ -16,15 +15,14 @@ class Game_Client(asynchat.async_chat):
 
     def __init__(self, sock, addr):
         asynchat.async_chat.__init__(self, sock=sock)
-
-        self.ac_in_buffer_size = 16384
-        self.ac_out_buffer_size = 16384
-
+        self.ac_in_buffer_size = IN_BUF_SIZE
+        self.ac_out_buffer_size = OUT_BUF_SIZE
         self.addr = addr
         self.ibuffer = []
         self.obuffer = b""
         self.imes = b""
         self.set_terminator(LEN_TERM)
+
         self.state = "len"
         self.team = ""
         self.sprite = 0
