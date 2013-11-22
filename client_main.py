@@ -209,14 +209,14 @@ def main():
                                   player_item['course'], player_item['shutdirection'], player_item['dead'])
 
         # пули
-        bullets = []
-        bullets_list = dataframe['bullets']
+        #bullets = []
+        #bullets_list = dataframe['bullets']
         #data = {'x': b.rect.x, 'y': b.rect.y, 'shutdirection' : b.shutdirection, 'bum': b.bum}
-        for bullet_item in bullets_list:
-            x = bullet_item['x']
-            y = bullet_item['y']
-            shutdirection = bullet_item['shutdirection']
-            bum = bullet_item['bum']
+        #for bullet_item in bullets_list:
+            #x = bullet_item['x']
+            #y = bullet_item['y']
+            #shutdirection = bullet_item['shutdirection']
+            #bum = bullet_item['bum']
             #bul_image = bullet_draw(x, y, shutdirection, bum)
             #bullets.append(bul_image)
 
@@ -231,7 +231,19 @@ def main():
         screen.blit(bg, (0,0))
 
         # рисование всех объектов
-        entities = blocks.sprites() + players.sprites() + players_bullets.sprites()# + monsters_bullets.sprites() + monsters.sprites()
+        entities = blocks.sprites()
+        for e in entities:
+            screen.blit(e.image, camera.apply(e))
+
+        # рисование всех объектов
+        entities = players.sprites()
+        for e in entities:
+            topleft = camera.apply(e)
+            screen.blit(e.image, topleft)
+            screen.blit(e.label, (topleft[0], topleft[1]+28))
+
+        # рисование всех объектов
+        entities = players_bullets.sprites()
         for e in entities:
             screen.blit(e.image, camera.apply(e))
 

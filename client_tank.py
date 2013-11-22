@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from pygame import sprite, Surface, Rect, image, Color, transform
+from pygame import sprite, font, Surface, Rect, image, Color, transform
 
 import pyganim
 
@@ -46,6 +46,10 @@ class Tank(sprite.Sprite):
         #self.yvel = 0                       # скорость движения по вертикали, 0 - не двигается
         self.dead = 0                       # счетчик кадров при смерти
         self.COLOR =  "#000000"             # цвет фона аватарки
+
+        # надпись
+        font_obj = font.Font(None, 18)
+        self.label = font_obj.render(id, True, (255,255,255))
 
         # автарка танка
         self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
