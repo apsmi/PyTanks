@@ -15,6 +15,7 @@ class Block(sprite.Sprite):
         self.type = type
         self.id = id
         self.shooted = False
+        self.dead = False
         self.shootdirection = ""
 
     def die(self, shutdirection):
@@ -43,4 +44,5 @@ class Block(sprite.Sprite):
             # если блок уничтожен совсем, удаляем его из всех групп
             if (self.rect.width == 0) or (self.rect.height == 0):
                 self.rect.width = self.rect.height = 0
-                self.kill()
+                #self.kill()
+                self.dead = True

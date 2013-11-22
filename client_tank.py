@@ -91,7 +91,7 @@ class Tank(sprite.Sprite):
                 #self.course = ""
                 #self.shutdirection = "up"
 
-        # если танк не взорван, то двигаем танк в соответсвующем направлении
+        # направление
         else:
 
             self.image = Surface((self.config.WIDTH,self.config.HEIGHT)) # перерисовываем аватарку
@@ -100,13 +100,13 @@ class Tank(sprite.Sprite):
             self.boltAnimMove.blit(self.image, (0, 0))                   # выводим анимацию
 
             # движение влево
-            if self.course == "left":
+            if self.shutdirection == "left":
                 #self.shutdirection = "left"                                  # изменяем направление выстрела
                 #self.xvel = -self.config.MOVE_SPEED_X                        # текущая скорость движения
                 self.image = transform.rotate(self.image, 90)                # поворачиваем по направлению движения
 
             # движение вправо
-            elif self.course == "right":
+            elif self.shutdirection == "right":
                 #self.shutdirection = "right"
                 #self.xvel = self.config.MOVE_SPEED_X
                 self.image = transform.rotate(self.image, 270)
@@ -124,7 +124,7 @@ class Tank(sprite.Sprite):
                 #self.yvel = -self.config.MOVE_SPEED_Y
 
             # движение вниз
-            elif self.course == "down":
+            elif self.shutdirection == "down":
                 #self.shutdirection = "down"
                 #self.yvel = self.config.MOVE_SPEED_Y
                 self.image = transform.rotate(self.image, 180)

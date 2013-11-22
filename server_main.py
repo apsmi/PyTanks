@@ -12,7 +12,7 @@ import time
 import pygame
 import random
 import pickle, struct
-from server_dispatcher import Game_Server
+from server_dispatcher import Game_Server, Game_Server_UDP
 from server_level import gen_level
 from server_tank import Tank, Tank_config
 from server_socket_loop import Socket_Loop
@@ -27,7 +27,7 @@ def pack_data(data):
 def server_main():
 
     # серверный сокет
-    game_server = Game_Server('', 80)
+    game_server = Game_Server_UDP('', 80)
 
     #запускаем цикл опроса сокетов
     socket_loop_thread = Socket_Loop(asyncore.loop, 0.01)
@@ -155,6 +155,8 @@ def server_main():
                 dataframe['blocks'].append(data)
                 b.shooted = False
                 b.shootdirection = ''
+            if b.dead:
+                b.kill()
 
         #игроки
         dataframe['players'] = []

@@ -16,6 +16,10 @@ class Game_Client(asynchat.async_chat):
 
     def __init__(self, sock, addr):
         asynchat.async_chat.__init__(self, sock=sock)
+
+        self.ac_in_buffer_size = 16384
+        self.ac_out_buffer_size = 16384
+
         self.addr = addr
         self.ibuffer = []
         self.obuffer = b""
@@ -47,4 +51,3 @@ class Game_Client(asynchat.async_chat):
             self.state = "len"
             self.set_terminator(LEN_TERM)
             self.imes = pickle.loads(dataframe)
-            #print(message)

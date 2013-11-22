@@ -6,7 +6,7 @@ from pygame import *
 import time
 
 from client_level import gen_client_level
-from bullet import Bullet
+#from client_bullet import Bullet, bullet_draw
 import client_tank# import Tank_config, Tank
 from monster_config import *
 from camera import  camera_configure, Camera
@@ -17,20 +17,29 @@ import asyncore, socket, asynchat, threading, pickle, struct
 
 LEN_TERM = 4
 
-# фиктивный диспетчер
-class Fiktive_Dispatcher(asyncore.dispatcher):
-    def __init__(self):
-        asyncore.dispatcher.__init__(self)
-        self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.bind(('', 0))
-        self.listen(1)
-
 # сокет, принимающий соединение от клиентов
 class Client(asynchat.async_chat):
 
-    def __init__(self, sock, addr):
-        asynchat.async_chat.__init__(self, sock=sock)
-        self.addr = addr
+    def __init__(self, addr):
+        asynchat.async_chat.__init__(self)
+
+        self.create_socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.bind(('', 0))
+        client_port = self.socket.getsockname()[1]
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.bind(('', 0))
+        sock.sendto(struct.pack('L', client_port), addr)
+
+        # получем серверный udp порт
+        buf, _ = sock.recvfrom(4)
+        server_port = struct.unpack('L',buf)[0]
+        sock.close()
+
+        self.ac_in_buffer_size = 16384
+        self.ac_out_buffer_size = 16384
+
+        self.addr = (addr[0], server_port)
         self.ibuffer = []
         self.obuffer = b""
         self.imes = [] #b""
@@ -89,38 +98,6 @@ def pack_data(data):
 
 def main():
 
-    # фиктивный диспетчер
-    f_d = Fiktive_Dispatcher()
-
-    # открываем сокет TCP
-
-    SERVER_ADDR = 'localhost'
-    SERVER_PORT_TCP = 80
-
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((SERVER_ADDR, SERVER_PORT_TCP))
-
-    # получем серверный udp порт
-    buf = sock.recv(1024)
-    server_port = struct.unpack('L',buf)[0]
-
-    # создаем UPD сокет
-    socket_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    socket_udp.bind(('', 0))
-    client_port = socket_udp.getsockname()[1]
-
-    # отправляем порт созданного сокета серверу
-    buf = struct.pack('L', client_port)
-    sock.sendall(buf)
-    sock.close()
-
-    # создаем асинхронный клиент
-    game_client = Client(socket_udp, (SERVER_ADDR, server_port))
-
-    # запускаем цикл опроса сокетов
-    socket_loop_thread = Socket_Loop(asyncore.loop, 0.01)
-    socket_loop_thread.start()
-
     # Инициация PyGame, обязательная строчка
     pygame.init()
     pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP])
@@ -134,8 +111,17 @@ def main():
     #monsters = pygame.sprite.Group()
     #monsters_bullets = pygame.sprite.Group()
 
+    SERVER_ADDR = 'localhost'
+    SERVER_PORT_DISP = 80
+
+    # создаем асинхронный клиент
+    game_client = Client((SERVER_ADDR, SERVER_PORT_DISP))
+
+    # запускаем цикл опроса сокетов
+    socket_loop_thread = Socket_Loop(asyncore.loop, 0.01)
+    socket_loop_thread.start()
+
     # получаем первоначальную инфу
-    #time.sleep(5)
     while len(game_client.imes) <= 0:
         time.sleep(1)
 
@@ -183,6 +169,7 @@ def main():
             # выход
             if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):
                 pygame.quit()
+                socket_loop_thread
                 sys.exit()
 
             # нажатие клавиши на клавиатуре
@@ -195,7 +182,10 @@ def main():
         game_client.obuffer = message
 
         # получаем очередной пакет данных
-        if len(game_client.imes) > 0:
+        l = len(game_client.imes)
+        if l > 0:
+            if l > 3:
+                game_client.imes = game_client.imes[-3:]
             dataframe = game_client.imes.pop(0)
         else:
             dataframe = {'blocks': [], 'players': []}
@@ -218,6 +208,18 @@ def main():
                     player.update(player_item['x'], player_item['y'],
                                   player_item['course'], player_item['shutdirection'], player_item['dead'])
 
+        # пули
+        bullets = []
+        bullets_list = dataframe['bullets']
+        #data = {'x': b.rect.x, 'y': b.rect.y, 'shutdirection' : b.shutdirection, 'bum': b.bum}
+        for bullet_item in bullets_list:
+            x = bullet_item['x']
+            y = bullet_item['y']
+            shutdirection = bullet_item['shutdirection']
+            bum = bullet_item['bum']
+            #bul_image = bullet_draw(x, y, shutdirection, bum)
+            #bullets.append(bul_image)
+
         # обновление всех объектов
         #players.update( blocks.sprites() + monsters.sprites())
         #players_bullets.update( blocks.sprites() + monsters.sprites() + monsters_bullets.sprites())
@@ -234,7 +236,7 @@ def main():
             screen.blit(e.image, camera.apply(e))
 
         # выводим FPS
-        label = font.render(' %.2f ' % timer.get_fps(), True, (255,255,255), (0,0,0))
+        label = font.render(' %.2f, %d' % (timer.get_fps(), len(game_client.imes)), True, (255,255,255), (0,0,0))
         screen.blit(label, (1, 1))
 
         # обновление и вывод всех изменений на экран
