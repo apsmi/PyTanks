@@ -202,7 +202,7 @@ def main():
             screen.blit(e.image, camera.apply(e))
 
         # выводим строчку с инфой
-        label = font.render(' fps=%.2f, len_queue=%d, dropped_frames=%d, empty_queue=%d' % (timer.get_fps(), len(game_client.imes), dropped_frames, empty_queue), True, (255,255,255), (0,0,0))
+        label = font.render(' fps=%.2f, len_queue=%d, dropped_frames=%d, empty_queue=%d ' % (timer.get_fps(), len(game_client.imes), dropped_frames, empty_queue), True, (255,255,255), (0,0,0))
         screen.blit(label, (1, 1))
 
         # обновление и вывод всех изменений на экран

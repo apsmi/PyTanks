@@ -41,7 +41,10 @@ class Tank(sprite.Sprite):
 
         # надпись
         font_obj = font.Font(None, 18)
-        self.label = font_obj.render(id, True, (255,255,255))
+        if team == "green":
+            self.label = font_obj.render(id, True, Color("green"))
+        else:
+            self.label = font_obj.render(id, True, Color("yellow"))
 
         # автарка танка
         self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
