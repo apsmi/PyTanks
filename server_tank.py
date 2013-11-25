@@ -1,22 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from pygame import sprite, Surface, Rect, image, Color, transform
-
-import pyganim
-
+from pygame import sprite, Rect
 
 class Tank_config():
     """
       Данный класс описывает конфигурацию танка. Содержит только те свойства, которые влияют на поведение танка.
     """
-    def __init__(self, x, y):
+    def __init__(self, x, y, speed, lifes, dead_count):
+        self.dead_count = dead_count
         self.START_X = x                         # начальные координаты по горизрнтали
         self.START_Y = y                         # начальные координаты по вертикали
-        self.MOVE_SPEED_X = 2                     # скорость перемещения по горизонтали
-        self.MOVE_SPEED_Y = 2                     # скорость перемещения по вертикали
+        self.MOVE_SPEED = speed                     # скорость перемещения
         self.WIDTH = 28                           # ширина аватарки
         self.HEIGHT = 28                          # высота автарки
-        self.lifeStart = 1                        # количество жизней танка
+        self.lifeStart = lifes                        # количество жизней танка
         self.last = {}                            #x,y,course,shutdirection
 
 class Tank(sprite.Sprite):
@@ -42,7 +39,7 @@ class Tank(sprite.Sprite):
 
         # если танк взорвали
         if (self.dead > 0):
-            if (self.dead < 30):
+            if (self.dead < self.config.dead_count):
 
                 self.dead += 1 # счетчик кадров анимации взрыва
 
@@ -61,12 +58,12 @@ class Tank(sprite.Sprite):
             # движение влево
             if self.course == "left":
                 self.shutdirection = "left"                                  # изменяем направление выстрела
-                self.xvel = -self.config.MOVE_SPEED_X                        # текущая скорость движения
+                self.xvel = -self.config.MOVE_SPEED                        # текущая скорость движения
 
             # движение вправо
             elif self.course == "right":
                 self.shutdirection = "right"
-                self.xvel = self.config.MOVE_SPEED_X
+                self.xvel = self.config.MOVE_SPEED
 
             # стоим, когда нет указаний идти вправо - влево
             else:
@@ -78,12 +75,12 @@ class Tank(sprite.Sprite):
             # движение вверх
             if self.course == "up":
                 self.shutdirection = "up"
-                self.yvel = -self.config.MOVE_SPEED_Y
+                self.yvel = -self.config.MOVE_SPEED
 
             # движение вниз
             elif self.course == "down":
                 self.shutdirection = "down"
-                self.yvel = self.config.MOVE_SPEED_Y
+                self.yvel = self.config.MOVE_SPEED
 
             # стоим, когда нет указаний идти вверх - вниз
             else:

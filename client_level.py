@@ -10,7 +10,7 @@
 import pygame
 from client_blocks import Block
 
-def gen_client_level(blocks_list):
+def gen_client_level(blocks_list, block_demage):
 
     blocks = pygame.sprite.Group()
 
@@ -25,7 +25,7 @@ def gen_client_level(blocks_list):
         y = block["y"]
         type = block["type"]
 
-        b = Block(id, x, y, type)
+        b = Block(id, x, y, type, block_demage)
         blocks.add(b)
 
     return blocks

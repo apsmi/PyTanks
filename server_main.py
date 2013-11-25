@@ -7,13 +7,13 @@ PLAYERS_COUNT = 1
 SERVER_ADDRESS = ''
 SERVER_PORT = 80
 
-LEVEL_H = 20
-LEVEL_W = 25
+LEVEL_H = 40
+LEVEL_W = 40
 
 BLOCK_SIZE = 32
+BLOCK_DEMAGE = 8
 
-WINDOW_H = 640
-WINDOW_W = 800
+FRAME_RATE = 30
 
 import asyncore
 import time
@@ -27,16 +27,19 @@ from server_tank import Tank, Tank_config
 from server_socket_loop import Socket_Loop
 from server_bullet import Bullet
 
+# подготовка пакета к передаче
 def pack_data(data):
     tmp = pickle.dumps(data)
     l = len(tmp)
     return struct.pack('L', l) + tmp
 
 # основная функция сервера
-def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BLOCK_SIZE, WINDOW_H, WINDOW_W):
+def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BLOCK_SIZE, BLOCK_DEMAGE, FRAME_RATE):
 
     # серверный сокет
     game_server = Game_Server_UDP(SERVER_ADDRESS, SERVER_PORT)
+    print("Server started on %s:%d" % (SERVER_ADDRESS, SERVER_PORT))
+    print("Waiting for %d players..." % PLAYERS_COUNT)
 
     #запускаем цикл опроса сокетов
     socket_loop_thread = Socket_Loop(asyncore.loop, 0.01)
@@ -48,7 +51,7 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BL
     # создаем уровень
     level_height = LEVEL_H
     level_width = LEVEL_W
-    blocks, total_level_width, total_level_height = gen_level(level_height,level_width)
+    blocks, total_level_width, total_level_height = gen_level(level_height,level_width, BLOCK_DEMAGE)
 
     # группы объектов
     players_yellow = pygame.sprite.Group()
@@ -62,9 +65,9 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BL
 
     # создаем героев
     for player in game_server.players:
-        x = random.randint(BLOCK_SIZE, WINDOW_W - 2 * BLOCK_SIZE)
-        y = random.randint(BLOCK_SIZE, WINDOW_H - 2 * BLOCK_SIZE)
-        player_config = Tank_config(x, y)
+        x = random.randint(BLOCK_SIZE, (LEVEL_W - 2) * BLOCK_SIZE)
+        y = random.randint(BLOCK_SIZE, (LEVEL_H - 2) * BLOCK_SIZE)
+        player_config = Tank_config(x=x, y=y, speed=2, lifes=1, dead_count=30)
         player_sprite = Tank(player_config)
         player.sprite = player_sprite
         if player.team == 'green':
@@ -72,12 +75,17 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BL
         elif player.team == 'yellow':
             players_yellow.add(player_sprite)
 
+    # отправить идентификаторы игрокам
+    for player in game_server.players:
+        message = pack_data(player.addr[0])
+        player.obuffer += message
+
     # отправить начальную конфигурацию уровня
     dataframe = {}
 
-    # передаем размеры уровня
-    dataframe['level'] = {'total_width': total_level_width, 'total_height': total_level_height, 'width': level_width,
-                          'height': level_height}
+    # передаем параметры
+    dataframe['params'] = {'total_width': total_level_width, 'total_height': total_level_height, 'width': level_width,
+                          'height': level_height, 'block_demage': BLOCK_DEMAGE}
 
     #блоки
     dataframe['blocks'] = []
@@ -88,7 +96,7 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BL
     #игроки
     dataframe['players'] = []
     for player in game_server.players:
-        data = {'id' : player.addr[0], 'x' : player.sprite.rect.x, 'y' : player.sprite.rect.y, 'team' : player.team}
+        data = {'id' : player.addr[0], 'x' : player.sprite.rect.x, 'y' : player.sprite.rect.y, 'team' : player.team, 'dead_count': player.sprite.config.dead_count}
         dataframe['players'].append(data)
 
     # упаковываем данные
@@ -96,7 +104,7 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BL
 
     # отправляем
     for player in game_server.players:
-        player.obuffer = message
+        player.obuffer += message
 
     # таймер
     timer = pygame.time.Clock()
@@ -107,11 +115,21 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BL
     # Основной цикл программы
     while 1:
 
-        timer.tick(30)                    # таймер на 30 кадров
-        print(' %.2f ' % timer.get_fps()) # вывод fps
+        timer.tick(FRAME_RATE)                    # таймер на 30 кадров
+        print('\rserver FPS: %.2f   ' % timer.get_fps(), end='') # вывод fps
 
         # цикл по всем игрокам
         for player in game_server.players:
+
+            if player.socket._closed:
+                print('\nDisconnected client %s:%d, team: %s' % (player.addr[0], player.addr[1], player.team))
+                game_server.players.remove(player)
+                game_server.player_count -= 1
+                if game_server.player_count <= 0:
+                    pygame.quit()
+                    game_server.close()
+                    print("All players disconnected")
+                    return
 
             # очередь событий текущего игрока
             event_queue = player.imes
@@ -200,6 +218,6 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BL
 
         # отправляем
         for player in game_server.players:
-            player.obuffer = message
+            player.obuffer += message
 
-server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BLOCK_SIZE, WINDOW_H, WINDOW_W)
+server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BLOCK_SIZE, BLOCK_DEMAGE, FRAME_RATE)

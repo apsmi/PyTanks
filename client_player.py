@@ -1,32 +1,45 @@
 # -*- coding: utf-8 -*-
+__author__ = 'apsmi'
 
-# player states
+import asynchat, socket, struct, pickle
 
 IN_BUF_SIZE = 16384   # размер  входящего буфера сокета
 OUT_BUF_SIZE = 16384  # размер исходящего буфера сокета
-LEN_TERM = 4          # размера первой части сообщения, содержащего длину - одно целое число 4 байта
 
-import asynchat
-import struct
-import pickle
+LEN_TERM = 4
 
-# серверный экземпляр клиента
-class Game_Client(asynchat.async_chat):
+# сокет, принимающий соединение от клиентов
+class Client(asynchat.async_chat):
 
-    def __init__(self, sock, addr):
-        asynchat.async_chat.__init__(self, sock=sock)
+    def __init__(self, addr):
+        asynchat.async_chat.__init__(self)
+
+        self.create_socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.bind(('', 0))
+        client_port = self.socket.getsockname()[1]
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.bind(('', 0))
+        sock.sendto(struct.pack('L', client_port), addr)
+
+        # получем серверный udp порт
+        buf, _ = sock.recvfrom(4)
+        server_port = struct.unpack('L',buf)[0]
+        sock.close()
+
         self.ac_in_buffer_size = IN_BUF_SIZE
         self.ac_out_buffer_size = OUT_BUF_SIZE
-        self.addr = addr
+
+        self.addr = (addr[0], server_port)
         self.ibuffer = []
         self.obuffer = b""
-        self.imes = b""
+        self.imes = [] #b""
         self.set_terminator(LEN_TERM)
-
         self.state = "len"
-        self.team = ""
-        self.sprite = 0
-        self.last = {}
+
+    def handle_close(self):
+        print(self.socket.getsockname())
+        self.close()
 
     def writable(self):
         return len(self.obuffer) > 0
@@ -48,7 +61,6 @@ class Game_Client(asynchat.async_chat):
         elif self.state == "data":
             self.state = "len"
             self.set_terminator(LEN_TERM)
-            self.imes = pickle.loads(dataframe)
-
+            self.imes.append(pickle.loads(dataframe))
             if self.imes == "exit":
                 self.close()

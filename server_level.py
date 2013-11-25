@@ -11,7 +11,7 @@ import random
 import pygame
 from server_blocks import Block, PLATFORM_HEIGHT, PLATFORM_WIDTH
 
-def gen_level(height, width):
+def gen_level(height, width, demage):
 
     level = []
 
@@ -43,7 +43,7 @@ def gen_level(height, width):
         for col in row: # столбцы
 
             if col == "-" or col == "*":
-                pf = Block(x,y,col,id)
+                pf = Block(x,y,col,id, demage)
                 id += 1
                 blocks.add(pf)
 

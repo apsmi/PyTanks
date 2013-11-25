@@ -2,6 +2,7 @@
 
 from pygame import sprite, Rect
 
+BUM_COUNT = 15
 
 class Bullet(sprite.Sprite):
     def __init__(self, id, x, y, shutdirection):
@@ -84,7 +85,7 @@ class Bullet(sprite.Sprite):
         self.collide(0, self.yvel, obstructions)#проверяем столкновения
 
         if (0 < self.bum):
-            if (self.bum < 20):
+            if (self.bum < BUM_COUNT):
                 self.rect = Rect(self.rect.left, self.rect.top, self.BUM_WIDTH, self.BUM_HEIGHT) # прямоугольный объект
                 self.bum += 1
             else:

@@ -2,6 +2,9 @@ __author__ = 'cam'
 
 from pygame import *
 
+WINDOW_W = 800
+WINDOW_H = 640
+
 class Camera(object):
     def __init__(self, camera_func, width, height):
         self.camera_func = camera_func
@@ -17,11 +20,11 @@ class Camera(object):
 def camera_configure(camera, target_rect):
     l, t, _, _ = target_rect
     _, _, w, h = camera
-    l, t = -l+800 / 2, -t+600 / 2
+    l, t = -l+WINDOW_W / 2, -t+WINDOW_H / 2
 
     l = min(0, l)                           # Не движемся дальше левой границы
-    l = max(-(camera.width-800), l)         # Не движемся дальше правой границы
-    t = max(-(camera.height-600), t)        # Не движемся дальше нижней границы
+    l = max(-(camera.width-WINDOW_W), l)         # Не движемся дальше правой границы
+    t = max(-(camera.height-WINDOW_H), t)        # Не движемся дальше нижней границы
     t = min(0, t)                           # Не движемся дальше верхней границы
 
     return Rect(l, t, w, h)

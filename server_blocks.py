@@ -9,7 +9,7 @@ class Block(sprite.Sprite):
     """
         Данный класс описывает блоки
     """
-    def __init__(self, x, y, type, id):
+    def __init__(self, x, y, type, id, demage):
         sprite.Sprite.__init__(self)
         self.rect = Rect(x, y, PLATFORM_WIDTH, PLATFORM_HEIGHT) # размеры блока
         self.type = type
@@ -17,6 +17,7 @@ class Block(sprite.Sprite):
         self.shooted = False
         self.dead = False
         self.shootdirection = ""
+        self.demage = demage
 
     def die(self, shutdirection):
 
@@ -33,13 +34,13 @@ class Block(sprite.Sprite):
 
             # уменьшаем размер блока с соответсвующего направления
             if shutdirection == "left":
-                self.rect = Rect(x, y, w-8, h)
+                self.rect = Rect(x, y, w-self.demage, h)
             elif shutdirection == "right":
-                self.rect = Rect(x+8, y, w-8, h)
+                self.rect = Rect(x+self.demage, y, w-self.demage, h)
             if shutdirection == "up":
-                self.rect = Rect(x, y, w, h-8)
+                self.rect = Rect(x, y, w, h-self.demage)
             if shutdirection == "down":
-                self.rect = Rect(x, y+8, w, h-8)
+                self.rect = Rect(x, y+self.demage, w, h-self.demage)
 
             # если блок уничтожен совсем, удаляем его из всех групп
             if (self.rect.width == 0) or (self.rect.height == 0):

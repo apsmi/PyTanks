@@ -23,7 +23,6 @@ class Game_Server_UDP(asyncore.dispatcher):
         # получем номер клиентского порта
         data, addr = self.recvfrom(4)
         client_port = struct.unpack('L',data)[0]
-        print("Connected %s:%d, client port %d" % (addr[0], addr[1], client_port))
 
         # создаем UPD сокет для клиента
         socket_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -43,3 +42,5 @@ class Game_Server_UDP(asyncore.dispatcher):
             player.team = "green"
         else:
             player.team = "yellow"
+
+        print("Connected client %s:%d, team: %s" % (addr[0], addr[1], player.team))
