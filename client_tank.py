@@ -40,7 +40,7 @@ class Tank(sprite.Sprite):
         self.COLOR =  "#000000"             # цвет фона аватарки
 
         # надпись
-        font_obj = font.Font(None, 18)
+        font_obj = font.Font('freesansbold.ttf', 12)
         if team == "green":
             self.label = font_obj.render(id, True, Color("green"))
         else:

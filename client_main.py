@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pygame
+import pygame._view
 import time
 import asyncore
 import pickle
@@ -14,12 +15,13 @@ from client_socket_loop import Socket_Loop
 from client_camera import  camera_configure, Camera
 from client_tank import Tank, Tank_config
 
-SERVER_ADDR = '10.12.129.70'
+#SERVER_ADDR = '10.12.129.70'
+SERVER_ADDR = 'localhost'
 SERVER_PORT_DISP = 80
 WINDOW_W = 800
 WINDOW_H = 640
+
 MAX_LEN_QUEUE = 3
-FRAME_RATE = 30
 
 def window_init(width, height, color, caption):
     display = (width, height)                   # Группируем ширину и высоту в одну переменную
@@ -34,7 +36,7 @@ def pack_data(data):
     l = len(tmp)
     return struct.pack('L', l) + tmp
 
-def main():
+def client_main(WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP):
 
     # Инициация PyGame, обязательная строчка
     pygame.init()
@@ -64,6 +66,8 @@ def main():
         time.sleep(1)
 
     init_data = game_client.imes.pop(0)
+
+    FRAME_RATE = init_data['params']['frame_rate']
     #['params'] = {'total_width': total_level_width, 'total_height': total_level_height, 'width': level_width,
     #                      'height': level_height, 'block_demage': BLOCK_DEMAGE}
 
@@ -74,7 +78,8 @@ def main():
     blocks = gen_client_level(init_data['blocks'], init_data['params']['block_demage'])
 
     # создаем героев
-    # {'id' : player.addr[0], 'x' : player.sprite.rect.x, 'y' : player.sprite.rect.y, 'team' : player.team, 'dead_count': player.config.dead_count}
+    # {'id' : player.addr[0], 'x' : player.sprite.rect.x, 'y' : player.sprite.rect.y,
+    # 'team' : player.team, 'dead_count': player.config.dead_count}
     players_list = init_data['players']
     for player_item in players_list:
         x = player_item['x']
@@ -89,13 +94,13 @@ def main():
             i_am = player
 
     #создаем камеру
-    camera = Camera(camera_configure, total_level_width, total_level_height)
+    camera = Camera(camera_configure, total_level_width, total_level_height, WINDOW_W, WINDOW_H)
 
     # таймер
     timer = pygame.time.Clock()
 
     # надпись
-    font = pygame.font.Font(None, 18)
+    font = pygame.font.Font('freesansbold.ttf', 12)
 
     dropped_frames = 0
     empty_queue = 0
@@ -179,7 +184,7 @@ def main():
                 b = Bullet(id, x, y, shutdirection)
                 players_bullets.add(b)
 
-        camera.update(i_am) # центризируем камеру относительно персонажа
+        camera.update(i_am, WINDOW_W, WINDOW_H) # центризируем камеру относительно персонажа
 
         # Каждую итерацию необходимо всё перерисовывать
         screen.blit(bg, (0,0))
@@ -208,5 +213,4 @@ def main():
         # обновление и вывод всех изменений на экран
         pygame.display.update()
 
-if __name__ == "__main__":
-    main()
+client_main(WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP)

@@ -86,7 +86,7 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BL
 
     # передаем параметры
     dataframe['params'] = {'total_width': total_level_width, 'total_height': total_level_height, 'width': level_width,
-                          'height': level_height, 'block_demage': BLOCK_DEMAGE}
+                          'height': level_height, 'block_demage': BLOCK_DEMAGE, 'frame_rate': FRAME_RATE}
 
     #блоки
     dataframe['blocks'] = []
@@ -211,8 +211,6 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BL
         for b in players_yellow_bullets.sprites() + players_green_bullets.sprites():
             data = {'id': b.id, 'x': b.rect.x, 'y': b.rect.y, 'shutdirection' : b.shutdirection, 'bum': b.bum}
             dataframe['bullets'].append(data)
-            if b.dead:
-                b.kill()
 
         # упаковываем данные
         message = pack_data(dataframe)
