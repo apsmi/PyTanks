@@ -1,15 +1,14 @@
-#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
 __author__ = 'apsmi'
 
-PLAYERS_COUNT = 1
+#PLAYERS_COUNT = 1
 
-SERVER_ADDRESS = ''
-SERVER_PORT = 80
+#SERVER_ADDRESS = ''
+#SERVER_PORT = 80
 
-LEVEL_H = 40
-LEVEL_W = 40
+#LEVEL_H = 40
+#LEVEL_W = 40
 
 BLOCK_SIZE = 32
 BLOCK_DEMAGE = 8
@@ -25,7 +24,7 @@ import struct
 from server_dispatcher import Game_Server_UDP
 from server_level import gen_level
 from server_tank import Tank, Tank_config
-from server_socket_loop import Socket_Loop
+from MyThread import MyThread
 from server_bullet import Bullet
 
 # подготовка пакета к передаче
@@ -35,7 +34,7 @@ def pack_data(data):
     return struct.pack('L', l) + tmp
 
 # основная функция сервера
-def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BLOCK_SIZE, BLOCK_DEMAGE, FRAME_RATE):
+def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
 
     # серверный сокет
     game_server = Game_Server_UDP(SERVER_ADDRESS, SERVER_PORT)
@@ -43,7 +42,7 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BL
     print("Waiting for %d players..." % PLAYERS_COUNT)
 
     #запускаем цикл опроса сокетов
-    socket_loop_thread = Socket_Loop(asyncore.loop, 0.01)
+    socket_loop_thread = MyThread(asyncore.loop, 0.01)
     socket_loop_thread.start()
 
     # инициализация pygame
@@ -219,4 +218,4 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BL
         for player in game_server.players:
             player.obuffer += message
 
-server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W, BLOCK_SIZE, BLOCK_DEMAGE, FRAME_RATE)
+#server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W)

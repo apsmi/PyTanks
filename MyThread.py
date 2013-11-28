@@ -3,9 +3,9 @@ __author__ = 'apsmi'
 
 import threading
 
-class Socket_Loop(threading.Thread):
+class MyThread(threading.Thread):
 
-    def __init__(self, function, arg):
+    def __init__(self, function, *arg):
         threading.Thread.__init__(self)
         self.function = function
         self.arg = arg

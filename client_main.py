@@ -11,7 +11,7 @@ from pygame import Surface, Color
 from client_player import Client
 from client_level import gen_client_level
 from client_bullet import Bullet
-from client_socket_loop import Socket_Loop
+from MyThread import MyThread
 from client_camera import  camera_configure, Camera
 from client_tank import Tank, Tank_config
 
@@ -53,7 +53,7 @@ def client_main(WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP):
     game_client = Client((SERVER_ADDR, SERVER_PORT_DISP))
 
     # запускаем цикл опроса сокетов
-    socket_loop_thread = Socket_Loop(asyncore.loop, 0.01)
+    socket_loop_thread = MyThread(asyncore.loop, 0.01)
     socket_loop_thread.start()
 
     # получаем собственный идентификатор
