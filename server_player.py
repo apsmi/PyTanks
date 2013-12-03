@@ -27,6 +27,7 @@ class Game_Client(asynchat.async_chat):
         self.team = ""
         self.sprite = 0
         self.last = {}
+        self.id = ""
 
     def writable(self):
         return len(self.obuffer) > 0
@@ -49,6 +50,10 @@ class Game_Client(asynchat.async_chat):
             self.state = "len"
             self.set_terminator(LEN_TERM)
             self.imes = pickle.loads(dataframe)
+
+            if self.id == "":
+                self.id = self.imes
+                self.imes = ""
 
             if self.imes == "exit":
                 self.close()

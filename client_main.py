@@ -16,10 +16,10 @@ from client_camera import  camera_configure, Camera
 from client_tank import Tank, Tank_config
 
 #SERVER_ADDR = '10.12.129.70'
-SERVER_ADDR = 'localhost'
-SERVER_PORT_DISP = 80
-WINDOW_W = 800
-WINDOW_H = 640
+#SERVER_ADDR = 'localhost'
+#SERVER_PORT_DISP = 80
+#WINDOW_W = 800
+#WINDOW_H = 640
 
 MAX_LEN_QUEUE = 3
 
@@ -36,14 +36,14 @@ def pack_data(data):
     l = len(tmp)
     return struct.pack('L', l) + tmp
 
-def client_main(WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP):
+def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, player_name):
 
     # Инициация PyGame, обязательная строчка
-    pygame.init()
-    pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
+    #pygame.init()
+    #pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
 
     #  инициализация окна
-    bg, screen = window_init(WINDOW_W, WINDOW_H, "#000000", "PyTanks")
+    #bg, screen = window_init(WINDOW_W, WINDOW_H, "#000000", "PyTanks")
 
     # группы объектов
     players = pygame.sprite.Group()
@@ -53,8 +53,12 @@ def client_main(WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP):
     game_client = Client((SERVER_ADDR, SERVER_PORT_DISP))
 
     # запускаем цикл опроса сокетов
-    socket_loop_thread = MyThread(asyncore.loop, 0.01)
+    socket_loop_thread = MyThread(asyncore.loop, [0.01])
     socket_loop_thread.start()
+
+    # отправляем серверу свое имя
+    message = pack_data(player_name)
+    game_client.obuffer = message
 
     # получаем собственный идентификатор
     while len(game_client.imes) <= 0:
@@ -213,4 +217,4 @@ def client_main(WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP):
         # обновление и вывод всех изменений на экран
         pygame.display.update()
 
-client_main(WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP)
+#client_main(background, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, player_name)

@@ -16,8 +16,10 @@ BLOCK_DEMAGE = 8
 FRAME_RATE = 30
 
 import asyncore
+import argparse
 import time
 import pygame
+import pygame._view
 import random
 import pickle
 import struct
@@ -42,7 +44,7 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
     print("Waiting for %d players..." % PLAYERS_COUNT)
 
     #запускаем цикл опроса сокетов
-    socket_loop_thread = MyThread(asyncore.loop, 0.01)
+    socket_loop_thread = MyThread(asyncore.loop, [0.01] )
     socket_loop_thread.start()
 
     # инициализация pygame
@@ -77,7 +79,7 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
 
     # отправить идентификаторы игрокам
     for player in game_server.players:
-        message = pack_data(player.addr[0])
+        message = pack_data(player.id)
         player.obuffer += message
 
     # отправить начальную конфигурацию уровня
@@ -96,7 +98,7 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
     #игроки
     dataframe['players'] = []
     for player in game_server.players:
-        data = {'id' : player.addr[0], 'x' : player.sprite.rect.x, 'y' : player.sprite.rect.y, 'team' : player.team, 'dead_count': player.sprite.config.dead_count}
+        data = {'id' : player.id, 'x' : player.sprite.rect.x, 'y' : player.sprite.rect.y, 'team' : player.team, 'dead_count': player.sprite.config.dead_count}
         dataframe['players'].append(data)
 
     # упаковываем данные
@@ -198,7 +200,7 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
         #игроки
         dataframe['players'] = []
         for player in game_server.players:
-            current = {'id': player.addr[0], 'x': player.sprite.rect.x, 'y': player.sprite.rect.y,
+            current = {'id': player.id, 'x': player.sprite.rect.x, 'y': player.sprite.rect.y,
                         'course': player.sprite.course, 'shutdirection': player.sprite.shutdirection,
                         'dead': player.sprite.dead}
             if player.last != current :
@@ -218,4 +220,14 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
         for player in game_server.players:
             player.obuffer += message
 
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-p", "--port", help="port of the game server", type=int, required=True)
+parser.add_argument("-c", "--count", help="count of players waiting to connect", type=int, required=True)
+parser.add_argument("-v", "--vertical", help="vertical size (height) of world in blocks", type=int, required=True)
+parser.add_argument("-w", "--width", help="width of world in blocks", type=int, required=True)
+#args = parser.parse_args()
+
 #server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W)
+server_main(1, "", 80, 30, 30)
+server_main(args.count, "", args.port, args.vertical, args.width)

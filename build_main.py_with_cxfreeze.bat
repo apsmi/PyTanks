@@ -1,8 +1,8 @@
-python C:\Python32\Scripts\cxfreeze main.py --target-dir ../build --target-name=PyTanks.exe --icon=icon.ico
-mkdir ..\build\tanks
-mkdir ..\build\shut
-mkdir ..\build\blocks
-cp tanks/* ../build/tanks/
-cp shut/* ../build/shut/
-cp blocks/* ../build/blocks/
-cp freesansbold.ttf ../build/
+python C:\Python32\Scripts\cxfreeze main.py --target-dir ../build/PyTanksClient/ --target-name=PyTanks.exe -O --icon=icon.ico
+mkdir ..\build\PyTanksClient\tanks
+mkdir ..\build\PyTanksClient\shut
+mkdir ..\build\PyTanksClient\blocks
+cp tanks/* ../build/PyTanksClient/tanks/
+cp shut/* ../build/PyTanksClient/shut/
+cp blocks/* ../build/PyTanksClient/blocks/
+cp freesansbold.ttf ../build/PyTanksClient/
