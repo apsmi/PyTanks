@@ -59,7 +59,7 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
     print("Waiting for %d players..." % PLAYERS_COUNT)
 
     #запускаем цикл опроса сокетов
-    socket_loop_thread = MyThread(asyncore.loop, [0.01] )
+    socket_loop_thread = MyThread(asyncore.loop, [0.01])
     socket_loop_thread.start()
 
     # таймер
@@ -87,11 +87,11 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
                     print('\nDisconnected client %s:%d, team: %s' % (player.addr[0], player.addr[1], player.team))
                     game_server.players.remove(player)
                     game_server.player_count -= 1
-                    if game_server.player_count <= 0:
-                        pygame.quit()
-                        game_server.close()
-                        print("All players disconnected")
-                        return
+                    #if game_server.player_count <= 0:
+                        #pygame.quit()
+                        #game_server.close()
+                        #print("All players disconnected")
+                        #return
 
                 # очередь событий текущего игрока
                 event_queue = player.imes

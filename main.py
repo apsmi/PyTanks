@@ -83,7 +83,7 @@ def title_screen(background, screen, WINDOW_W, WINDOW_H):
                         return box_server.value, box_port.value, box_name.value
 
                 # если стрелки, двигаем курсор
-                elif e.key == pygame.K_DOWN:
+                elif (e.key == pygame.K_DOWN) or (e.key == pygame.K_TAB):
                     if selected == 'server':
                         selected = 'port'
                     elif selected == 'port':

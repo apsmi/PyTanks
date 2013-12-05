@@ -57,7 +57,7 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
     socket_loop_thread.start()
 
     # отправляем серверу свое имя
-    message = pack_data(player_name)
+    #message = pack_data(player_name)
     #game_client.obuffer = message
 
     # получаем собственный идентификатор
