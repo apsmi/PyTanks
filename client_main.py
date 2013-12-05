@@ -61,9 +61,9 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
     game_client.obuffer = message
 
     # получаем собственный идентификатор
-    while len(game_client.imes) <= 0:
-        time.sleep(1)
-    my_id = game_client.imes.pop(0)
+    #while len(game_client.imes) <= 0:
+        #time.sleep(1)
+    my_id = player_name
 
     # получаем первоначальную инфу
     while len(game_client.imes) <= 0:
@@ -113,7 +113,7 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
     while 1:
 
         if game_client.socket._closed:
-            pygame.quit()
+            #pygame.quit()
             return
 
         timer.tick(FRAME_RATE) # таймер на 30 кадров
@@ -123,7 +123,7 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
         for e in pygame.event.get():
             # выход
             if e.type == pygame.QUIT or (e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE):
-                pygame.quit()
+                #pygame.quit()
                 # упаковываем данные
                 message = pack_data("exit")
                 game_client.obuffer = message

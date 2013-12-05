@@ -3,7 +3,7 @@
 import pyganim
 from pygame import *
 
-BUM_COUNT = 15
+BUM_COUNT = 10
 
 class Bullet(sprite.Sprite):
     def __init__(self, id, x, y, shutdirection):

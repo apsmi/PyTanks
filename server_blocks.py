@@ -18,6 +18,7 @@ class Block(sprite.Sprite):
         self.dead = False
         self.shootdirection = ""
         self.demage = demage
+        self.hits = []
 
     def die(self, shutdirection):
 
@@ -25,6 +26,7 @@ class Block(sprite.Sprite):
         if self.type == "-":
             self.shooted = True
             self.shootdirection = shutdirection
+            self.hits.append(shutdirection)
 
             # если он разрушаемый
             x = self.rect.left

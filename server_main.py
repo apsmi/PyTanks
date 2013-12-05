@@ -38,15 +38,6 @@ def pack_data(data):
 # основная функция сервера
 def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
 
-    # серверный сокет
-    game_server = Game_Server_UDP(SERVER_ADDRESS, SERVER_PORT)
-    print("Server started on %s:%d" % (SERVER_ADDRESS, SERVER_PORT))
-    print("Waiting for %d players..." % PLAYERS_COUNT)
-
-    #запускаем цикл опроса сокетов
-    socket_loop_thread = MyThread(asyncore.loop, [0.01] )
-    socket_loop_thread.start()
-
     # инициализация pygame
     pygame.init()
 
@@ -61,58 +52,25 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
     players_green = pygame.sprite.Group()
     players_green_bullets = pygame.sprite.Group()
 
-    # ждем клиентов
-    while game_server.player_count < PLAYERS_COUNT:
-        time.sleep(1)
+    # серверный сокет
+    game_server = Game_Server_UDP(SERVER_ADDRESS, SERVER_PORT, BLOCK_SIZE, LEVEL_W, LEVEL_H, players_green, players_yellow,
+                    total_level_width, total_level_height, level_width, level_height, BLOCK_DEMAGE, FRAME_RATE, blocks)
+    print("Server started on %s:%d" % (SERVER_ADDRESS, SERVER_PORT))
+    print("Waiting for %d players..." % PLAYERS_COUNT)
 
-    # создаем героев
-    for player in game_server.players:
-        x = random.randint(BLOCK_SIZE, (LEVEL_W - 2) * BLOCK_SIZE)
-        y = random.randint(BLOCK_SIZE, (LEVEL_H - 2) * BLOCK_SIZE)
-        player_config = Tank_config(x=x, y=y, speed=2, lifes=1, dead_count=30)
-        player_sprite = Tank(player_config)
-        player.sprite = player_sprite
-        if player.team == 'green':
-            players_green.add(player_sprite)
-        elif player.team == 'yellow':
-            players_yellow.add(player_sprite)
-
-    # отправить идентификаторы игрокам
-    for player in game_server.players:
-        message = pack_data(player.id)
-        player.obuffer += message
-
-    # отправить начальную конфигурацию уровня
-    dataframe = {}
-
-    # передаем параметры
-    dataframe['params'] = {'total_width': total_level_width, 'total_height': total_level_height, 'width': level_width,
-                          'height': level_height, 'block_demage': BLOCK_DEMAGE, 'frame_rate': FRAME_RATE}
-
-    #блоки
-    dataframe['blocks'] = []
-    for b in blocks.sprites():
-        data = {'id' : b.id, 'x' : b.rect.x, 'y' : b.rect.y, 'type' : b.type}
-        dataframe['blocks'].append(data)
-
-    #игроки
-    dataframe['players'] = []
-    for player in game_server.players:
-        data = {'id' : player.id, 'x' : player.sprite.rect.x, 'y' : player.sprite.rect.y, 'team' : player.team, 'dead_count': player.sprite.config.dead_count}
-        dataframe['players'].append(data)
-
-    # упаковываем данные
-    message = pack_data(dataframe)
-
-    # отправляем
-    for player in game_server.players:
-        player.obuffer += message
+    #запускаем цикл опроса сокетов
+    socket_loop_thread = MyThread(asyncore.loop, [0.01] )
+    socket_loop_thread.start()
 
     # таймер
     timer = pygame.time.Clock()
 
     # id пули
     bullet_id = 0
+
+    # ждем первого клиента
+    while game_server.player_count == 0:
+        time.sleep(1)
 
     # Основной цикл программы
     while 1:
@@ -222,12 +180,12 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-p", "--port", help="port of the game server", type=int, required=True)
-parser.add_argument("-c", "--count", help="count of players waiting to connect", type=int, required=True)
-parser.add_argument("-v", "--vertical", help="vertical size (height) of world in blocks", type=int, required=True)
-parser.add_argument("-w", "--width", help="width of world in blocks", type=int, required=True)
-#args = parser.parse_args()
+parser.add_argument("-p", "--port", help="port of the game server, default=80", type=int, default=80)
+parser.add_argument("-c", "--count", help="count of players waiting to connect, default=2", type=int, default=2)
+parser.add_argument("-v", "--vertical", help="vertical size (height) of world in blocks, default=30", type=int, default=30)
+parser.add_argument("-w", "--width", help="width of world in blocks, default=30", type=int, default=30)
+args = parser.parse_args()
 
 #server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W)
-server_main(1, "", 80, 30, 30)
+#server_main(1, "", 80, 30, 30)
 server_main(args.count, "", args.port, args.vertical, args.width)
