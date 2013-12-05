@@ -81,59 +81,61 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
         # цикл по всем игрокам
         for player in game_server.players:
 
-            if player.socket._closed:
-                print('\nDisconnected client %s:%d, team: %s' % (player.addr[0], player.addr[1], player.team))
-                game_server.players.remove(player)
-                game_server.player_count -= 1
-                if game_server.player_count <= 0:
-                    pygame.quit()
-                    game_server.close()
-                    print("All players disconnected")
-                    return
+            if player.ready:
 
-            # очередь событий текущего игрока
-            event_queue = player.imes
+                if player.socket._closed:
+                    print('\nDisconnected client %s:%d, team: %s' % (player.addr[0], player.addr[1], player.team))
+                    game_server.players.remove(player)
+                    game_server.player_count -= 1
+                    if game_server.player_count <= 0:
+                        pygame.quit()
+                        game_server.close()
+                        print("All players disconnected")
+                        return
 
-            # цикл по всем событиям в очереди
-            for e in event_queue:
+                # очередь событий текущего игрока
+                event_queue = player.imes
 
-                type = e['type'] # тип события
-                key = e['key']   # нажатая клавиша
+                # цикл по всем событиям в очереди
+                for e in event_queue:
 
-                # нажатие клавиши на клавиатуре
-                if type == pygame.KEYDOWN:
+                    type = e['type'] # тип события
+                    key = e['key']   # нажатая клавиша
 
-                    # движение
-                    if key == pygame.K_LEFT:
-                        player.sprite.course = 'left'
-                    elif key == pygame.K_RIGHT:
-                        player.sprite.course = 'right'
-                    elif key == pygame.K_UP:
-                        player.sprite.course = 'up'
-                    elif key == pygame.K_DOWN:
-                        player.sprite.course = 'down'
+                    # нажатие клавиши на клавиатуре
+                    if type == pygame.KEYDOWN:
 
-                    # выстрел
-                    if key == pygame.K_SPACE and not player.sprite.isBullet:
-                        player_bullet = Bullet(bullet_id,player.sprite.rect.left,player.sprite.rect.top,player.sprite.shutdirection)
-                        bullet_id += 1
-                        player_bullet.shooter = player.sprite
-                        if player.team == 'green':
-                            players_green_bullets.add(player_bullet)
-                        elif player.team == 'yellow':
-                            players_yellow_bullets.add(player_bullet)
-                        player.sprite.isBullet = True
+                        # движение
+                        if key == pygame.K_LEFT:
+                            player.sprite.course = 'left'
+                        elif key == pygame.K_RIGHT:
+                            player.sprite.course = 'right'
+                        elif key == pygame.K_UP:
+                            player.sprite.course = 'up'
+                        elif key == pygame.K_DOWN:
+                            player.sprite.course = 'down'
 
-                # отпускание клавиши
-                if type == pygame.KEYUP:
-                    if (key == pygame.K_RIGHT) and (player.sprite.course == 'right'):
-                        player.sprite.course = ''
-                    elif (key == pygame.K_LEFT) and (player.sprite.course == 'left'):
-                        player.sprite.course = ''
-                    elif (key == pygame.K_UP) and (player.sprite.course == 'up'):
-                        player.sprite.course = ''
-                    elif (key == pygame.K_DOWN) and (player.sprite.course == 'down'):
-                        player.sprite.course = ''
+                        # выстрел
+                        if key == pygame.K_SPACE and not player.sprite.isBullet:
+                            player_bullet = Bullet(bullet_id,player.sprite.rect.left,player.sprite.rect.top,player.sprite.shutdirection)
+                            bullet_id += 1
+                            player_bullet.shooter = player.sprite
+                            if player.team == 'green':
+                                players_green_bullets.add(player_bullet)
+                            elif player.team == 'yellow':
+                                players_yellow_bullets.add(player_bullet)
+                            player.sprite.isBullet = True
+
+                    # отпускание клавиши
+                    if type == pygame.KEYUP:
+                        if (key == pygame.K_RIGHT) and (player.sprite.course == 'right'):
+                            player.sprite.course = ''
+                        elif (key == pygame.K_LEFT) and (player.sprite.course == 'left'):
+                            player.sprite.course = ''
+                        elif (key == pygame.K_UP) and (player.sprite.course == 'up'):
+                            player.sprite.course = ''
+                        elif (key == pygame.K_DOWN) and (player.sprite.course == 'down'):
+                            player.sprite.course = ''
 
         # обновление всех объектов (симуляция мира)
         players_yellow.update( blocks.sprites() + players_green.sprites() + players_yellow.sprites() )

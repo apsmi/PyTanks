@@ -58,7 +58,7 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
 
     # отправляем серверу свое имя
     message = pack_data(player_name)
-    game_client.obuffer = message
+    #game_client.obuffer = message
 
     # получаем собственный идентификатор
     #while len(game_client.imes) <= 0:
@@ -66,10 +66,16 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
     my_id = player_name
 
     # получаем первоначальную инфу
-    while len(game_client.imes) <= 0:
-        time.sleep(1)
+    flag = True
+    while flag:
+        if len(game_client.imes) > 0:
+            data = game_client.imes.pop(0)
+            if 'params' in data.keys():
+                init_data = data
+                flag = False
 
-    init_data = game_client.imes.pop(0)
+    #print(game_client.imes)
+    #init_data = game_client.imes.pop(0)
 
     FRAME_RATE = init_data['params']['frame_rate']
     #['params'] = {'total_width': total_level_width, 'total_height': total_level_height, 'width': level_width,

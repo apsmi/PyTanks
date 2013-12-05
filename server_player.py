@@ -28,6 +28,7 @@ class Game_Client(asynchat.async_chat):
         self.sprite = 0
         self.last = {}
         self.id = ""
+        self.ready = False
 
     def writable(self):
         return len(self.obuffer) > 0

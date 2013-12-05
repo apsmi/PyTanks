@@ -5,6 +5,7 @@ import socket
 import struct
 import pickle
 import random
+import time
 from server_tank import Tank, Tank_config
 from server_player import Game_Client
 
@@ -27,7 +28,7 @@ class Game_Server_UDP(asyncore.dispatcher):
         self.players = []     # список пдключенных клиентов
 
     # подготовка пакета к передаче
-    def pack_data(data):
+    def pack_data(self, data):
         tmp = pickle.dumps(data)
         l = len(tmp)
         return struct.pack('L', l) + tmp
@@ -82,6 +83,11 @@ class Game_Server_UDP(asyncore.dispatcher):
             data = {'id' : b.id, 'x' : b.rect.x, 'y' : b.rect.y, 'type' : b.type, 'hits': b.hits}
             dataframe['blocks'].append(data)
 
+        # ожидаем получения идентификатора создаваемого игрока
+        while player.id == "":
+            time.sleep(0.5)
+            player.id = str(self.player_count)
+
         #игроки
         dataframe['players'] = []
         for gamer in self.players:
@@ -93,5 +99,6 @@ class Game_Server_UDP(asyncore.dispatcher):
 
         # отправляем
         player.obuffer += message
+        player.ready = True
 
         print("Connected client %s:%d, team: %s" % (addr[0], addr[1], player.team))
