@@ -33,6 +33,7 @@ class Tank(sprite.Sprite):
         self.config = config
         self.id = id
         self.team = team
+        self.name = ""
 
         self.course = ""                 # направление движения
         self.shutdirection = "up"           # направление выстрела
@@ -40,11 +41,11 @@ class Tank(sprite.Sprite):
         self.COLOR =  "#000000"             # цвет фона аватарки
 
         # надпись
-        font_obj = font.Font('freesansbold.ttf', 12)
-        if team == "green":
-            self.label = font_obj.render(id, True, Color("green"))
-        else:
-            self.label = font_obj.render(id, True, Color("yellow"))
+        #font_obj = font.Font('freesansbold.ttf', 12)
+        #if team == "green":
+            #self.label = font_obj.render(id, True, Color("green"))
+        #else:
+            #self.label = font_obj.render(id, True, Color("yellow"))
 
         # автарка танка
         self.image = Surface((self.config.WIDTH,self.config.HEIGHT))

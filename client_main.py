@@ -63,7 +63,9 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
     # получаем собственный идентификатор
     #while len(game_client.imes) <= 0:
         #time.sleep(1)
-    my_id = player_name
+
+    #my_id = player_name
+    my_id = game_client.addr[1]
 
     # получаем первоначальную инфу
     flag = True
@@ -142,7 +144,8 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
                 event_queue.append(event_item)
 
         # упаковываем данные
-        message = pack_data(event_queue)
+        out_data = {'id': my_id, 'name': player_name, 'events': event_queue}
+        message = pack_data(out_data)
         game_client.obuffer = message
 
         # получаем очередной пакет данных
@@ -153,7 +156,7 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
                 dropped_frames += (l - 3)
             dataframe = game_client.imes.pop(0)
         else:
-            dataframe = {'blocks': [], 'players': [], 'bullets': []}
+            dataframe = {'blocks': [], 'players': [], 'bullets': [], 'disconnected': []}
             empty_queue += 1
 
         #блоки dataframe["blocks"] = {"id" : b.id, "shootdirection" : b.shootdirection}
@@ -164,16 +167,34 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
                     block.die(block_data['shootdirection'])
                     break
 
-        # игроки dataframe["players"] = { "id": player.addr[0], "x": player.sprite.rect.x, "y": player.sprite.rect.y,
-        #                                 "course": player.sprite.course, "shutdirection": player.sprite.shutdirection,
-        #                                 "dead": player.sprite.dead}
+        # dataframe['disconnected'] - отключившиеся игроки
+        disconnected = dataframe['disconnected']
+        for player in players.sprites():
+            if player.id in disconnected:
+                player.kill()
+
+        # игроки dataframe["players"] = {'id': player.id, 'name': player.name, 'x': player.sprite.rect.x, 'y': player.sprite.rect.y,
+        #                'course': player.sprite.course, 'shutdirection': player.sprite.shutdirection,
+        #                'dead': player.sprite.dead, 'team' : player.team, 'dead_count': player.sprite.config.dead_count}
         players_list = dataframe['players']
         for player_item in players_list:
+            found = False
             for player in players.sprites():
                 if player.id == player_item['id']:
+                    player.name = player_item['name']
                     player.update(player_item['x'], player_item['y'],
                                   player_item['course'], player_item['shutdirection'], player_item['dead'])
+                    found = True
                     break
+            if not found:
+                x = player_item['x']
+                y = player_item['y']
+                id = player_item['id']
+                team = player_item['team']
+                dead_count = player_item['dead_count']
+                tank_config = Tank_config(x, y, dead_count)
+                new_player = Tank(tank_config, id, team)
+                players.add(new_player)
 
         # пули
         #{'id': b.id, 'x': b.rect.x, 'y': b.rect.y, 'shutdirection' : b.shutdirection, 'bum': b.bum}
@@ -209,7 +230,11 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
         for e in entities:
             topleft = camera.apply(e)
             screen.blit(e.image, topleft)
-            screen.blit(e.label, (topleft[0], topleft[1]+28))
+            if e.team == "green":
+                label = font.render(e.name, True, Color("green"))
+            else:
+                label = font.render(e.name, True, Color("yellow"))
+            screen.blit(label, (topleft[0], topleft[1]+28))
 
         # рисование пуль
         entities = players_bullets.sprites()

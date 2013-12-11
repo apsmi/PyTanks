@@ -61,6 +61,9 @@ class Game_Server_UDP(asyncore.dispatcher):
         player_sprite = Tank(player_config)
         player.sprite = player_sprite
 
+        # идентификатор создаваемого игрока
+        player.id = server_port
+
         # определяем команду нового клиента
         if (self.player_count % 2) == 0 :
             player.team = "green"
@@ -82,11 +85,6 @@ class Game_Server_UDP(asyncore.dispatcher):
         for b in self.blocks.sprites():
             data = {'id' : b.id, 'x' : b.rect.x, 'y' : b.rect.y, 'type' : b.type, 'hits': b.hits}
             dataframe['blocks'].append(data)
-
-        # ожидаем получения идентификатора создаваемого игрока
-        while player.id == "":
-            time.sleep(0.5)
-            player.id = str(self.player_count)
 
         #игроки
         dataframe['players'] = []

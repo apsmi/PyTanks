@@ -78,13 +78,17 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
         timer.tick(FRAME_RATE)                    # таймер на 30 кадров
         print('\rserver FPS: %.2f   ' % timer.get_fps(), end='') # вывод fps
 
+        # отключившиеся игроки
+        disconnected = []
+
         # цикл по всем игрокам
         for player in game_server.players:
 
             if player.ready:
 
                 if player.socket._closed:
-                    print('\nDisconnected client %s:%d, team: %s' % (player.addr[0], player.addr[1], player.team))
+                    disconnected.append(player.id)
+                    print('\nDisconnected client %s:%d, team: %s, id: %d' % (player.addr[0], player.addr[1], player.team, player.id))
                     game_server.players.remove(player)
                     game_server.player_count -= 1
                     #if game_server.player_count <= 0:
@@ -93,8 +97,23 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
                         #print("All players disconnected")
                         #return
 
+                # очередной пакет данных текущего игрока
+                # формат:
+                # input_message = {'id': my_id, 'name': player_name, 'events': event_queue}
+                # event_queue = [ {'type': e.type, 'key': e.key}, ... ]
+
+
+                # получаем очередной пакет данных
+                l = len(player.imes)
+                if l > 0:
+                    input_message = player.imes.pop()
+                    player.imes = []
+                    player.name = input_message['name']
+                else:
+                    input_message = {'id': 0, 'name': "", 'events': []}
+
                 # очередь событий текущего игрока
-                event_queue = player.imes
+                event_queue = input_message['events']
 
                 # цикл по всем событиям в очереди
                 for e in event_queue:
@@ -158,11 +177,12 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
                 b.kill()
 
         #игроки
+        dataframe['disconnected'] = disconnected
         dataframe['players'] = []
         for player in game_server.players:
-            current = {'id': player.id, 'x': player.sprite.rect.x, 'y': player.sprite.rect.y,
+            current = {'id': player.id, 'name': player.name, 'x': player.sprite.rect.x, 'y': player.sprite.rect.y,
                         'course': player.sprite.course, 'shutdirection': player.sprite.shutdirection,
-                        'dead': player.sprite.dead}
+                        'dead': player.sprite.dead, 'team' : player.team, 'dead_count': player.sprite.config.dead_count}
             if player.last != current :
                 dataframe['players'].append(current)
             player.last = current
@@ -183,7 +203,7 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--port", help="port of the game server, default=80", type=int, default=80)
-parser.add_argument("-c", "--count", help="count of players waiting to connect, default=2", type=int, default=2)
+parser.add_argument("-c", "--count", help="count of players waiting to connect, default=2", type=int, default=10)
 parser.add_argument("-v", "--vertical", help="vertical size (height) of world in blocks, default=30", type=int, default=30)
 parser.add_argument("-w", "--width", help="width of world in blocks, default=30", type=int, default=30)
 args = parser.parse_args()
