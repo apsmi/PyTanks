@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
 from pygame import sprite, Rect
+import random
 
 class Tank_config():
     """
       Данный класс описывает конфигурацию танка. Содержит только те свойства, которые влияют на поведение танка.
     """
-    def __init__(self, x, y, speed, lifes, dead_count):
+    def __init__(self, min_x, max_x, min_y, max_y, speed, lifes, dead_count):
         self.dead_count = dead_count
-        self.START_X = x                         # начальные координаты по горизрнтали
-        self.START_Y = y                         # начальные координаты по вертикали
+        self.MIN_X = min_x                         # начальные координаты по горизрнтали
+        self.MAX_X = max_x                         # начальные координаты по горизрнтали
+        self.MIN_Y = min_y                         # начальные координаты по вертикали
+        self.MAX_Y = max_y                         # начальные координаты по вертикали
         self.MOVE_SPEED = speed                     # скорость перемещения
         self.WIDTH = 28                           # ширина аватарки
         self.HEIGHT = 28                          # высота автарки
@@ -32,7 +35,9 @@ class Tank(sprite.Sprite):
         self.yvel = 0                       # скорость движения по вертикали, 0 - не двигается
         self.dead = 0                       # счетчик кадров при смерти
 
-        self.rect = Rect(self.config.START_X, self.config.START_Y, self.config.WIDTH, self.config.HEIGHT) # прямоугольный объект
+        x = random.randint(self.config.MIN_X, self.config.MAX_X)
+        y = random.randint(self.config.MIN_Y, self.config.MAX_Y)
+        self.rect = Rect(x, y, self.config.WIDTH, self.config.HEIGHT) # прямоугольный объект
 
     def update(self,  obstructions):
 
@@ -45,8 +50,8 @@ class Tank(sprite.Sprite):
             else:
 
                 # закончили показывать взрыв, респауним танк
-                self.rect.x = self.config.START_X
-                self.rect.y = self.config.START_Y
+                self.rect.x = random.randint(self.config.MIN_X, self.config.MAX_X)
+                self.rect.y = random.randint(self.config.MIN_Y, self.config.MAX_Y)
                 self.dead = 0
                 self.course = ""
                 self.shutdirection = "up"

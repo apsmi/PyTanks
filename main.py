@@ -130,8 +130,9 @@ def title_screen(background, screen, WINDOW_W, WINDOW_H):
 
 def main():
 
-    WINDOW_W = 800
-    WINDOW_H = 640
+    WINDOW_W = 1280
+    WINDOW_W_Game = 1024
+    WINDOW_H = 800
 
     # Инициация PyGame, обязательная строчка
     pygame.init()
@@ -152,7 +153,7 @@ def main():
 
         else:
             # client_main(background, screen, SERVER_ADDR, SERVER_PORT_DISP)
-            client_main.client_main(background, screen, WINDOW_W, WINDOW_H, server, int(port), player_name)
+            client_main.client_main(background, screen, WINDOW_W_Game, WINDOW_H, server, int(port), player_name)
 
     pygame.quit()
     return

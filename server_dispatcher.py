@@ -4,8 +4,6 @@ import asyncore
 import socket
 import struct
 import pickle
-import random
-import time
 from server_tank import Tank, Tank_config
 from server_player import Game_Client
 
@@ -55,9 +53,11 @@ class Game_Server_UDP(asyncore.dispatcher):
         player = Game_Client(socket_udp, addr)
 
         # создаем спрайт нового клиента
-        x = random.randint(self.BLOCK_SIZE, (self.LEVEL_W - 2) * self.BLOCK_SIZE)
-        y = random.randint(self.BLOCK_SIZE, (self.LEVEL_H - 2) * self.BLOCK_SIZE)
-        player_config = Tank_config(x=x, y=y, speed=2, lifes=1, dead_count=15)
+        #x = random.randint(self.BLOCK_SIZE, (self.LEVEL_W - 2) * self.BLOCK_SIZE)
+        #y = random.randint(self.BLOCK_SIZE, (self.LEVEL_H - 2) * self.BLOCK_SIZE)
+        player_config = Tank_config(min_x=self.BLOCK_SIZE, max_x=(self.LEVEL_W - 2) * self.BLOCK_SIZE,
+                                    min_y=self.BLOCK_SIZE, max_y=(self.LEVEL_H - 2) * self.BLOCK_SIZE,
+                                    speed=2, lifes=1, dead_count=15)
         player_sprite = Tank(player_config)
         player.sprite = player_sprite
 

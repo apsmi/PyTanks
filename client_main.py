@@ -45,6 +45,9 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
     #  инициализация окна
     #bg, screen = window_init(WINDOW_W, WINDOW_H, "#000000", "PyTanks")
 
+    label_bg = Surface((WINDOW_W,WINDOW_H))
+    label_bg.fill((54,64,74))
+
     # группы объектов
     players = pygame.sprite.Group()
     players_bullets = pygame.sprite.Group()
@@ -241,9 +244,36 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
         for e in entities:
             screen.blit(e.image, camera.apply(e))
 
-        # выводим строчку с инфой
-        label = font.render(' fps=%.2f, len_queue=%d, dropped_frames=%d, empty_queue=%d ' % (timer.get_fps(), len(game_client.imes), dropped_frames, empty_queue), True, (255,255,255), (0,0,0))
-        screen.blit(label, (1, 1))
+        # выводим списки игроков
+        screen.blit(label_bg, (WINDOW_W,0))
+
+        label = font.render(' YELLOW team: ', True, Color("yellow"))
+        screen.blit(label, (WINDOW_W, 10))
+        i = 30
+        for player in players:
+            if player.team == "yellow":
+                label = font.render("     " + player.name, True, Color("yellow"))
+                screen.blit(label, (WINDOW_W, i))
+                i+=20
+        i += 20
+        label = font.render(' GREEN team: ', True, Color("green"))
+        screen.blit(label, (WINDOW_W, i))
+        i += 20
+        for player in players:
+            if player.team == "green":
+                label = font.render("     " + player.name, True, Color("green"))
+                screen.blit(label, (WINDOW_W, i))
+                i+=20
+
+        # выводим строчки со служебной инфой
+        label = font.render(' fps=%.2f ' % timer.get_fps(), True, (255,255,255))
+        screen.blit(label, (WINDOW_W, WINDOW_H - 60))
+        label = font.render(' len_queue=%d ' % len(game_client.imes), True, (255,255,255))
+        screen.blit(label, (WINDOW_W, WINDOW_H - 45))
+        label = font.render(' dropped_frames=%d ' % dropped_frames, True, (255,255,255))
+        screen.blit(label, (WINDOW_W, WINDOW_H - 30))
+        label = font.render(' empty_queue=%d ' % empty_queue, True, (255,255,255))
+        screen.blit(label, (WINDOW_W, WINDOW_H - 15))
 
         # обновление и вывод всех изменений на экран
         pygame.display.update()

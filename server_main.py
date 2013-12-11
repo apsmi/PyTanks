@@ -89,6 +89,7 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
                 if player.socket._closed:
                     disconnected.append(player.id)
                     print('\nDisconnected client %s:%d, team: %s, id: %d' % (player.addr[0], player.addr[1], player.team, player.id))
+                    player.sprite.kill()
                     game_server.players.remove(player)
                     game_server.player_count -= 1
                     #if game_server.player_count <= 0:
@@ -203,9 +204,9 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--port", help="port of the game server, default=80", type=int, default=80)
-parser.add_argument("-c", "--count", help="count of players waiting to connect, default=2", type=int, default=10)
-parser.add_argument("-v", "--vertical", help="vertical size (height) of world in blocks, default=30", type=int, default=30)
-parser.add_argument("-w", "--width", help="width of world in blocks, default=30", type=int, default=30)
+parser.add_argument("-c", "--count", help="count of players waiting to connect, default=20", type=int, default=20)
+parser.add_argument("-v", "--vertical", help="vertical size (height) of world in blocks, default=25", type=int, default=25)
+parser.add_argument("-w", "--width", help="width of world in blocks, default=32", type=int, default=32)
 args = parser.parse_args()
 
 #server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W)

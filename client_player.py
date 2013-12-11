@@ -3,8 +3,8 @@ __author__ = 'apsmi'
 
 import asynchat, socket, struct, pickle
 
-IN_BUF_SIZE = 16384   # размер  входящего буфера сокета
-OUT_BUF_SIZE = 16384  # размер исходящего буфера сокета
+IN_BUF_SIZE  = 128 * (2**10) # размер  входящего буфера сокета
+OUT_BUF_SIZE = 128 * (2**10) # размер исходящего буфера сокета
 
 LEN_TERM = 4
 

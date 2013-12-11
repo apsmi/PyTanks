@@ -84,6 +84,12 @@ class Tank(sprite.Sprite):
 
                 # закончили показывать взрыв, респауним танк
                 self.image = image.load(self.config.INIT_IMAGE)
+                #  Анимация движения
+                boltAnim = []
+                for anim in self.config.ANIMATION:
+                    boltAnim.append((anim, self.config.ANIMATION_DELAY))
+                self.boltAnimMove = pyganim.PygAnimation(boltAnim)
+                self.boltAnimMove.play()
 
         # направление
         else:
