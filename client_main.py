@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pygame
-import pygame._view
+#import pygame._view
 import time
 import asyncore
 import pickle

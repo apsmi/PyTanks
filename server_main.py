@@ -19,7 +19,7 @@ import asyncore
 import argparse
 import time
 import pygame
-import pygame._view
+#import pygame._view
 import random
 import pickle
 import struct

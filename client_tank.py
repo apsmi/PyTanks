@@ -14,12 +14,12 @@ class Tank_config():
         self.WIDTH = 28                           # ширина аватарки
         self.HEIGHT = 28                          # высота автарки
         self.ANIMATION_DELAY = 0.1                # скорость анимации аватарки
-        self.ANIMATION =     ['tanks\player1_1.png', # анимация при движении
-                              'tanks\player1_2.png']
-        self.ANIMATION_DIE = ['tanks\die_1.png',  # анимация при взрыве
-                              'tanks\die_2.png',
-                              'tanks\die_3.png']
-        self.INIT_IMAGE =     "tanks\player1_1.png"  # изображение при появлении танка
+        self.ANIMATION =     ['tanks/player1_1.png', # анимация при движении
+                              'tanks/player1_2.png']
+        self.ANIMATION_DIE = ['tanks/die_1.png',  # анимация при взрыве
+                              'tanks/die_2.png',
+                              'tanks/die_3.png']
+        self.INIT_IMAGE =     "tanks/player1_1.png"  # изображение при появлении танка
 
 
 class Tank(sprite.Sprite):

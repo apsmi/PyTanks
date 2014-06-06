@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pygame._view
+#import pygame._view
+import os
 import pygame
 import pyganim
 import eztext
@@ -44,10 +45,10 @@ def title_screen(background, screen, WINDOW_W, WINDOW_H):
     err_x = WINDOW_W/2 - label_error.get_width()/2
 
     # танчик-курсор
-    cursor = pygame.image.load('tanks\player1_1.png')
+    cursor = pygame.image.load('tanks/player1_1.png')
 
     # его анимация
-    ANIMATION = ['tanks\player1_1.png', 'tanks\player1_2.png']
+    ANIMATION = ['tanks/player1_1.png', 'tanks/player1_2.png']
     boltAnim = []
     for anim in ANIMATION:
         boltAnim.append((anim, 0.1))
