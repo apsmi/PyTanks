@@ -49,3 +49,5 @@ class Block(sprite.Sprite):
                 self.rect.width = self.rect.height = 0
                 #self.kill()
                 self.dead = True
+
+        return 0

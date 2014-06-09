@@ -183,7 +183,8 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
         for player in game_server.players:
             current = {'id': player.id, 'name': player.name, 'x': player.sprite.rect.x, 'y': player.sprite.rect.y,
                         'course': player.sprite.course, 'shutdirection': player.sprite.shutdirection,
-                        'dead': player.sprite.dead, 'team' : player.team, 'dead_count': player.sprite.config.dead_count}
+                        'dead': player.sprite.dead, 'team' : player.team, 'dead_count': player.sprite.config.dead_count,
+                        'frag': player.sprite.frag}
             if player.last != current :
                 dataframe['players'].append(current)
             player.last = current
@@ -204,7 +205,7 @@ def server_main(PLAYERS_COUNT, SERVER_ADDRESS, SERVER_PORT, LEVEL_H, LEVEL_W):
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", "--port", help="port of the game server, default=80", type=int, default=80)
-parser.add_argument("-c", "--count", help="count of players waiting to connect, default=20", type=int, default=20)
+parser.add_argument("-c", "--count", help="count of players waiting to connect, default=2", type=int, default=2)
 parser.add_argument("-v", "--vertical", help="vertical size (height) of world in blocks, default=25", type=int, default=25)
 parser.add_argument("-w", "--width", help="width of world in blocks, default=32", type=int, default=32)
 args = parser.parse_args()

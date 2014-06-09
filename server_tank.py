@@ -31,6 +31,7 @@ class Tank(sprite.Sprite):
         self.shutdirection = "up"           # направление выстрела
         self.isBullet = False               # флаг существования пули
         self.life = self.config.lifeStart   # оставшееся количество жизней
+        self.frag = 0                       # счетчик убийств
         self.xvel = 0                       # cкорость движения по горизонтали, 0 - стоит на месте
         self.yvel = 0                       # скорость движения по вертикали, 0 - не двигается
         self.dead = 0                       # счетчик кадров при смерти
@@ -123,8 +124,12 @@ class Tank(sprite.Sprite):
             self.dead = 1
             self.life = self.config.lifeStart
 
+            return 1 # Взорвали танк. Если не взорвали, или взорвали не танк, то возвращаем 0.
+
         # если жизни еще есть
         else:
 
             # то их стало меньше
             self.life -= 1
+
+        return 0

@@ -7,6 +7,7 @@ import asyncore
 import pickle
 import struct
 from pygame import Surface, Color
+import time
 
 from client_player import Client
 from client_level import gen_client_level
@@ -103,7 +104,7 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
         team = player_item['team']
         dead_count = player_item['dead_count']
         tank_config = Tank_config(x, y, dead_count)
-        player = Tank(tank_config, id, team)
+        player = Tank(tank_config, id, team, 0)
         players.add(player)
         if id == my_id:
             i_am = player
@@ -178,7 +179,8 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
 
         # игроки dataframe["players"] = {'id': player.id, 'name': player.name, 'x': player.sprite.rect.x, 'y': player.sprite.rect.y,
         #                'course': player.sprite.course, 'shutdirection': player.sprite.shutdirection,
-        #                'dead': player.sprite.dead, 'team' : player.team, 'dead_count': player.sprite.config.dead_count}
+        #                'dead': player.sprite.dead, 'team' : player.team, 'dead_count': player.sprite.config.dead_count,
+        #                'frag': player.sprite.frag}
         players_list = dataframe['players']
         for player_item in players_list:
             found = False
@@ -186,7 +188,8 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
                 if player.id == player_item['id']:
                     player.name = player_item['name']
                     player.update(player_item['x'], player_item['y'],
-                                  player_item['course'], player_item['shutdirection'], player_item['dead'])
+                                  player_item['course'], player_item['shutdirection'], player_item['dead'],
+                                  player_item['frag'])
                     found = True
                     break
             if not found:
@@ -195,8 +198,9 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
                 id = player_item['id']
                 team = player_item['team']
                 dead_count = player_item['dead_count']
+                frag = player_item['frag']
                 tank_config = Tank_config(x, y, dead_count)
-                new_player = Tank(tank_config, id, team)
+                new_player = Tank(tank_config, id, team, frag)
                 players.add(new_player)
 
         # пули
@@ -247,23 +251,29 @@ def client_main(bg, screen, WINDOW_W, WINDOW_H, SERVER_ADDR, SERVER_PORT_DISP, p
         # выводим списки игроков
         screen.blit(label_bg, (WINDOW_W,0))
 
-        label = font.render(' YELLOW team: ', True, Color("yellow"))
-        screen.blit(label, (WINDOW_W, 10))
         i = 30
+        team_count = 0
         for player in players:
             if player.team == "yellow":
-                label = font.render("     " + player.name, True, Color("yellow"))
+                team_count += player.frag
+                label = font.render("     " + player.name + " ["+str(player.frag)+"]", True, Color("yellow"))
                 screen.blit(label, (WINDOW_W, i))
                 i+=20
         i += 20
-        label = font.render(' GREEN team: ', True, Color("green"))
-        screen.blit(label, (WINDOW_W, i))
+        label = font.render(' YELLOW team: '+ str(team_count), True, Color("yellow"))
+        screen.blit(label, (WINDOW_W, 10))
+
+        team_count = 0
+        l_x = i
         i += 20
         for player in players:
             if player.team == "green":
-                label = font.render("     " + player.name, True, Color("green"))
+                team_count += player.frag
+                label = font.render("     " + player.name + " ["+str(player.frag)+"]", True, Color("green"))
                 screen.blit(label, (WINDOW_W, i))
                 i+=20
+        label = font.render(' GREEN team: '+ str(team_count), True, Color("green"))
+        screen.blit(label, (WINDOW_W, l_x))
 
         # выводим строчки со служебной инфой
         label = font.render(' fps=%.2f ' % timer.get_fps(), True, (255,255,255))

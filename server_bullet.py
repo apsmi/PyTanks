@@ -101,7 +101,9 @@ class Bullet(sprite.Sprite):
                     self.rect.left -= 8
                     self.rect.top -= 8
                     self.bum = 1
-                    p.die(self.shutdirection)   # сообщаем объекту, в который попали, что в него попали
+                    who_die = p.die(self.shutdirection)   # сообщаем объекту, в который попали, что в него попали
+                    if who_die == 1:                      # если взорвали танк, то прибавляем фраг стрелявшему
+                        self.shooter.frag += 1
 
                 if xvel > 0:                      # если движется вправо
                     self.rect.right -= xvel # то не движется вправо

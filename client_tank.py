@@ -27,13 +27,14 @@ class Tank(sprite.Sprite):
         Это основной класс, реализующий поведение танка.
     """
 
-    def __init__(self, config, id, team):
+    def __init__(self, config, id, team, frag):
         sprite.Sprite.__init__(self)
 
         self.config = config
         self.id = id
         self.team = team
         self.name = ""
+        self.frag = frag
 
         self.course = ""                 # направление движения
         self.shutdirection = "up"           # направление выстрела
@@ -66,9 +67,10 @@ class Tank(sprite.Sprite):
         self.boltAnimDie = pyganim.PygAnimation(boltAnim)
         self.boltAnimDie.play()
 
-    def update(self, x, y, course, shutdirection, dead):
+    def update(self, x, y, course, shutdirection, dead, frag):
 
-        self.rect.x, self.rect.y, self.course, self.shutdirection, self.dead = x, y, course, shutdirection, dead
+        self.rect.x, self.rect.y, self.course, self.shutdirection, self.dead, self.frag = \
+            x, y, course, shutdirection, dead, frag
 
         # если танк взорвали
         if (self.dead > 0):
