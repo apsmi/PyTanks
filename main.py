@@ -24,7 +24,7 @@ def window_init(width, height, color, caption):
 def main():
 
     # инициализация окна
-    bg, screen = window_init(800, 640, "#000000", "PyTanks")
+    bg, screen = window_init(800, 480, "#000000", "PyTanks")
 
     # группы объектов
     players = pygame.sprite.Group()

@@ -9,10 +9,10 @@ class Monster_config_1 (Tank_config):
         self.START_X = START_X
         self.START_Y = START_Y
 
-        self.ANIMATION = ['tanks\monster1_1.png',
-                        'tanks\monster1_2.png',
-                        'tanks\monster1_3.png']
-        self.INIT_IMAGE = "tanks\monster1_1.png"
+        self.ANIMATION = ['tanks/monster1_1.png',
+                        'tanks/monster1_2.png',
+                        'tanks/monster1_3.png']
+        self.INIT_IMAGE = "tanks/monster1_1.png"
 
         self.maxLengthLeft = 500 # макс. пройденое расстояние от точки спавна
         self.maxLengthUp = 500 # макс. пройденое расстояние от точки спавна
@@ -30,9 +30,9 @@ class Monster_config_2 (Tank_config):
         self.START_X = START_X
         self.START_Y = START_Y
 
-        self.ANIMATION = ['tanks\monster2_1.png',
-                        'tanks\monster2_2.png']
-        self.INIT_IMAGE = "tanks\monster2_1.png"
+        self.ANIMATION = ['tanks/monster2_1.png',
+                        'tanks/monster2_2.png']
+        self.INIT_IMAGE = "tanks/monster2_1.png"
 
         self.maxLengthLeft = 300 # макс. пройденое расстояние от точки спавна
         self.maxLengthUp = 300 # макс. пройденое расстояние от точки спавна
@@ -50,9 +50,9 @@ class Monster_config_3 (Tank_config):
         self.START_X = START_X
         self.START_Y = START_Y
 
-        self.ANIMATION = ['tanks\monster3_1.png',
-                           'tanks\monster3_2.png']
-        self.INIT_IMAGE = "tanks\monster3_1.png"
+        self.ANIMATION = ['tanks/monster3_1.png',
+                           'tanks/monster3_2.png']
+        self.INIT_IMAGE = "tanks/monster3_1.png"
 
         self.maxLengthLeft = 500 # макс. пройденое расстояние от точки спавна
         self.maxLengthUp = 500 # макс. пройденое расстояние от точки спавна
