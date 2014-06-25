@@ -4,7 +4,7 @@ from pygame import *
 
 import pyganim
 
-
+#TODO: change to kivy from image and Surface
 class Bullet(sprite.Sprite):
     def __init__(self, x, y, shutdirection):
         sprite.Sprite.__init__(self)

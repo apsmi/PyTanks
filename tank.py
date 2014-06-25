@@ -4,6 +4,7 @@ from pygame import sprite, Surface, Rect, image, Color, transform
 
 import pyganim
 
+#TODO: change to kivy from image and Surface
 
 class Tank_config():
     """

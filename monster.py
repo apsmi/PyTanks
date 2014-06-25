@@ -5,6 +5,8 @@ from pygame import *
 from tank import Tank
 from bullet import Bullet
 
+#TODO: change to kivy from image and Surface
+
 class Monster(Tank):
     def __init__(self, config):
         Tank.__init__(self, config)

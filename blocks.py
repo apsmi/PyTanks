@@ -10,6 +10,9 @@ class Block(sprite.Sprite):
     """
         Данный класс описывает блоки
     """
+
+    #TODO: change to kivy from image and Surface
+
     def __init__(self, x, y, type):
         sprite.Sprite.__init__(self)
 

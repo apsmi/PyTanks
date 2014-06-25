@@ -1,123 +1,63 @@
+__author__ = 'master'
 # -*- coding: utf-8 -*-
 
-import sys
-import pygame
-from pygame import *
+from kivy.app import App
+from kivy.uix.widget import Widget
+from kivy.uix.button import Button
+from kivy.graphics import Rectangle
+from kivy.config import Config
 
-from level import gen_level
-from bullet import Bullet
-from tank import Tank_config, Tank
-from monster_config import *
-from camera import  camera_configure, Camera
+#размеры окна, когда будем собирать андроид-пакет - убрать
+width = 800
+height = 480
+Config.set('graphics', 'width', width)
+Config.set('graphics', 'height', height)
 
-from monster import Monster
+class MyPaintApp(App):
 
-def window_init(width, height, color, caption):
-    display = (width, height)                   # Группируем ширину и высоту в одну переменную
-    pygame.init()                               # Инициация PyGame, обязательная строчка
-    screen = pygame.display.set_mode(display)   # Создаем окошко
-    pygame.display.set_caption(caption)         # Пишем в шапку
-    bg = Surface((width,height))                # Создание видимой поверхности, будем использовать как фон
-    bg.fill(Color(color))                       # Заливаем поверхность сплошным цветом
-    return bg, screen
+    def build(self):
+        parent = Widget(size=(width,height)) #родительский, НЕ root  !!!!!!!!!!   УБРАТЬ РАЗМЕР ДЛЯ АНДРОИДА
+        painter = Widget(size=parent.size)   #на нем будем рисовать
 
-def main():
+        #кнопки
+        right_btn = Button(background_normal='controls/right_normal.png', background_down='controls/right_press.png', pos=(160, 80))
+        left_btn = Button(background_normal='controls/left_normal.png', background_down='controls/left_press.png', pos=(0, 80))
+        up_btn = Button(background_normal='controls/up_normal.png', background_down='controls/up_press.png', pos=(80, 160))
+        down_btn = Button(background_normal='controls/down_normal.png', background_down='controls/down_press.png', pos=(80, 0))
+        fire_btn = Button(background_normal='controls/fire_normal.png', background_down='controls/fire_press.png', pos=(width-140, 40))
 
-    # инициализация окна
-    bg, screen = window_init(800, 480, "#000000", "PyTanks")
+        #добавляем кнопки на родительский
+        parent.add_widget(painter)
+        parent.add_widget(right_btn)
+        parent.add_widget(left_btn)
+        parent.add_widget(up_btn)
+        parent.add_widget(down_btn)
+        parent.add_widget(fire_btn)
 
-    # группы объектов
-    players = pygame.sprite.Group()
-    players_bullets = pygame.sprite.Group()
-    monsters = pygame.sprite.Group()
-    monsters_bullets = pygame.sprite.Group() # перемещено в глобальную переменную
+        #обработчики событий нажатия на кнопки
+        def fire_buttton_press(obj):
+            pass
+        fire_btn.bind(on_release=fire_buttton_press)
 
-    # создаем героя
-    player_config = Tank_config()
-    player = Tank(player_config)
-    players.add(player)
+        def up_buttton_press(obj):
+             pass
+        up_btn.bind(on_release=up_buttton_press)
 
-    # монстр 1
-    monster_config = Monster_config_1(704,580)
-    monster = Monster(monster_config)
-    monsters.add(monster)
+        def down_buttton_press(obj):
+            pass
+        down_btn.bind(on_release=down_buttton_press)
 
-    # монстр 1
-    monster_config = Monster_config_2(736,580)
-    monster = Monster(monster_config)
-    monsters.add(monster)
+        def left_buttton_press(obj):
+             pass
+        left_btn.bind(on_release=left_buttton_press)
 
-    # монстр 1
-    monster_config = Monster_config_3(768,580)
-    monster = Monster(monster_config)
-    monsters.add(monster)
+        def right_buttton_press(obj):
+             pass
+        right_btn.bind(on_release=right_buttton_press)
 
-    # генерируем уровень
-    blocks, total_level_width, total_level_height = gen_level(30,30)
-    
-    #создаем камеру
-    camera = Camera(camera_configure, total_level_width, total_level_height)
+        return parent
 
-    # таймер
-    timer = pygame.time.Clock()
 
-    # Основной цикл программы
-    while 1:
-
-        timer.tick(60) # таймер на 60 кадров
-
-        for e in pygame.event.get(): # Обрабатываем события
-
-            # выход
-            if e.type == QUIT or (e.type == KEYDOWN and e.key == K_ESCAPE):
-                pygame.quit()
-                sys.exit()
-
-            # действия  героя
-            # нажатие клавиши на клавиатуре
-            if e.type == KEYDOWN:
-                if e.key == K_LEFT:
-                    player.course = "left"
-                elif e.key == K_RIGHT:
-                    player.course = "right"
-                elif e.key == K_UP:
-                    player.course = "up"
-                elif e.key == K_DOWN:
-                    player.course = "down"
-                if e.key == K_SPACE and not player.isBullet:
-                    player_bullet = Bullet(player.rect.left,player.rect.top,player.shutdirection)
-                    player_bullet.shooter = player
-                    players_bullets.add(player_bullet)
-                    player.isBullet = True
-
-            # отпускание клавиши
-            if e.type == KEYUP:
-                if (e.key == K_RIGHT) and (player.course == "right"):
-                    player.course = ""
-                elif (e.key == K_LEFT) and (player.course == "left"):
-                    player.course = ""
-                elif (e.key == K_UP) and (player.course == "up"):
-                    player.course = ""
-                elif (e.key == K_DOWN) and (player.course == "down"):
-                    player.course = ""
-
-        # обновление всех объектов
-        players.update( blocks.sprites() + monsters.sprites())
-        players_bullets.update( blocks.sprites() + monsters.sprites() + monsters_bullets.sprites())
-        monsters_bullets.update( blocks.sprites() + players.sprites() + players_bullets.sprites())
-        monsters.update( blocks.sprites() + players.sprites() + monsters.sprites(), player.rect.top, player.rect.left, monsters_bullets)
-        camera.update(player) # центризируем камеру относительно персонажа
-
-        # Каждую итерацию необходимо всё перерисовывать
-        screen.blit(bg, (0,0))
-
-        # рисование всех объектов
-        entities = blocks.sprites() + players.sprites() + players_bullets.sprites() + monsters_bullets.sprites() + monsters.sprites()
-        for e in entities:
-            screen.blit(e.image, camera.apply(e))
-
-        # обновление и вывод всех изменений на экран
-        pygame.display.update()
-
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    MyPaint = MyPaintApp()
+    MyPaint.run()
