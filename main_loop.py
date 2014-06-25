@@ -1,93 +1,74 @@
 # -*- coding: utf-8 -*-
+from kivy.uix.widget import Widget
+from kivy.uix.button import Button
+from kivy.graphics import Rectangle
 
-import sys
-import pygame
-from pygame import *
+from pygame.sprite import Group
 
 from level import gen_level
-from bullet import Bullet
 from tank import Tank_config, Tank
 from monster_config import *
 from camera import  camera_configure, Camera
-
 from monster import Monster
 
 
-def window_init(width, height, color, caption):
-    display = (width, height)                   # Группируем ширину и высоту в одну переменную
-    pygame.init()                               # Инициация PyGame, обязательная строчка
-    screen = pygame.display.set_mode(display)   # Создаем окошко
-    pygame.display.set_caption(caption)         # Пишем в шапку
-    bg = Surface((width, height))                # Создание видимой поверхности, будем использовать как фон
-    bg.fill(Color(color))                       # Заливаем поверхность сплошным цветом
-    return bg, screen
 
+class PyTanksGame(Widget):
 
-def main_loop_prepare():
-    # инициализация окна TODO: change to kivy
-    #bg, screen = window_init(800, 480, "#000000", "PyTanks")
+    def prepare(self):
 
-    # группы объектов
-    players = pygame.sprite.Group()
-    players_bullets = pygame.sprite.Group()
-    monsters = pygame.sprite.Group()
-    monsters_bullets = pygame.sprite.Group() # перемещено в глобальную переменную
+        # группы объектов
+        self.players = Group()
+        self.players_bullets = Group()
+        self.monsters = Group()
+        self.monsters_bullets = Group() # перемещено в глобальную переменную
 
-    # создаем героя
-    player_config = Tank_config()
-    player = Tank(player_config)
-    players.add(player)
+        # создаем героя
+        player_config = Tank_config()
+        self.player = Tank(player_config)
+        self.players.add(self.player)
 
-    # монстр 1
-    monster_config = Monster_config_1(704,580)
-    monster = Monster(monster_config)
-    monsters.add(monster)
+        # монстр 1
+        #monster_config = Monster_config_1(100, 100)
+        #monster = Monster(monster_config)
+        #self.monsters.add(monster)
 
-    # монстр 1
-    monster_config = Monster_config_2(736,580)
-    monster = Monster(monster_config)
-    monsters.add(monster)
+        # монстр 1
+        #monster_config = Monster_config_2(200, 200)
+        #monster = Monster(monster_config)
+        #self.monsters.add(monster)
 
-    # монстр 1
-    monster_config = Monster_config_3(768,580)
-    monster = Monster(monster_config)
-    monsters.add(monster)
+        # монстр 1
+        #monster_config = Monster_config_3(300, 300)
+        #monster = Monster(monster_config)
+        #self.monsters.add(monster)
 
-    # генерируем уровень
-    blocks, total_level_width, total_level_height = gen_level(30,30)
+        # генерируем уровень
+        self.blocks, total_level_width, total_level_height = gen_level(25,25)
 
-    #создаем камеру
-    camera = Camera(camera_configure, total_level_width, total_level_height)
+        display_w, display_h = self.width, self.height
 
-    return player, players_bullets, players, blocks, monsters, monsters_bullets, camera
+        #создаем камеру
+        self.camera = Camera(camera_configure, total_level_width, total_level_height, display_w, display_h)
 
+    def update(self, dt):
 
-def main_loop(player, players_bullets, players, blocks, monsters, monsters_bullets, camera, screen, bg):
+        # симуляция мира
+        self.players.update(self.blocks.sprites() + self.monsters.sprites())
+        self.players_bullets.update(self.blocks.sprites() + self.monsters.sprites() + self.monsters_bullets.sprites())
+        self.monsters_bullets.update(self.blocks.sprites() + self.players.sprites() + self.players_bullets.sprites())
+        self.monsters.update(self.blocks.sprites() + self.players.sprites() + self.monsters.sprites(),
+                             self.player.rect.top, self.player.rect.left, self.monsters_bullets)
 
-    # таймер
-    #timer = pygame.time.Clock()
+        self.camera.update(self.player)  # центризируем камеру относительно персонажа
 
-    # Основной цикл программы
-    #while 1:
-    if True:
-
-        #timer.tick(60)  # таймер на 60 кадров
-
-        # обновление всех объектов
-        players.update(blocks.sprites() + monsters.sprites())
-        players_bullets.update(blocks.sprites() + monsters.sprites() + monsters_bullets.sprites())
-        monsters_bullets.update(blocks.sprites() + players.sprites() + players_bullets.sprites())
-        monsters.update(blocks.sprites() + players.sprites() + monsters.sprites(), player.rect.top, player.rect.left,
-                        monsters_bullets)
-        camera.update(player)  # центризируем камеру относительно персонажа
-
-        # Каждую итерацию необходимо всё перерисовывать TODO: change to kivy
-        #screen.blit(bg, (0, 0))
+        # Каждую итерацию необходимо всё перерисовывать
+        self.canvas.clear()
 
         # рисование всех объектов
-        entities = blocks.sprites() + players.sprites() + players_bullets.sprites() + monsters_bullets.sprites() + monsters.sprites()
+        entities = self.blocks.sprites() + self.players.sprites() + self.players_bullets.sprites() + \
+                   self.monsters_bullets.sprites() + self.monsters.sprites()
         for e in entities:
-            screen.blit(e.image, camera.apply(e))  # TODO: change to kivy
-
-        # обновление и вывод всех изменений на экран TODO: change to kivy
-        #pygame.display.update()
+            with self.canvas:
+                pos = self.camera.apply(e)
+                Rectangle(texture=e.texture, pos=(pos.x, self.height - pos.y - 32), size=e.texture.size)

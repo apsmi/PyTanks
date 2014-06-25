@@ -2,7 +2,7 @@
 
 from pygame import sprite, Rect
 import pyganim
-
+from kivy.core.image import Image
 
 
 #TODO: change to kivy from image and Surface
@@ -48,7 +48,7 @@ class Tank(sprite.Sprite):
         self.COLOR =  "#000000"             # цвет фона аватарки
 
         # автарка танка
-        self.texture = Image("tanks/player1_1.png")#.texture
+        self.texture = Image('tanks/player1_1.png').texture
         #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
         self.rect = Rect(self.config.START_X, self.config.START_Y, self.config.WIDTH, self.config.HEIGHT) # прямоугольный объект
         #self.image = image.load(self.config.INIT_IMAGE)
