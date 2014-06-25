@@ -4,8 +4,7 @@ import random
 from pygame import *
 from tank import Tank
 from bullet import Bullet
-
-#TODO: change to kivy from image and Surface
+from kivy.core.image import Image
 
 class Monster(Tank):
     def __init__(self, config):
@@ -22,10 +21,11 @@ class Monster(Tank):
             if (self.dead < 30):
 
                 # показываем анимацию взрыва
-                self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                self.image.fill(Color(self.COLOR))
-                self.image.set_colorkey(Color(self.COLOR))
-                self.boltAnimDie.blit(self.image, (0, 0))
+                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
+                #self.image.fill(Color(self.COLOR))
+                #self.image.set_colorkey(Color(self.COLOR))
+                #self.boltAnimDie.blit(self.image, (0, 0))
+                self.texture = Image("tanks/die_3.png").texture  # TODO: port anim to kivy
                 self.dead += 1 # счетчик кадро анимации взрыва
 
             else:
@@ -34,7 +34,7 @@ class Monster(Tank):
                 self.rect.x = self.config.START_X
                 self.rect.y = self.config.START_Y
                 self.dead = 0
-                self.image = image.load(self.config.INIT_IMAGE)
+                self.texture = Image(self.config.INIT_IMAGE).texture
 
         else:
 
@@ -74,21 +74,23 @@ class Monster(Tank):
             if self.course == "left":
                 self.shutdirection = "left"                                  # изменяем направление выстрела
                 self.xvel = -self.config.MOVE_SPEED_X                        # текущая скорость движения
-                self.image = Surface((self.config.WIDTH,self.config.HEIGHT)) # перерисовываем аватарку
-                self.image.fill(Color(self.COLOR))                           # заливаем фон
-                self.image.set_colorkey(Color(self.COLOR))                   # делаем фон прозрачным
-                self.boltAnimMove.blit(self.image, (0, 0))                   # выводим анимацию
-                self.image = transform.rotate(self.image, 90)                # поворачиваем по направлению движения
+                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT)) # перерисовываем аватарку
+                #self.image.fill(Color(self.COLOR))                           # заливаем фон
+                #self.image.set_colorkey(Color(self.COLOR))                   # делаем фон прозрачным
+                #self.boltAnimMove.blit(self.image, (0, 0))                   # выводим анимацию
+                self.texture = Image("tanks/monster2_1.png").texture  # TODO: port anim to kivy
+                #self.image = transform.rotate(self.image, 90)                # поворачиваем по направлению движения
 
             # движение вправо
             elif self.course == "right":
                 self.shutdirection = "right"
                 self.xvel = self.config.MOVE_SPEED_X
-                self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                self.image.fill(Color(self.COLOR))
-                self.image.set_colorkey(Color(self.COLOR))
-                self.boltAnimMove.blit(self.image, (0, 0))
-                self.image = transform.rotate(self.image, 270)
+                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
+                #self.image.fill(Color(self.COLOR))
+                #self.image.set_colorkey(Color(self.COLOR))
+                #self.boltAnimMove.blit(self.image, (0, 0))
+                self.texture = Image("tanks/monster2_1.png").texture  # TODO: port anim to kivy
+                #self.image = transform.rotate(self.image, 270)
 
             # стоим, когда нет указаний идти вправо - влево
             else:
@@ -101,20 +103,22 @@ class Monster(Tank):
             if self.course == "up":
                 self.shutdirection = "up"
                 self.yvel = -self.config.MOVE_SPEED_Y
-                self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                self.image.fill(Color(self.COLOR))
-                self.image.set_colorkey(Color(self.COLOR))
-                self.boltAnimMove.blit(self.image, (0, 0))
+                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
+                #self.image.fill(Color(self.COLOR))
+                #self.image.set_colorkey(Color(self.COLOR))
+                #self.boltAnimMove.blit(self.image, (0, 0))
+                self.texture = Image("tanks/monster2_1.png").texture  # TODO: port anim to kivy
 
             # движение вниз
             elif self.course == "down":
                 self.shutdirection = "down"
                 self.yvel = self.config.MOVE_SPEED_Y
-                self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                self.image.fill(Color(self.COLOR))
-                self.image.set_colorkey(Color(self.COLOR))
-                self.boltAnimMove.blit(self.image, (0, 0))
-                self.image = transform.rotate(self.image, 180)
+                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
+                #self.image.fill(Color(self.COLOR))
+                #self.image.set_colorkey(Color(self.COLOR))
+                #self.boltAnimMove.blit(self.image, (0, 0))
+                self.texture = Image("tanks/monster2_1.png").texture  # TODO: port anim to kivy
+                #self.image = transform.rotate(self.image, 180)
 
             # стоим, когда нет указаний идти вверх - вниз
             else:
@@ -125,7 +129,7 @@ class Monster(Tank):
 
 
             # если упердись в препятствие - повернулись
-            if self.impact == True:
+            if self.impact is True:
                 if hero_y == self.rect.y:
                     if hero_x > self.rect.x:
                         self.course = "right"
@@ -139,7 +143,7 @@ class Monster(Tank):
                         self.course = "up"
 
             #стрельба
-            if self.isBullet == False :
+            if self.isBullet is False:
                 if 40 > random.randint (1, 1000):
                     bullet = Bullet(self.rect.x,self.rect.y,self.shutdirection)
                     bullet.shooter = self

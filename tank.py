@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from pygame import sprite, Surface, Rect, image, Color, transform
-
+from pygame import sprite, Rect
 import pyganim
+
+
 
 #TODO: change to kivy from image and Surface
 
@@ -47,9 +48,10 @@ class Tank(sprite.Sprite):
         self.COLOR =  "#000000"             # цвет фона аватарки
 
         # автарка танка
-        self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
+        self.texture = Image("tanks/player1_1.png")#.texture
+        #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
         self.rect = Rect(self.config.START_X, self.config.START_Y, self.config.WIDTH, self.config.HEIGHT) # прямоугольный объект
-        self.image = image.load(self.config.INIT_IMAGE)
+        #self.image = image.load(self.config.INIT_IMAGE)
 
         #  Анимация движения
         boltAnim = []
@@ -72,10 +74,11 @@ class Tank(sprite.Sprite):
             if (self.dead < 30):
 
                 # показываем анимацию взрыва
-                self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                self.image.fill(Color(self.COLOR))
-                self.image.set_colorkey(Color(self.COLOR))
-                self.boltAnimDie.blit(self.image, (0, 0))
+                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
+                #self.image.fill(Color(self.COLOR))
+                #self.image.set_colorkey(Color(self.COLOR))
+                #self.boltAnimDie.blit(self.image, (0, 0))
+                self.texture = Image(self.config.INIT_IMAGE).texture  # TODO: port anim to kivy
                 self.dead += 1 # счетчик кадро анимации взрыва
 
             else:
@@ -84,7 +87,8 @@ class Tank(sprite.Sprite):
                 self.rect.x = self.config.START_X
                 self.rect.y = self.config.START_Y
                 self.dead = 0
-                self.image = image.load(self.config.INIT_IMAGE)
+                #self.image = image.load(self.config.INIT_IMAGE)
+                self.texture = Image(self.config.INIT_IMAGE).texture
                 self.course = ""
                 self.shutdirection = "up"
 
@@ -95,21 +99,23 @@ class Tank(sprite.Sprite):
             if self.course == "left":
                 self.shutdirection = "left"                                  # изменяем направление выстрела
                 self.xvel = -self.config.MOVE_SPEED_X                        # текущая скорость движения
-                self.image = Surface((self.config.WIDTH,self.config.HEIGHT)) # перерисовываем аватарку
-                self.image.fill(Color(self.COLOR))                           # заливаем фон
-                self.image.set_colorkey(Color(self.COLOR))                   # делаем фон прозрачным
-                self.boltAnimMove.blit(self.image, (0, 0))                   # выводим анимацию
-                self.image = transform.rotate(self.image, 90)                # поворачиваем по направлению движения
+                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT)) # перерисовываем аватарку
+                #self.image.fill(Color(self.COLOR))                           # заливаем фон
+                #self.image.set_colorkey(Color(self.COLOR))                   # делаем фон прозрачным
+                #self.boltAnimMove.blit(self.image, (0, 0))                   # выводим анимацию
+                self.texture = Image(self.config.INIT_IMAGE).texture  # TODO: port anim to kivy
+                #self.image = transform.rotate(self.image, 90)                # поворачиваем по направлению движения
 
             # движение вправо
             elif self.course == "right":
                 self.shutdirection = "right"
                 self.xvel = self.config.MOVE_SPEED_X
-                self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                self.image.fill(Color(self.COLOR))
-                self.image.set_colorkey(Color(self.COLOR))
-                self.boltAnimMove.blit(self.image, (0, 0))
-                self.image = transform.rotate(self.image, 270)
+                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
+                #self.image.fill(Color(self.COLOR))
+                #self.image.set_colorkey(Color(self.COLOR))
+                self.texture = Image(self.config.INIT_IMAGE).texture  # TODO: port anim to kivy
+                #self.boltAnimMove.blit(self.image, (0, 0))
+                #self.image = transform.rotate(self.image, 270)
 
             # стоим, когда нет указаний идти вправо - влево
             else:
@@ -122,20 +128,22 @@ class Tank(sprite.Sprite):
             if self.course == "up":
                 self.shutdirection = "up"
                 self.yvel = -self.config.MOVE_SPEED_Y
-                self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                self.image.fill(Color(self.COLOR))
-                self.image.set_colorkey(Color(self.COLOR))
-                self.boltAnimMove.blit(self.image, (0, 0))
+                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
+                #self.image.fill(Color(self.COLOR))
+                #self.image.set_colorkey(Color(self.COLOR))
+                #self.boltAnimMove.blit(self.image, (0, 0))
+                self.texture = Image(self.config.INIT_IMAGE).texture  # TODO: port anim to kivy
 
             # движение вниз
             elif self.course == "down":
                 self.shutdirection = "down"
                 self.yvel = self.config.MOVE_SPEED_Y
-                self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                self.image.fill(Color(self.COLOR))
-                self.image.set_colorkey(Color(self.COLOR))
-                self.boltAnimMove.blit(self.image, (0, 0))
-                self.image = transform.rotate(self.image, 180)
+                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
+                #self.image.fill(Color(self.COLOR))
+                #self.image.set_colorkey(Color(self.COLOR))
+                #self.boltAnimMove.blit(self.image, (0, 0))
+                #self.image = transform.rotate(self.image, 180)
+                self.texture = Image(self.config.INIT_IMAGE).texture  # TODO: port anim to kivy
 
             # стоим, когда нет указаний идти вверх - вниз
             else:

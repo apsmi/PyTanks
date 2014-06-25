@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from pygame import *
-
 import pyganim
+from kivy.core.image import Image
 
-#TODO: change to kivy from image and Surface
 class Bullet(sprite.Sprite):
     def __init__(self, x, y, shutdirection):
         sprite.Sprite.__init__(self)
@@ -42,23 +41,23 @@ class Bullet(sprite.Sprite):
         else:
             self.shutdirection = shutdirection
 
-        self.image = Surface((self.WIDTH,self.HEIGHT)) # поверхность изображения
+        #self.image = Surface((self.WIDTH,self.HEIGHT)) # поверхность изображения
 
         # загружаем картинку и определяем положение пули
         if shutdirection == "left":
-            self.image = image.load(self.IMAGE_LEFT)
+            self.texture = Image(self.IMAGE_LEFT).texture
             self.startX -= 6
             self.startY += 11
         elif shutdirection == "right":
-            self.image = image.load(self.IMAGE_RIGHT)
+            self.texture = Image(self.IMAGE_RIGHT).texture
             self.startX += 28
             self.startY += 11
         elif shutdirection == "up":
-            self.image = image.load(self.IMAGE_UP)
+            self.texture = Image(self.IMAGE_UP).texture
             self.startX += 11
             self.startY += 6
         elif shutdirection == "down":
-            self.image = image.load(self.IMAGE_DOWN)
+            self.texture = Image(self.IMAGE_DOWN).texture
             self.startX += 11
             self.startY += 28
 
@@ -105,11 +104,12 @@ class Bullet(sprite.Sprite):
 
         if (0 < self.bum):
             if (self.bum < 20):
-                self.image = Surface((self.BUM_WIDTH,self.BUM_HEIGHT))
+                #self.image = Surface((self.BUM_WIDTH,self.BUM_HEIGHT))
                 self.rect = Rect(self.rect.left, self.rect.top, self.BUM_WIDTH, self.BUM_HEIGHT) # прямоугольный объект
-                self.image.fill(Color(self.COLOR))
-                self.image.set_colorkey(Color(self.COLOR)) # делаем фон прозрачным
-                self.boltAnimBum.blit(self.image, (0, 0))  #animation
+                #self.image.fill(Color(self.COLOR))
+                #self.image.set_colorkey(Color(self.COLOR)) # делаем фон прозрачным
+                #self.boltAnimBum.blit(self.image, (0, 0))  #animation
+                self.texture = Image('shut/bum_2.png').texture  # TODO: port animation to kivy
                 self.bum += 1
             else:
                 self.kill()
