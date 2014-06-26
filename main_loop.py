@@ -2,6 +2,9 @@
 
 from kivy.uix.widget import Widget
 from kivy.graphics import Rectangle
+
+from kivy.clock import Clock
+
 from pygame.sprite import Group
 
 from level import gen_level
@@ -53,6 +56,9 @@ class PyTanksGame(Widget):
         self.camera = Camera(camera_configure, total_level_width, total_level_height, display_w, display_h)
 
     def update(self, dt):
+
+        text = "clock-fps: %f | clock-rfps: %f" % (Clock.get_fps(), Clock.get_rfps() )
+        self.label.text = text
 
         self.dt += dt
         if self.dt > 0.1:

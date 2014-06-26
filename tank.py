@@ -11,8 +11,8 @@ class Tank_config():
       Данный класс описывает конфигурацию танка. Содержит только те свойства, которые влияют на поведение танка.
     """
     def __init__(self):
-        self.START_X = random.randint(1, 600)                         # начальные координаты по горизрнтали
-        self.START_Y = random.randint(1, 400)                         # начальные координаты по вертикали
+        self.START_X = random.randint(40, 600)                         # начальные координаты по горизрнтали
+        self.START_Y = random.randint(40, 400)                         # начальные координаты по вертикали
         self.MOVE_SPEED_X = 1                     # скорость перемещения по горизонтали
         self.MOVE_SPEED_Y = 1                     # скорость перемещения по вертикали
         self.WIDTH = 28                           # ширина аватарки
@@ -71,8 +71,8 @@ class Tank(sprite.Sprite):
             else:
 
                 # закончили показывать взрыв, респауним танк
-                self.rect.x = random.randint(1, 600)
-                self.rect.y = random.randint(1, 400)
+                self.rect.x = random.randint(40, 600)
+                self.rect.y = random.randint(40, 400)
                 self.dead = 0
                 self.texture = self.config.t_u_1
                 self.course = ""

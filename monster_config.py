@@ -10,8 +10,8 @@ class Monster_config_1(Tank_config):
     def __init__(self):
         Tank_config.__init__(self)
 
-        self.START_X = random.randint(1, 600)
-        self.START_Y = random.randint(1, 400)
+        self.START_X = random.randint(40, 600)
+        self.START_Y = random.randint(40, 400)
 
         self.t_u_1 = Image('tanks/monster1_u_1.png').texture
         self.t_u_2 = Image('tanks/monster1_u_2.png').texture
@@ -38,8 +38,8 @@ class Monster_config_2(Tank_config):
     def __init__(self,):
         Tank_config.__init__(self)
 
-        self.START_X = random.randint(1, 600)
-        self.START_Y = random.randint(1, 400)
+        self.START_X = random.randint(40, 600)
+        self.START_Y = random.randint(40, 400)
 
         self.t_u_1 = Image('tanks/monster2_u_1.png').texture
         self.t_u_2 = Image('tanks/monster2_u_2.png').texture
@@ -65,8 +65,8 @@ class Monster_config_3(Tank_config):
     def __init__(self):
         Tank_config.__init__(self)
 
-        self.START_X = random.randint(1, 600)
-        self.START_Y = random.randint(1, 400)
+        self.START_X = random.randint(40, 600)
+        self.START_Y = random.randint(40, 400)
 
         self.t_u_1 = Image('tanks/monster3_u_1.png').texture
         self.t_u_2 = Image('tanks/monster3_u_2.png').texture

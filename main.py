@@ -2,26 +2,27 @@
 __author__ = 'master'
 
 from kivy.app import App
-from kivy.config import Config
+#from kivy.config import Config
 from kivy.clock import Clock
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
-#from kivy.core.window import Window
+from kivy.uix.label import Label
+from kivy.core.window import Window
 from main_loop import PyTanksGame
 from bullet import Bullet
 
 #размеры окна, когда будем собирать андроид-пакет - убрать
-width = 800
-height = 480
-Config.set('graphics', 'width', width)
-Config.set('graphics', 'height', height)
+#width = 800
+#height = 480
+#Config.set('graphics', 'width', width)
+#Config.set('graphics', 'height', height)
 
 
 class MyPaintApp(App):
 
     def build(self):
-        #size = Window.size
-        parent = Widget(size=(800, 480))  # size=size
+        size = Window.size
+        parent = Widget(size=size)  # size=size
         game = PyTanksGame(size=parent.size, pos=(0, 0))  #
         game.prepare()
 
@@ -37,6 +38,8 @@ class MyPaintApp(App):
         fire_btn = Button(background_normal='controls/fire_normal.png', background_down='controls/fire_press.png',
                           pos=(parent.width-140, 40))
 
+        label = Label(pos=(300, 300))
+
         #добавляем кнопки на родительский
         parent.add_widget(game)
         parent.add_widget(right_btn)
@@ -44,6 +47,7 @@ class MyPaintApp(App):
         parent.add_widget(up_btn)
         parent.add_widget(down_btn)
         parent.add_widget(fire_btn)
+        parent.add_widget(label)
 
         #обработчики событий нажатия на кнопки
         def fire_button_press(obj):
@@ -92,7 +96,8 @@ class MyPaintApp(App):
         right_btn.bind(on_release=right_button_release)
 
         parent.game = game
-        Clock.schedule_interval(parent.game.update, 1.0 / 60.0)
+        game.label = label
+        Clock.schedule_interval(parent.game.update, 1.0 / 30.0)
         return parent
 
 if __name__ == '__main__':

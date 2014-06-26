@@ -29,8 +29,8 @@ class Monster(Tank):
             else:
 
                 # закончили показывать взрыв, респауним танк
-                self.rect.x = random.randint(1, 600)
-                self.rect.y = random.randint(1, 400)
+                self.rect.x = random.randint(40, 600)
+                self.rect.y = random.randint(40, 400)
                 self.dead = 0
                 self.texture = self.config.t_u_1
 
