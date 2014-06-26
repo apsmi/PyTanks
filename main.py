@@ -6,34 +6,34 @@ from kivy.config import Config
 from kivy.clock import Clock
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
-from kivy.core.window import Window
+#from kivy.core.window import Window
 from main_loop import PyTanksGame
 from bullet import Bullet
 
 #размеры окна, когда будем собирать андроид-пакет - убрать
-#width = 800
-#height = 480
-#Config.set('graphics', 'width', width)
-#Config.set('graphics', 'height', height)
+width = 800
+height = 480
+Config.set('graphics', 'width', width)
+Config.set('graphics', 'height', height)
 
 
 class MyPaintApp(App):
 
     def build(self):
-        size = Window.size
-        parent = Widget(size=size)  #
-        game = PyTanksGame(size=parent.size, pos=(0, 0))
+        #size = Window.size
+        parent = Widget(size=(800, 480))  # size=size
+        game = PyTanksGame(size=parent.size, pos=(0, 0))  #
         game.prepare()
 
         #кнопки
         right_btn = Button(background_normal='controls/right_normal.png', background_down='controls/right_press.png',
-                           pos=(160, 80))
+                           pos=(180, 45))
         left_btn = Button(background_normal='controls/left_normal.png', background_down='controls/left_press.png',
-                          pos=(0, 80))
+                          pos=(0, 45))
         up_btn = Button(background_normal='controls/up_normal.png', background_down='controls/up_press.png',
-                        pos=(80, 160))
+                        pos=(90, 90))
         down_btn = Button(background_normal='controls/down_normal.png', background_down='controls/down_press.png',
-                          pos=(80, 0))
+                          pos=(90, 0))
         fire_btn = Button(background_normal='controls/fire_normal.png', background_down='controls/fire_press.png',
                           pos=(parent.width-140, 40))
 
@@ -47,7 +47,7 @@ class MyPaintApp(App):
 
         #обработчики событий нажатия на кнопки
         def fire_button_press(obj):
-            if game.player.isBullet:
+            if game.player.isBullet is False:
                     game.player_bullet = Bullet(game.player.rect.left, game.player.rect.top, game.player.shutdirection)
                     game.player_bullet.shooter = game.player
                     game.players_bullets.add(game.player_bullet)

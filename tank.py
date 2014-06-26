@@ -1,31 +1,35 @@
 # -*- coding: utf-8 -*-
 
 from pygame import sprite, Rect
-import pyganim
+
 from kivy.core.image import Image
 
-
-#TODO: change to kivy from image and Surface
+import random
 
 class Tank_config():
     """
       Данный класс описывает конфигурацию танка. Содержит только те свойства, которые влияют на поведение танка.
     """
     def __init__(self):
-        self.START_X = 34                         # начальные координаты по горизрнтали
-        self.START_Y = 34                         # начальные координаты по вертикали
+        self.START_X = random.randint(1, 600)                         # начальные координаты по горизрнтали
+        self.START_Y = random.randint(1, 400)                         # начальные координаты по вертикали
         self.MOVE_SPEED_X = 1                     # скорость перемещения по горизонтали
         self.MOVE_SPEED_Y = 1                     # скорость перемещения по вертикали
         self.WIDTH = 28                           # ширина аватарки
         self.HEIGHT = 28                          # высота автарки
         self.lifeStart = 1                        # количество жизней танка
-        self.ANIMATION_DELAY = 0.1                # скорость анимации аватарки
-        self.ANIMATION =     ['tanks/player1_1.png', # анимация при движении
-                              'tanks/player1_2.png']
-        self.ANIMATION_DIE = ['tanks/die_1.png',  # анимация при взрыве
-                              'tanks/die_2.png',
-                              'tanks/die_3.png']
-        self.INIT_IMAGE =     "tanks/player1_1.png"  # изображение при появлении танка
+
+        self.t_u_1 = Image('tanks/player_u_1.png').texture
+        self.t_u_2 = Image('tanks/player_u_2.png').texture
+        self.t_r_1 = Image('tanks/player_r_1.png').texture
+        self.t_r_2 = Image('tanks/player_r_2.png').texture
+        self.t_d_1 = Image('tanks/player_d_1.png').texture
+        self.t_d_2 = Image('tanks/player_d_2.png').texture
+        self.t_l_1 = Image('tanks/player_l_1.png').texture
+        self.t_l_2 = Image('tanks/player_l_2.png').texture
+
+        self.t_b_2 = Image('tanks/die_2.png').texture
+        self.t_b_3 = Image('tanks/die_3.png').texture
 
 
 class Tank(sprite.Sprite):
@@ -48,47 +52,29 @@ class Tank(sprite.Sprite):
         self.COLOR =  "#000000"             # цвет фона аватарки
 
         # автарка танка
-        self.texture = Image('tanks/player1_1.png').texture
-        #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
+        self.texture = self.config.t_u_1
         self.rect = Rect(self.config.START_X, self.config.START_Y, self.config.WIDTH, self.config.HEIGHT) # прямоугольный объект
-        #self.image = image.load(self.config.INIT_IMAGE)
 
-        #  Анимация движения
-        boltAnim = []
-        for anim in self.config.ANIMATION:
-            boltAnim.append((anim, self.config.ANIMATION_DELAY))
-        self.boltAnimMove = pyganim.PygAnimation(boltAnim)
-        self.boltAnimMove.play()
 
-        # Анимация уничтожения
-        boltAnim = []
-        for anim in self.config.ANIMATION_DIE:
-            boltAnim.append((anim, 0.2))
-        self.boltAnimDie = pyganim.PygAnimation(boltAnim)
-        self.boltAnimDie.play()
-
-    def update(self,  obstructions):
+    def update(self,  obstructions, anim):
 
         # если танк взорвали
         if (self.dead > 0):
-            if (self.dead < 30):
+            if (self.dead < 15):
 
-                # показываем анимацию взрыва
-                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                #self.image.fill(Color(self.COLOR))
-                #self.image.set_colorkey(Color(self.COLOR))
-                #self.boltAnimDie.blit(self.image, (0, 0))
-                self.texture = Image(self.config.INIT_IMAGE).texture  # TODO: port anim to kivy
+                if anim:
+                    self.texture = self.config.t_b_2
+                else:
+                    self.texture = self.config.t_b_3
                 self.dead += 1 # счетчик кадро анимации взрыва
 
             else:
 
                 # закончили показывать взрыв, респауним танк
-                self.rect.x = self.config.START_X
-                self.rect.y = self.config.START_Y
+                self.rect.x = random.randint(1, 600)
+                self.rect.y = random.randint(1, 400)
                 self.dead = 0
-                #self.image = image.load(self.config.INIT_IMAGE)
-                self.texture = Image(self.config.INIT_IMAGE).texture
+                self.texture = self.config.t_u_1
                 self.course = ""
                 self.shutdirection = "up"
 
@@ -99,23 +85,20 @@ class Tank(sprite.Sprite):
             if self.course == "left":
                 self.shutdirection = "left"                                  # изменяем направление выстрела
                 self.xvel = -self.config.MOVE_SPEED_X                        # текущая скорость движения
-                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT)) # перерисовываем аватарку
-                #self.image.fill(Color(self.COLOR))                           # заливаем фон
-                #self.image.set_colorkey(Color(self.COLOR))                   # делаем фон прозрачным
-                #self.boltAnimMove.blit(self.image, (0, 0))                   # выводим анимацию
-                self.texture = Image(self.config.INIT_IMAGE).texture  # TODO: port anim to kivy
-                #self.image = transform.rotate(self.image, 90)                # поворачиваем по направлению движения
+
+                if anim:
+                    self.texture = self.config.t_l_1
+                else:
+                    self.texture = self.config.t_l_2
 
             # движение вправо
             elif self.course == "right":
                 self.shutdirection = "right"
                 self.xvel = self.config.MOVE_SPEED_X
-                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                #self.image.fill(Color(self.COLOR))
-                #self.image.set_colorkey(Color(self.COLOR))
-                self.texture = Image(self.config.INIT_IMAGE).texture  # TODO: port anim to kivy
-                #self.boltAnimMove.blit(self.image, (0, 0))
-                #self.image = transform.rotate(self.image, 270)
+                if anim:
+                    self.texture = self.config.t_r_1
+                else:
+                    self.texture = self.config.t_r_2
 
             # стоим, когда нет указаний идти вправо - влево
             else:
@@ -127,23 +110,20 @@ class Tank(sprite.Sprite):
             # движение вверх
             if self.course == "up":
                 self.shutdirection = "up"
-                self.yvel = -self.config.MOVE_SPEED_Y
-                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                #self.image.fill(Color(self.COLOR))
-                #self.image.set_colorkey(Color(self.COLOR))
-                #self.boltAnimMove.blit(self.image, (0, 0))
-                self.texture = Image(self.config.INIT_IMAGE).texture  # TODO: port anim to kivy
+                self.yvel = self.config.MOVE_SPEED_Y
+                if anim:
+                    self.texture = self.config.t_u_1
+                else:
+                    self.texture = self.config.t_u_2
 
             # движение вниз
             elif self.course == "down":
                 self.shutdirection = "down"
-                self.yvel = self.config.MOVE_SPEED_Y
-                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                #self.image.fill(Color(self.COLOR))
-                #self.image.set_colorkey(Color(self.COLOR))
-                #self.boltAnimMove.blit(self.image, (0, 0))
-                #self.image = transform.rotate(self.image, 180)
-                self.texture = Image(self.config.INIT_IMAGE).texture  # TODO: port anim to kivy
+                self.yvel = -self.config.MOVE_SPEED_Y
+                if anim:
+                    self.texture = self.config.t_d_1
+                else:
+                    self.texture = self.config.t_d_2
 
             # стоим, когда нет указаний идти вверх - вниз
             else:

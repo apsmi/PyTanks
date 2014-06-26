@@ -1,96 +1,89 @@
 # -*- coding: utf-8 -*-
 
 import random
-from pygame import *
+
 from tank import Tank
 from bullet import Bullet
-from kivy.core.image import Image
+
 
 class Monster(Tank):
     def __init__(self, config):
         Tank.__init__(self, config)
 
         self.fire = 0   # выстрел
-        self.impact = False # переменная столкновения
+        self.impact = False  # переменная столкновения
         self.counter = self.config.counterStart
 
-    def update(self, obstructions, hero_y, hero_x, monsters_bullets): # по принципу героя
+    def update(self, obstructions, hero_y, hero_x, monsters_bullets, anim):  # по принципу героя
 
         # если танк взорвали
         if (self.dead > 0):
-            if (self.dead < 30):
+            if (self.dead < 15):
 
-                # показываем анимацию взрыва
-                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                #self.image.fill(Color(self.COLOR))
-                #self.image.set_colorkey(Color(self.COLOR))
-                #self.boltAnimDie.blit(self.image, (0, 0))
-                self.texture = Image("tanks/die_3.png").texture  # TODO: port anim to kivy
+                if anim:
+                    self.texture = self.config.t_b_2
+                else:
+                    self.texture = self.config.t_b_3
                 self.dead += 1 # счетчик кадро анимации взрыва
 
             else:
 
                 # закончили показывать взрыв, респауним танк
-                self.rect.x = self.config.START_X
-                self.rect.y = self.config.START_Y
+                self.rect.x = random.randint(1, 600)
+                self.rect.y = random.randint(1, 400)
                 self.dead = 0
-                self.texture = Image(self.config.INIT_IMAGE).texture
+                self.texture = self.config.t_u_1
 
         else:
 
             #наведение на героя
             if self.counter == 0:
                 if 50 < random.randint (1,100) and hero_y != self.rect.y:
-                    if self.impact == False:
+                    if self.impact is False:
                         if hero_y > self.rect.y:
-                            self.course = "down"
-                        elif hero_y < self.rect.y:
                             self.course = "up"
+                        elif hero_y < self.rect.y:
+                            self.course = "down"
                 else:
-                    if self.impact == False:
+                    if self.impact is False:
                         if hero_x > self.rect.x:
                             self.course = "right"
                         elif hero_x < self.rect.x:
                             self.course = "left"
                 self.counter = self.config.counterStart
 
-
             #проверка на макс. пройденое расстояние
             if (self.config.START_X - self.rect.x) > self.config.maxLengthLeft:
                 self.course = "right"
-                self.counter = 200 # включаем дурака
+                self.counter = 200  # включаем дурака
             if (self.config.START_Y - self.rect.y) > self.config.maxLengthUp:
-                self.course = "down"
-                self.counter = 20 # включаем дурака
-            if (self.config.START_X - self.rect.x) < 0 and (self.rect.x - self.config.START_X)  > self.config.maxLengthLeft :
-                self.course = "left"
-                self.counter = 20 # включаем дурака
-            if (self.config.START_Y - self.rect.y) < 0 and (self.rect.y - self.config.START_Y) > self.config.maxLengthUp :
                 self.course = "up"
-                self.counter = 20 # включаем дурака
+                self.counter = 20  # включаем дурака
+            if (self.config.START_X - self.rect.x) < 0 and (self.rect.x - self.config.START_X) > self.config.maxLengthLeft:
+                self.course = "left"
+                self.counter = 20  # включаем дурака
+            if (self.config.START_Y - self.rect.y) < 0 and (self.rect.y - self.config.START_Y) > self.config.maxLengthUp:
+                self.course = "down"
+                self.counter = 20  # включаем дурака
 
             #course - направление
             # движение влево
             if self.course == "left":
                 self.shutdirection = "left"                                  # изменяем направление выстрела
                 self.xvel = -self.config.MOVE_SPEED_X                        # текущая скорость движения
-                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT)) # перерисовываем аватарку
-                #self.image.fill(Color(self.COLOR))                           # заливаем фон
-                #self.image.set_colorkey(Color(self.COLOR))                   # делаем фон прозрачным
-                #self.boltAnimMove.blit(self.image, (0, 0))                   # выводим анимацию
-                self.texture = Image("tanks/monster2_1.png").texture  # TODO: port anim to kivy
-                #self.image = transform.rotate(self.image, 90)                # поворачиваем по направлению движения
+                if anim:
+                    self.texture = self.config.t_l_1
+                else:
+                    self.texture = self.config.t_l_2
 
             # движение вправо
             elif self.course == "right":
                 self.shutdirection = "right"
                 self.xvel = self.config.MOVE_SPEED_X
-                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                #self.image.fill(Color(self.COLOR))
-                #self.image.set_colorkey(Color(self.COLOR))
-                #self.boltAnimMove.blit(self.image, (0, 0))
-                self.texture = Image("tanks/monster2_1.png").texture  # TODO: port anim to kivy
-                #self.image = transform.rotate(self.image, 270)
+                if anim:
+                    self.texture = self.config.t_r_1
+                else:
+                    self.texture = self.config.t_r_2
 
             # стоим, когда нет указаний идти вправо - влево
             else:
@@ -102,30 +95,27 @@ class Monster(Tank):
             # движение вверх
             if self.course == "up":
                 self.shutdirection = "up"
-                self.yvel = -self.config.MOVE_SPEED_Y
-                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                #self.image.fill(Color(self.COLOR))
-                #self.image.set_colorkey(Color(self.COLOR))
-                #self.boltAnimMove.blit(self.image, (0, 0))
-                self.texture = Image("tanks/monster2_1.png").texture  # TODO: port anim to kivy
+                self.yvel = self.config.MOVE_SPEED_Y
+                if anim:
+                    self.texture = self.config.t_u_1
+                else:
+                    self.texture = self.config.t_u_2
 
             # движение вниз
             elif self.course == "down":
                 self.shutdirection = "down"
-                self.yvel = self.config.MOVE_SPEED_Y
-                #self.image = Surface((self.config.WIDTH,self.config.HEIGHT))
-                #self.image.fill(Color(self.COLOR))
-                #self.image.set_colorkey(Color(self.COLOR))
-                #self.boltAnimMove.blit(self.image, (0, 0))
-                self.texture = Image("tanks/monster2_1.png").texture  # TODO: port anim to kivy
-                #self.image = transform.rotate(self.image, 180)
+                self.yvel = -self.config.MOVE_SPEED_Y
+                if anim:
+                    self.texture = self.config.t_d_1
+                else:
+                    self.texture = self.config.t_d_2
 
             # стоим, когда нет указаний идти вверх - вниз
             else:
                 self.yvel = 0
 
             self.rect.y += self.yvel                 # переносим свои положение на yvel
-            self.collide(0, self.yvel, obstructions) # проверяем столкновения
+            self.collide(0, self.yvel, obstructions)  # проверяем столкновения
 
 
             # если упердись в препятствие - повернулись
@@ -138,17 +128,17 @@ class Monster(Tank):
 
                 if hero_x == self.rect.x:
                     if hero_y > self.rect.y:
-                        self.course = "down"
-                    elif hero_y < self.rect.y:
                         self.course = "up"
+                    elif hero_y < self.rect.y:
+                        self.course = "down"
 
             #стрельба
             if self.isBullet is False:
-                if 40 > random.randint (1, 1000):
-                    bullet = Bullet(self.rect.x,self.rect.y,self.shutdirection)
+                if 40 > random.randint(1, 1000):
+                    bullet = Bullet(self.rect.x, self.rect.y, self.shutdirection)
                     bullet.shooter = self
                     monsters_bullets.add(bullet)
                     self.isBullet = True
 
-            self.counter -= 1 #уменьшаем счётчик цикла update
+            self.counter -= 1  # уменьшаем счётчик цикла update
             self.impact = False

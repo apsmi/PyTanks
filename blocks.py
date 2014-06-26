@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from pygame import sprite, Surface, image, Rect, Color
+from pygame import sprite, Rect
 from kivy.core.image import Image
 
 PLATFORM_WIDTH = 32
@@ -47,11 +47,11 @@ class Block(sprite.Sprite):
                 self.texture = self.texture.get_region(8, 0, w-8, h)
                 self.rect = Rect(x+8, y, w-8, h)
             if shutdirection == "up":
-                self.texture = self.texture.get_region(0, 0, w, h-8)
-                self.rect = Rect(x, y, w, h-8)
-            if shutdirection == "down":
                 self.texture = self.texture.get_region(0, 8, w, h-8)
                 self.rect = Rect(x, y+8, w, h-8)
+            if shutdirection == "down":
+                self.texture = self.texture.get_region(0, 0, w, h-8)
+                self.rect = Rect(x, y, w, h-8)
 
             # если блок уничтожен совсем, удаляем его из всех групп
             if (self.rect.width == 0) or (self.rect.height == 0):
