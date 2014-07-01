@@ -13,8 +13,8 @@ class Tank_config():
     def __init__(self):
         self.START_X = random.randint(40, 600)                         # начальные координаты по горизрнтали
         self.START_Y = random.randint(40, 400)                         # начальные координаты по вертикали
-        self.MOVE_SPEED_X = 1                     # скорость перемещения по горизонтали
-        self.MOVE_SPEED_Y = 1                     # скорость перемещения по вертикали
+        self.MOVE_SPEED_X = 2                     # скорость перемещения по горизонтали
+        self.MOVE_SPEED_Y = 2                     # скорость перемещения по вертикали
         self.WIDTH = 28                           # ширина аватарки
         self.HEIGHT = 28                          # высота автарки
         self.lifeStart = 1                        # количество жизней танка

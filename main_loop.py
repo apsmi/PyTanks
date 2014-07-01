@@ -31,21 +31,24 @@ class PyTanksGame(Widget):
         player_config = Tank_config()
         self.player = Tank(player_config)
         self.players.add(self.player)
+        with self.canvas:
+            self.player.picture = Rectangle(texture=self.player.texture, pos=(self.player.rect.x, self.player.rect.y),
+                                            size=self.player.texture.size)
 
         # монстр 1
-        monster_config = Monster_config_1()
-        monster = Monster(monster_config)
-        self.monsters.add(monster)
+        #monster_config = Monster_config_1()
+        #monster = Monster(monster_config)
+        #self.monsters.add(monster)
 
         # монстр 2
-        monster_config = Monster_config_2()
-        monster = Monster(monster_config)
-        self.monsters.add(monster)
+        #monster_config = Monster_config_2()
+        #monster = Monster(monster_config)
+        #self.monsters.add(monster)
 
         # монстр 3
-        monster_config = Monster_config_3()
-        monster = Monster(monster_config)
-        self.monsters.add(monster)
+        #monster_config = Monster_config_3()
+        #monster = Monster(monster_config)
+        #self.monsters.add(monster)
 
         # генерируем уровень
         self.blocks, total_level_width, total_level_height = gen_level(16, 27)
@@ -57,7 +60,7 @@ class PyTanksGame(Widget):
 
     def update(self, dt):
 
-        text = "clock-fps: %f | clock-rfps: %f" % (Clock.get_fps(), Clock.get_rfps() )
+        text = "clock-fps: %f | clock-rfps: %f" % (Clock.get_fps(), Clock.get_rfps())
         self.label.text = text
 
         self.dt += dt
@@ -78,8 +81,8 @@ class PyTanksGame(Widget):
         self.canvas.clear()
 
         # рисование всех объектов
-        entities = self.blocks.sprites() + self.players.sprites() + self.players_bullets.sprites() + \
-                   self.monsters_bullets.sprites() + self.monsters.sprites()
+        entities = self.players.sprites() + self.players_bullets.sprites() + self.monsters_bullets.sprites() +\
+                   self.monsters.sprites() + self.blocks.sprites()
         for e in entities:
             with self.canvas:
                 pos = self.camera.apply(e)

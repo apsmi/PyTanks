@@ -75,7 +75,7 @@ class Bullet(sprite.Sprite):
         self.collide(0, self.yvel, obstructions)  # проверяем столкновения
 
         if (0 < self.bum):
-            if (self.bum < 15):
+            if (self.bum < 8):
                 self.rect = Rect(self.rect.left, self.rect.top, self.BUM_WIDTH, self.BUM_HEIGHT)  # прямоугольный объект
                 if anim:
                     self.texture = self.b_b_1
