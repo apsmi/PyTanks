@@ -84,6 +84,7 @@ class Bullet(sprite.Sprite):
                 self.bum += 1
             else:
                 self.kill()
+                self.picture.size = (0, 0)
                 self.shooter.isBullet = False # сообщаем тому, кто выстрелил, что его пуля кердык
 
     def collide(self, xvel, yvel, obstructions):

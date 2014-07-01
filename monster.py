@@ -5,6 +5,8 @@ import random
 from tank import Tank
 from bullet import Bullet
 
+from kivy.graphics import Rectangle
+
 
 class Monster(Tank):
     def __init__(self, config):
@@ -14,7 +16,7 @@ class Monster(Tank):
         self.impact = False  # переменная столкновения
         self.counter = self.config.counterStart
 
-    def update(self, obstructions, hero_y, hero_x, monsters_bullets, anim):  # по принципу героя
+    def update(self, obstructions, hero_y, hero_x, monsters_bullets, anim, canvas):  # по принципу героя
 
         # если танк взорвали
         if (self.dead > 0):
@@ -137,6 +139,10 @@ class Monster(Tank):
                 if 40 > random.randint(1, 1000):
                     bullet = Bullet(self.rect.x, self.rect.y, self.shutdirection)
                     bullet.shooter = self
+                    with canvas:
+                        bullet.picture = Rectangle(texture=bullet.texture,
+                                                   pos=(bullet.rect.x, bullet.rect.y),
+                                                   size=bullet.texture.size)
                     monsters_bullets.add(bullet)
                     self.isBullet = True
 

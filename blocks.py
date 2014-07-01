@@ -57,3 +57,9 @@ class Block(sprite.Sprite):
             if (self.rect.width == 0) or (self.rect.height == 0):
                 self.rect.width = self.rect.height = 0
                 self.kill()
+                self.picture.size = (0, 0)
+
+        # перемещаем картинку
+        #self.picture.size = (self.rect.width, self.rect.height)
+        #self.picture.pos = (self.rect.x, self.rect.y)
+        #self.picture.texture = self.texture

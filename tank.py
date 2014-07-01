@@ -49,12 +49,11 @@ class Tank(sprite.Sprite):
         self.xvel = 0                       # cкорость движения по горизонтали, 0 - стоит на месте
         self.yvel = 0                       # скорость движения по вертикали, 0 - не двигается
         self.dead = 0                       # счетчик кадров при смерти
-        self.COLOR =  "#000000"             # цвет фона аватарки
+        self.COLOR = "#000000"             # цвет фона аватарки
 
         # автарка танка
         self.texture = self.config.t_u_1
-        self.rect = Rect(self.config.START_X, self.config.START_Y, self.config.WIDTH, self.config.HEIGHT) # прямоугольный объект
-
+        self.rect = Rect(self.config.START_X, self.config.START_Y, self.config.WIDTH, self.config.HEIGHT)  # прямоугольный объект
 
     def update(self,  obstructions, anim):
 
@@ -138,7 +137,7 @@ class Tank(sprite.Sprite):
         for p in obstructions:
             if p != self:
 
-                if sprite.collide_rect(self, p): # если есть пересечение чего-то с танком
+                if sprite.collide_rect(self, p):  # если есть пересечение чего-то с танком
 
                     if xvel > 0:                 # если движется вправо
                         self.rect.right -= xvel  # то не движется вправо
