@@ -9,15 +9,15 @@ class Camera(object):
         self.display_w, self.display_h = display_w, display_h
         self.state = Rect(0, 0, width, height)
 
-    def apply(self, target):
+    def apply(self, target, x, y, w, h):
         return target.rect.move(self.state.topleft)
 
-    def update(self, target):
-        self.state = self.camera_func(self.state, target.rect, self.display_w, self.display_h)
+    def update(self, x, y, w, h):
+        self.state = self.camera_func(self.state, x, y, w, h, self.display_w, self.display_h)
 
 
-def camera_configure(camera, target_rect, display_w, display_h):
-    l, t, _, _ = target_rect
+def camera_configure(camera, target_x, target_y, target_w, target_h, display_w, display_h):
+    l, t, _, _ = target_x, target_y, target_w, target_h
     _, _, w, h = camera
     l, t = -l+display_w / 2, -t+display_h / 2
 

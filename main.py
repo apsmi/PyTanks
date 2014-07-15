@@ -33,18 +33,23 @@ class MyPaintApp(App):
         parent.add_widget(parent.game)
 
         #кнопки
-        right_btn = Button(background_normal='controls/right_normal.png', background_down='controls/right_press.png',
+        right_btn = Button(background_normal='controls/right_normal.png',
+                           background_down='controls/right_press.png',
                            pos=(180, 45))
-        left_btn = Button(background_normal='controls/left_normal.png', background_down='controls/left_press.png',
+        left_btn = Button(background_normal='controls/left_normal.png',
+                          background_down='controls/left_press.png',
                           pos=(0, 45))
-        up_btn = Button(background_normal='controls/up_normal.png', background_down='controls/up_press.png',
+        up_btn = Button(background_normal='controls/up_normal.png',
+                        background_down='controls/up_press.png',
                         pos=(90, 90))
-        down_btn = Button(background_normal='controls/down_normal.png', background_down='controls/down_press.png',
+        down_btn = Button(background_normal='controls/down_normal.png',
+                          background_down='controls/down_press.png',
                           pos=(90, 0))
-        fire_btn = Button(background_normal='controls/fire_normal.png', background_down='controls/fire_press.png',
+        fire_btn = Button(background_normal='controls/fire_normal.png',
+                          background_down='controls/fire_press.png',
                           pos=(parent.width-140, 40))
 
-        parent.game.label = Label(pos=(300, 300))  # для вывода FPS
+        parent.game.label = Label(pos=(100, size[1] - 100))  # для вывода FPS
         parent.add_widget(parent.game.label)
 
         #добавляем кнопки на корневой виджет
@@ -56,15 +61,16 @@ class MyPaintApp(App):
 
         #обработчики событий нажатия на кнопки
         def fire_button_press(obj):
-            if parent.game.player.isBullet is False:
-                    player_bullet = Bullet(parent.game.player.rect.left, parent.game.player.rect.top, parent.game.player.shutdirection)
-                    player_bullet.shooter = parent.game.player
-                    with parent.game.canvas:
-                        player_bullet.picture = Rectangle(texture=player_bullet.texture,
-                                                          pos=(player_bullet.rect.x, player_bullet.rect.y),
-                                                          size=player_bullet.texture.size)
-                    parent.game.players_bullets.add(player_bullet)
-                    parent.game.player.isBullet = True
+            pass  # TODO: переписать пули на виджеты
+            #if parent.game.player.isBullet is False:
+                    #player_bullet = Bullet(parent.game.player.rect.left, parent.game.player.rect.top, parent.game.player.shutdirection)
+                    #player_bullet.shooter = parent.game.player
+                    #with parent.game.canvas:
+                        #player_bullet.picture = Rectangle(texture=player_bullet.texture,
+                                                          #pos=(player_bullet.rect.x, player_bullet.rect.y),
+                                                          #size=player_bullet.texture.size)
+                    #parent.game.players_bullets.add(player_bullet)
+                    #parent.game.player.isBullet = True
         fire_btn.bind(on_press=fire_button_press)
 
         def up_button_press(obj):
