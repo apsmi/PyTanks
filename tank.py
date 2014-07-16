@@ -18,8 +18,6 @@ class TankWidget(Widget):
         START_X = random.randint(40, 600)                         # начальные координаты по горизрнтали
         START_Y = random.randint(40, 400)                         # начальные координаты по вертикали
 
-        Widget.__init__(self, size=(WIDTH, HEIGHT), pos=(START_X, START_Y))
-
         self.t_u_1 = Image('tanks/player_u_1.png').texture
         self.t_u_2 = Image('tanks/player_u_2.png').texture
         self.t_r_1 = Image('tanks/player_r_1.png').texture
@@ -32,8 +30,11 @@ class TankWidget(Widget):
         self.t_b_2 = Image('tanks/die_2.png').texture
         self.t_b_3 = Image('tanks/die_3.png').texture
 
+        # create a Widget object
+        Widget.__init__(self, size=(WIDTH, HEIGHT), pos=(START_X, START_Y))
+
         with self.canvas:
-            self.rectangle = Rectangle(texture=self.t_u_1, size=self.t_u_1.size, pos=self.pos)
+            self.rectangle = Rectangle(texture=self.t_u_1, size=self.t_u_1.size)
 
         self.MOVE_SPEED_X = 2                     # скорость перемещения по горизонтали
         self.MOVE_SPEED_Y = 2                     # скорость перемещения по вертикали
@@ -118,8 +119,6 @@ class TankWidget(Widget):
             self.pos[1] += yvel                 # переносим свои положение на yvel
 
             self.collide(xvel, yvel, obstructions)  # проверяем столкновения
-
-            self.rectangle.pos = self.pos
 
     def collide(self, xvel, yvel, obstructions):
 

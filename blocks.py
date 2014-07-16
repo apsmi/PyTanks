@@ -24,7 +24,7 @@ class BlockWidget(Widget):
         Widget.__init__(self, size=texture.size, pos=(x, y))
 
         with self.canvas:
-            self.rectangle = Rectangle(texture=texture, pos=self.pos, size=texture.size)
+            self.rectangle = Rectangle(texture=texture, size=texture.size)
 
     def die(self, shutdirection):
 

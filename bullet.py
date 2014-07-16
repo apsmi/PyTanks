@@ -2,10 +2,12 @@
 
 from pygame import *
 from kivy.core.image import Image
+from kivy.uix.widget import Widget
+from kivy.graphics import Rectangle
 
-class Bullet(sprite.Sprite):
+
+class Bullet(Widget):
     def __init__(self, x, y, shutdirection):
-        sprite.Sprite.__init__(self)
 
         self.b_u = Image('shut/bullet_up.png').texture
         self.b_r = Image('shut/bullet_right.png').texture
@@ -52,6 +54,11 @@ class Bullet(sprite.Sprite):
             self.startY += 0
 
         self.rect = Rect(self.startX, self.startY, self.WIDTH, self.HEIGHT) # прямоугольный объект
+        # create a Widget object
+        Widget.__init__(self, size=self.texture.size, pos=(self.startX, self.startY))
+        # draw texture
+        with self.canvas:
+            self.rectangle = Rectangle(texture=self.texture, size=self.texture.size)
 
     def update(self, obstructions, anim):
 
@@ -68,26 +75,24 @@ class Bullet(sprite.Sprite):
         elif self.shutdirection == "stop":
             self.xvel = self.yvel = 0
 
-        self.rect.x += self.xvel  # переносим свои положение на xvel
-        self.collide(self.xvel, 0, obstructions)  # проверяем столкновения
-
-        self.rect.y += self.yvel  # переносим свои положение на yvel
-        self.collide(0, self.yvel, obstructions)  # проверяем столкновения
+        self.x += self.xvel  # переносим свои положение на xvel
+        self.collide(self.xvel, self.yvel, obstructions)  # проверяем столкновения
 
         if (0 < self.bum):
             if (self.bum < 8):
-                self.rect = Rect(self.rect.left, self.rect.top, self.BUM_WIDTH, self.BUM_HEIGHT)  # прямоугольный объект
                 if anim:
-                    self.texture = self.b_b_1
+                    self.rectangle.texture = self.b_b_1
                 else:
-                    self.texture = self.b_b_2
+                    self.rectangle.texture = self.b_b_2
                 self.bum += 1
             else:
-                self.kill()
-                self.picture.size = (0, 0)
+                #self.kill() # TODO: think!!!
+                self.size = (0, 0)
                 self.shooter.isBullet = False # сообщаем тому, кто выстрелил, что его пуля кердык
 
     def collide(self, xvel, yvel, obstructions):
+
+        # TODO: need port to widget collide
 
         for p in obstructions:
             if sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
