@@ -44,9 +44,9 @@ class PyTanksGame(Widget):
 
         # монстр 1
         #monster_config = Monster_config_1()
-        monster_item = Monster1()
-        self.monsters.append(monster_item)
-        self.add_widget(monster_item)
+        #monster_item = Monster1()
+        #self.monsters.append(monster_item)
+        #self.add_widget(monster_item)
 
         # монстр 2
         #monster_config = Monster_config_2()
@@ -79,7 +79,7 @@ class PyTanksGame(Widget):
     def update(self, dt):
 
         text = "clock-fps: %f | clock-rfps: %f" % (Clock.get_fps(), Clock.get_rfps())
-        self.label.text = text
+        self.label.text = text + " /// " + str(self.label.size)
 
         # таймер анимации
         self.dt_anim += dt
