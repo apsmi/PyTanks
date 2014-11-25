@@ -59,7 +59,7 @@ class PyTanksGame(Widget):
         #self.monsters.add(monster)
 
         # генерируем уровень
-        self.blocks, total_level_width, total_level_height = gen_level(50, 50)
+        self.blocks, total_level_width, total_level_height = gen_level(30, 25)
 
         # добавляем виджеты блоков
         for item in self.blocks:
@@ -78,8 +78,8 @@ class PyTanksGame(Widget):
 
     def update(self, dt):
 
-        text = "clock-fps: %f | clock-rfps: %f" % (Clock.get_fps(), Clock.get_rfps())
-        self.label.text = text + " /// " + str(self.label.size)
+        text = "clock-fps: %f | clock-rfps: %d" % (Clock.get_fps(), Clock.get_rfps())
+        self.label.text = text + " /// " + str(self.label.s)
 
         # таймер анимации
         self.dt_anim += dt

@@ -36,22 +36,22 @@ class MyPaintApp(App):
         #кнопки
         right_btn = Button(background_normal='controls/right_normal.png',
                            background_down='controls/right_press.png',
-                           pos=(size[0]/3, size[1]/8), size=(size[1]/4, size[1]/4))
+                           pos=(size[0]/3, size[1]/8), size=(size[0]/6, size[0]/6))
         left_btn = Button(background_normal='controls/left_normal.png',
                           background_down='controls/left_press.png',
-                          pos=(0, size[1]/8), size=(size[1]/4, size[1]/4))
+                          pos=(0, size[1]/8), size=(size[0]/6, size[0]/6))
         up_btn = Button(background_normal='controls/up_normal.png',
                         background_down='controls/up_press.png',
-                        pos=(size[0]/6, size[1]/4), size=(size[1]/4, size[1]/4))
+                        pos=(size[0]/6, size[1]/4), size=(size[0]/6, size[0]/6))
         down_btn = Button(background_normal='controls/down_normal.png',
                           background_down='controls/down_press.png',
-                          pos=(size[0]/6, 0), size=(size[1]/4, size[1]/4))
+                          pos=(size[0]/6, 0), size=(size[0]/6, size[0]/6))
         fire_btn = Button(background_normal='controls/fire_normal.png',
                           background_down='controls/fire_press.png',
-                          pos=(size[0]-size[0]/6, size[1]/8), size=(size[1]/4, size[1]/4))
+                          pos=(size[0]-size[0]/6, size[1]/8), size=(size[0]/6, size[0]/6))
 
-        parent.game.label = Label(pos=(100, size[1] - 100))  # для вывода FPS
-        parent.game.label.size = size
+        parent.game.label = Label(pos=(size[0]/2, size[1] - 100))  # для вывода FPS
+        parent.game.label.s = size
         parent.add_widget(parent.game.label)
 
         #добавляем кнопки на корневой виджет

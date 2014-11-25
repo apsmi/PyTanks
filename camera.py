@@ -21,7 +21,6 @@ class NewCamera(object):
         window_y = min(window_y, self.level_height - self.window_height)
         self.window_y = window_y
 
-        print(target.pos)
 
     def apply(self, entity):
         x, y = entity.pos[0], entity.pos[1]
