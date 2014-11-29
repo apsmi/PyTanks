@@ -59,9 +59,10 @@ class PyTanksGame(Widget):
         #self.monsters.add(monster)
 
         # генерируем уровень
-        l_w = self.width / 32 + 10
-        l_h = self.height / 32 + 10
+        l_w = self.width / 32 + 5
+        l_h = self.height / 32 + 5
         self.blocks, total_level_width, total_level_height = gen_level(l_h, l_w)
+        total_level_height += 32  # место под посказки снизу
 
         # добавляем виджеты блоков
         for item in self.blocks:

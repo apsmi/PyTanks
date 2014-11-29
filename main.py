@@ -121,7 +121,7 @@ class MyPaintApp(App):
         root.add_widget(joystic)
 
         # для вывода FPS
-        root.game.label = Label(pos=(size[0]/2, size[1] - 100))
+        root.game.label = Label(pos=(size[0]/2, root.height-64))
         root.game.label.s = size
         root.add_widget(root.game.label)
 
