@@ -1,44 +1,41 @@
 # -*- coding: utf-8 -*-
 
-#генератор уровней
 """
-Объекты
-"-" -  не уничтожаемый, границы уровня
-"*" - уничтожаемый объект
+Генератор уровней.
+
+Объекты:
+"*" - не уничтожаемый, границы уровня;
+"-" - уничтожаемый объект.
+
 """
 
 import random
-from pygame.sprite import Group
 
 from blocks import BlockWidget, PLATFORM_HEIGHT, PLATFORM_WIDTH
 
 
 def gen_level(height, width):
 
-    level = []
+    level = []  # матрица, содержащая уровень
 
     for y in range(height):
 
-        st_line = ""
+        line = ""  # строка матрицы уровня
         for x in range(width):
 
-            line = " "
+            item = " "  # блок
             if 8 < random.randint(0, 10):
-                line = "-"
+                item = "-"
             if y == 0 or y == (height-1) or x == 0 or x == (width - 1):
-                line = "*"
+                item = "*"
 
-            st_line = st_line + line
+            line += item
 
-        level.append(st_line)
+        level.append(line)
 
-    #level[1] = level[1][:1] + " " + level[1][2:]
-    #level[height-2] = level[height-2][:width-2] + " " + level[height-2][width-1:]
+    total_level_width = len(level[0])*PLATFORM_WIDTH  # Высчитываем фактическую ширину уровня в пикселах
+    total_level_height = len(level)*PLATFORM_HEIGHT   # высоту
 
-    total_level_width  = len(level[0])*PLATFORM_WIDTH  # Высчитываем фактическую ширину уровня
-    total_level_height = len(level)*PLATFORM_HEIGHT    # высоту
-
-    #blocks = Group()
     blocks = []
 
     #рисуем платформы

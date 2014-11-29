@@ -59,7 +59,9 @@ class PyTanksGame(Widget):
         #self.monsters.add(monster)
 
         # генерируем уровень
-        self.blocks, total_level_width, total_level_height = gen_level(30, 25)
+        l_w = self.width / 32 + 10
+        l_h = self.height / 32 + 10
+        self.blocks, total_level_width, total_level_height = gen_level(l_h, l_w)
 
         # добавляем виджеты блоков
         for item in self.blocks:
@@ -67,7 +69,6 @@ class PyTanksGame(Widget):
 
         #создаем камеру
         display_w, display_h = self.width, self.height
-        #self.camera = Camera(camera_configure, total_level_width, total_level_height, display_w, display_h)
         self.camera = NewCamera(total_level_width, total_level_height, display_w, display_h)
 
         # рисуем все объекты
