@@ -8,7 +8,7 @@ from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.core.window import Window
-from kivy.graphics import Rectangle, Color, Ellipse
+from kivy.graphics import Rectangle, Color
 from kivy.core.image import Image
 
 from main_loop import PyTanksGame
@@ -114,36 +114,54 @@ class MyPaintApp(App):
                           background_down='controls/fire_press.png',
                           size=(control_size, control_size))
         fire_btn.pos = (root.width - fire_btn.width, 0)
+
+        # выводим на окно
         root.add_widget(fire_btn)
+
+        # обработчик событий нажатия на кнопку
+        def fire_button_press(obj):
+
+            # если у стреляющего нет пули, то стреляем
+            if root.game.player.isBullet is False:
+
+                    # создаем виджет пули
+                    player_bullet = Bullet(root.game.player.x, root.game.player.y, root.game.player.shutdirection)
+
+                    # говорим пуле чья она
+                    player_bullet.shooter = root.game.player
+
+                    # добавляем виджет пули на основное окно
+                    root.game.add_widget(player_bullet)
+
+                    # добавляем пулю в массив пуль игроков
+                    player_bullet.list = root.game.players_bullets
+                    root.game.players_bullets.append(player_bullet)
+
+                    # флаг существования пули у выстрелившего игрока
+                    root.game.player.isBullet = True
+
+        # биндим обработчик
+        fire_btn.bind(on_press=fire_button_press)
 
         # Виджет джойстика управления. Размер 1/3 меньшей стороны экрана (высоты).
         joystic = Joystic(control_size)
         root.add_widget(joystic)
-
-        # для вывода FPS
-        root.game.label = Label(pos=(size[0]/2, root.height-64))
-        root.game.label.s = size
-        root.add_widget(root.game.label)
-
-        # обработчик событий нажатия на кнопку
-        #def fire_button_press(obj):
-            #pass  # TODO: переписать пули на виджеты
-            #if parent.game.player.isBullet is False:
-                    #player_bullet = Bullet(parent.game.player.rect.left, parent.game.player.rect.top, parent.game.player.shutdirection)
-                    #player_bullet.shooter = parent.game.player
-                    #with parent.game.canvas:
-                        #player_bullet.picture = Rectangle(texture=player_bullet.texture,
-                                                          #pos=(player_bullet.rect.x, player_bullet.rect.y),
-                                                          #size=player_bullet.texture.size)
-                    #parent.game.players_bullets.add(player_bullet)
-                    #parent.game.player.isBullet = True
-        #fire_btn.bind(on_press=fire_button_press)
 
         # отпустили кнопку
         #def fire_button_release(obj):
             #pass
         #fire_btn.bind(on_release=fire_button_release)
 
+        # для вывода FPS
+        label_backgroud = Widget(pos=(0, root.height-32), size=(root.width, 64))
+        with label_backgroud.canvas:
+            Color(0.5, 0.5, 0.5)
+            Rectangle(pos=label_backgroud.pos, size=label_backgroud.size)
+        root.add_widget(label_backgroud)
+        root.game.label = Label(pos=(size[0]/2, root.height-64))
+        root.add_widget(root.game.label)
+
+        # по таймеру запускаем основной цикл игры
         Clock.schedule_interval(root.game.update, 1.0 / 60.0)
         return root
 

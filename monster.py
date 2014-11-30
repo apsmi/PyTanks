@@ -13,36 +13,47 @@ class MonsterWidget(TankWidget):
     def __init__(self):
         TankWidget.__init__(self)
 
+        # индивидуально, задано в конфиге
+        self.counterStart = 78  # счётчик поиска игрока (сложность)
+        self.maxLengthLeft = 500  # макс. пройденое расстояние от точки спавна
+        self.maxLengthUp = 500  # макс. пройденое расстояние от точки спавна
+        self.maxLengthRight = 500  # макс. пройденое расстояние от точки спавна
+        self.maxLengthDown = 500  # макс. пройденое расстояние от точки спавна
+
+        # для всех монстров
         self.fire = 0   # выстрел
         self.impact = False  # переменная столкновения
-        self.counterStart = 78  # счётчик поиска игрока (сложность)
-        self.counter = self.counterStart
+        self.counter = 0
 
-    def update(self, obstructions, hero_y, hero_x, monsters_bullets, anim, canvas):  # по принципу героя
+    def update(self, obstructions, hero_y, hero_x, anim):  # по принципу героя
 
         # если танк взорвали
         if (self.dead > 0):
             if (self.dead < 15):
 
                 if anim:
-                    self.rectangle.texture = self.t_b_2   # TODO: подумать над тем, как не присваивать каждый раз
+                    self.rectangle.texture = self.t_b_2
                 else:
                     self.rectangle.texture = self.t_b_3
-                self.dead += 1 # счетчик кадро анимации взрыва
+                self.dead += 1  # счетчик кадров анимации взрыва
 
             else:
 
                 # закончили показывать взрыв, респауним танк
-                x = random.randint(40, 600)
-                y = random.randint(40, 400)
-                self.pos = (x, y)
+                self.START_X = random.randint(40, 600)
+                self.START_Y = random.randint(40, 400)
+                self.pos = (self.START_X, self.START_Y)
 
                 self.dead = 0
                 self.rectangle.texture = self.t_u_1
+                self.course = ""
+                self.shutdirection = "up"
+
+                self.parent.monsters.append(self)  # включаем танк в массив танков
 
         else:
 
-            #наведение на героя
+            # наведение на героя
             if self.counter == 0:
                 if 50 < random.randint(1, 100) and hero_y != self.y:
                     if self.impact is False:
@@ -58,10 +69,10 @@ class MonsterWidget(TankWidget):
                             self.course = "left"
                 self.counter = self.counterStart
 
-            #проверка на макс. пройденое расстояние
+            # проверка на макс. пройденое расстояние
             if (self.START_X - self.x) > self.maxLengthLeft:
                 self.course = "right"
-                self.counter = 200  # включаем дурака
+                self.counter = 20  # включаем дурака
             if (self.START_Y - self.y) > self.maxLengthUp:
                 self.course = "up"
                 self.counter = 20  # включаем дурака
@@ -72,8 +83,8 @@ class MonsterWidget(TankWidget):
                 self.course = "down"
                 self.counter = 20  # включаем дурака
 
-            #course - направление
-            #обнуляем движение
+            # course - направление
+            # обнуляем движение
             xvel = yvel = 0
 
             # движение влево
@@ -116,35 +127,45 @@ class MonsterWidget(TankWidget):
                 else:
                     self.rectangle.texture = self.t_d_2
 
-            self.pos[0] += xvel                 # переносим свои положение на xvel
-            self.pos[1] += yvel                 # переносим свои положение на yvel
+            self.x += xvel                 # переносим свои положение на xvel
+            self.y += yvel                 # переносим свои положение на yvel
 
-            self.collide(xvel, yvel, obstructions)  # проверяем столкновения
+            self.impact = self.collide(xvel, yvel, obstructions)  # проверяем столкновения
 
             # если упердись в препятствие - повернулись
             if self.impact is True:
-                if hero_y == self.rect.y:
-                    if hero_x > self.rect.x:
+                if self.course == "down" or self.course == "up":
+                    if hero_x > self.x:
                         self.course = "right"
-                    elif hero_x < self.rect.x:
+                    elif hero_x < self.x:
                         self.course = "left"
 
-                if hero_x == self.rect.x:
-                    if hero_y > self.rect.y:
+                if self.course == "left" or self.course == "right":
+                    if hero_y > self.y:
                         self.course = "up"
-                    elif hero_y < self.rect.y:
+                    elif hero_y < self.y:
                         self.course = "down"
 
-            #стрельба
+            # стрельба
+
+            # если у стреляющего нет пули, то стреляем
             if self.isBullet is False:
                 if 40 > random.randint(1, 1000):
-                    bullet = Bullet(self.rect.x, self.rect.y, self.shutdirection)
+
+                    # создаем виджет пули
+                    bullet = Bullet(self.x, self.y, self.shutdirection)
+
+                    # говорим пуле чья она
                     bullet.shooter = self
-                    with canvas:
-                        bullet.picture = Rectangle(texture=bullet.texture,
-                                                   pos=(bullet.rect.x, bullet.rect.y),
-                                                   size=bullet.texture.size)
-                    monsters_bullets.add(bullet)
+
+                    # добавляем виджет пули на основное окно
+                    self.parent.add_widget(bullet)
+
+                    # добавляем пулю в массив пуль монстров
+                    bullet.list = self.parent.monsters_bullets
+                    self.parent.monsters_bullets.append(bullet)
+
+                    # флаг существования пули у выстрелившего монстра
                     self.isBullet = True
 
             self.counter -= 1  # уменьшаем счётчик цикла update
@@ -164,6 +185,9 @@ class Monster1(MonsterWidget):
         self.t_l_1 = Image('tanks/monster1_l_1.png').texture
         self.t_l_2 = Image('tanks/monster1_l_2.png').texture
 
+        with self.canvas:
+            self.rectangle = Rectangle(texture=self.t_u_1, size=self.t_u_1.size)
+
         self.maxLengthLeft = 500  # макс. пройденое расстояние от точки спавна
         self.maxLengthUp = 500  # макс. пройденое расстояние от точки спавна
         self.maxLengthRight = 500  # макс. пройденое расстояние от точки спавна
@@ -173,6 +197,8 @@ class Monster1(MonsterWidget):
         self.MOVE_SPEED_Y = 3  # скорость движения по вертикали, 0 - не двигается
 
         self.counterStart = 78  # счётчик поиска игрока (сложность)
+
+        self.life = self.lifeStart   # оставшееся количество жизней
 
 
 class Monster2(MonsterWidget):
@@ -188,6 +214,9 @@ class Monster2(MonsterWidget):
         self.t_l_1 = Image('tanks/monster2_l_1.png').texture
         self.t_l_2 = Image('tanks/monster2_l_2.png').texture
 
+        with self.canvas:
+            self.rectangle = Rectangle(texture=self.t_u_1, size=self.t_u_1.size)
+
         self.maxLengthLeft = 300  # макс. пройденое расстояние от точки спавна
         self.maxLengthUp = 300  # макс. пройденое расстояние от точки спавна
         self.maxLengthRight = 500  # макс. пройденое расстояние от точки спавна
@@ -197,6 +226,8 @@ class Monster2(MonsterWidget):
         self.MOVE_SPEED_Y = 2  # скорость движения по вертикали, 0 - не двигается
 
         self.counterStart = 20  # счётчик поиска игрока (сложность)
+
+        self.life = self.lifeStart   # оставшееся количество жизней
 
 
 class Monster3(MonsterWidget):
@@ -212,6 +243,9 @@ class Monster3(MonsterWidget):
         self.t_l_1 = Image('tanks/monster3_l_1.png').texture
         self.t_l_2 = Image('tanks/monster3_l_2.png').texture
 
+        with self.canvas:
+            self.rectangle = Rectangle(texture=self.t_u_1, size=self.t_u_1.size)
+
         self.maxLengthLeft = 500  # макс. пройденое расстояние от точки спавна
         self.maxLengthUp = 500  # макс. пройденое расстояние от точки спавна
         self.maxLengthRight = 500  # макс. пройденое расстояние от точки спавна
@@ -223,3 +257,4 @@ class Monster3(MonsterWidget):
         self.counterStart = 56  # счётчик поиска игрока (сложность)
 
         self.lifeStart = 3
+        self.life = self.lifeStart   # оставшееся количество жизней
