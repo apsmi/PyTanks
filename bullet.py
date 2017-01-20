@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from pygame import *
+#from pygame import *
 from kivy.core.image import Image
 from kivy.uix.widget import Widget
 from kivy.graphics import Rectangle
