@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from kivy.uix.widget import Widget
-
 from kivy.clock import Clock
 
 from level import gen_level

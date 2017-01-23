@@ -1,4 +1,6 @@
 PyTanks
 =======
 
-tanks on python
+tanks on python for android
+
+a.p.smirnof@gmail.com

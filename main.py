@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-__author__ = 'apsmi'
 
 from kivy.app import App
-
 from kivy.clock import Clock
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
@@ -12,15 +10,14 @@ from kivy.graphics import Rectangle, Color
 from kivy.core.image import Image
 
 from main_loop import PyTanksGame
-
 from bullet import Bullet
 
-#размеры окна, когда будем собирать андроид-пакет - убрать
-#from kivy.config import Config
-#width = 800
-#height = 480
-#Config.set('graphics', 'width', width)
-#Config.set('graphics', 'height', height)
+# размеры окна, когда будем собирать андроид-пакет - убрать
+# from kivy.config import Config
+# width = 800
+# height = 480
+# Config.set('graphics', 'width', width)
+# Config.set('graphics', 'height', height)
 
 
 class Joystic(Widget):
